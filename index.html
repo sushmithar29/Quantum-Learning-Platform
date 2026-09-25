@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuantumLab – Explore Quantum Computing</title>
+  <meta name="description" content="Learn quantum computing by exploring, experimenting, simulating, and visualizing concepts interactively. QuantumLab is your virtual quantum laboratory." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+</head>
+<body>
+  <!-- NAVIGATION -->
+  <nav class="nav" id="main-nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo" id="logo-link">
+        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav__logo-text">QuantumLab</span>
+      </a>
+      <div class="nav__links">
+        <a href="/experiments" class="nav__link">Experiments</a>
+        <a href="/virtual-labs" class="nav__link">Virtual Labs</a>
+        <a href="/algorithms" class="nav__link">Algorithms</a>
+        <a href="#learn" class="nav__link">Learn</a>
+        <a href="#challenges" class="nav__link">Challenges</a>
+      </div>
+      <div class="nav__actions">
+        <button class="nav__ai-btn" id="ai-tutor-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          AI Tutor
+        </button>
+        <button class="nav__profile-btn" id="profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+      </div>
+      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="/experiments" class="nav__mobile-link">Experiments</a>
+      <a href="/virtual-labs" class="nav__mobile-link">Virtual Labs</a>
+      <a href="/algorithms" class="nav__mobile-link">Algorithms</a>
+      <a href="#learn" class="nav__mobile-link">Learn</a>
+      <a href="#challenges" class="nav__mobile-link">Challenges</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas class="hero__canvas" id="hero-canvas"></canvas>
+    <div class="hero__container">
+      <div class="hero__content">
+        <div class="hero__badge">
+          <span class="hero__badge-dot"></span>
+          Virtual Quantum Laboratory
+        </div>
+        <h1 class="hero__title">Explore Quantum<br/><span class="hero__title-accent">Computing</span></h1>
+        <p class="hero__subtitle">Learn quantum concepts by experimenting, simulating,<br/>and visualizing them interactively.</p>
+        <div class="hero__actions">
+          <button class="btn btn--primary btn--lg" id="start-exploring-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Exploring
+          </button>
+          <button class="btn btn--ghost btn--lg" id="playground-btn">
+            Open Quantum Playground
+          </button>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat" id="hero-exp-stat" style="cursor:pointer" onclick="window.location.href='/experiments'"><span class="hero__stat-num" id="hero-exp-count">12</span><span class="hero__stat-label">Experiments</span></div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat" id="hero-labs-stat" style="cursor:pointer" onclick="window.location.href='/virtual-labs'"><span class="hero__stat-num" id="hero-labs-count">5</span><span class="hero__stat-label">Virtual Labs</span></div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat" id="hero-algo-stat" style="cursor:pointer" onclick="window.location.href='/algorithms'"><span class="hero__stat-num" id="hero-algo-count">12</span><span class="hero__stat-label">Algorithms</span></div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat"><span class="hero__stat-num">5</span><span class="hero__stat-label">Challenges</span></div>
+        </div>
+      </div>
+
+      <!-- HERO BLOCH SPHERE PANEL (True 3D WebGL) -->
+      <div class="hero__visual" id="bloch-panel">
+        <div class="bloch-panel-card">
+          <!-- Top bar with state info and reset -->
+          <div class="bloch-header">
+            <div class="bloch-state-indicator" id="bloch-state-indicator">
+              <span class="bloch-state-indicator__tag">STATE</span>
+              <span class="bloch-state-indicator__ket" id="bloch-state-ket">|ψ⟩</span>
+              <span class="bloch-state-indicator__angles" id="bloch-state-angles">θ: 60° · φ: 45°</span>
+            </div>
+            <button class="bloch-reset-btn" id="bloch-reset-btn" title="Reset 3D camera and state (or double-click sphere)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+              Reset View
+            </button>
+          </div>
+
+          <!-- 3D Canvas wrapper -->
+          <div class="bloch-canvas-wrap" id="bloch-canvas-wrap">
+            <div id="bloch-webgl-container"></div>
+            <!-- Interaction instruction banner -->
+            <div class="bloch-hint" id="bloch-hint">
+              <span class="bloch-hint__icon">↺</span>
+              <span>Drag 360° to rotate • Scroll to zoom • Double-click reset</span>
+            </div>
+          </div>
+
+          <!-- Bottom bar with Gate controls & probabilities -->
+          <div class="bloch-footer">
+            <div class="bloch-gates" id="bloch-gates">
+              <span class="bloch-gates__label">APPLY GATE:</span>
+              <div class="bloch-gates__row">
+                <button class="bloch-gate-btn" id="gate-H" data-gate="H" title="Hadamard (Superposition)">H</button>
+                <button class="bloch-gate-btn" id="gate-X" data-gate="X" title="Pauli-X (Bit-flip)">X</button>
+                <button class="bloch-gate-btn" id="gate-Y" data-gate="Y" title="Pauli-Y (Bit & Phase-flip)">Y</button>
+                <button class="bloch-gate-btn" id="gate-Z" data-gate="Z" title="Pauli-Z (Phase-flip)">Z</button>
+              </div>
+            </div>
+            <div class="bloch-probs" id="bloch-probs">
+              <div class="bloch-prob-item">
+                <span class="bloch-prob-label">P(|0⟩):</span>
+                <span class="bloch-prob-val" id="bloch-p0">75%</span>
+              </div>
+              <div class="bloch-prob-divider"></div>
+              <div class="bloch-prob-item">
+                <span class="bloch-prob-label">P(|1⟩):</span>
+                <span class="bloch-prob-val" id="bloch-p1">25%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- QUANTUM ALGORITHMS SECTION -->
+    <section class="section" id="algorithms">
+      <div class="section__header">
+        <div>
+          <div class="section__label"><span class="section__label-icon">⚙</span> Build</div>
+          <h2 class="section__title">Quantum Algorithms</h2>
+          <p class="section__subtitle">Build and visualize the algorithms behind quantum computing.</p>
+        </div>
+        <a href="/algorithms" class="section__view-all">View All (12) <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="cards-track" id="algorithms-track"></div>
+        <button class="carousel-btn carousel-btn--prev" id="algo-prev">‹</button>
+        <button class="carousel-btn carousel-btn--next" id="algo-next">›</button>
+      </div>
+    </section>
+
+    <!-- LEARN SECTION -->
+    <section class="section section--learn" id="learn">
+      <div class="section__header">
+        <div>
+          <div class="section__label"><span class="section__label-icon">📚</span> Learn</div>
+          <h2 class="section__title">Learn Quantum Computing</h2>
+          <p class="section__subtitle">Build your understanding from the basics.</p>
+        </div>
+      </div>
+      <div class="learn-categories" id="learn-categories"></div>
+    </section>
+
+    <!-- CHALLENGES SECTION -->
+    <section class="section" id="challenges">
+      <div class="section__header">
+        <div>
+          <div class="section__label"><span class="section__label-icon">🏆</span> Practice</div>
+          <h2 class="section__title">Quantum Challenges</h2>
+          <p class="section__subtitle">Build it yourself.</p>
+        </div>
+        <a href="#" class="section__view-all">View All <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="cards-track" id="challenges-track"></div>
+        <button class="carousel-btn carousel-btn--prev" id="chal-prev">‹</button>
+        <button class="carousel-btn carousel-btn--next" id="chal-next">›</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
+          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#fg)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs><linearGradient id="fg" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+        </svg>
+        <span>QuantumLab</span>
+      </div>
+      <p class="footer__tagline">A virtual quantum learning laboratory.</p>
+      <p class="footer__copy">© 2026 QuantumLab. Built for explorers.</p>
+    </div>
+  </footer>
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal__inner">
+      <button class="modal__close" id="modal-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="modal__content" id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- AI TUTOR PANEL -->
+  <div class="ai-panel" id="ai-panel">
+    <div class="ai-panel__header">
+      <div class="ai-panel__title">
+        <span>🤖</span> AI Tutor
+      </div>
+      <button class="ai-panel__close" id="ai-panel-close">✕</button>
+    </div>
+    <div class="ai-panel__messages" id="ai-messages">
+      <div class="ai-msg ai-msg--bot">
+        <div class="ai-msg__avatar">🤖</div>
+        <div class="ai-msg__bubble">Hello! I'm your quantum AI tutor. Ask me anything about quantum computing, or click "Explain this" on any experiment or visualization.</div>
+      </div>
+    </div>
+    <div class="ai-panel__input">
+      <input type="text" class="ai-panel__field" id="ai-input" placeholder="Ask about quantum concepts..." />
+      <button class="ai-panel__send" id="ai-send">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3D Engine & Modules -->
+  <script src="js/vendor/three.min.js"></script>
+  <script src="js/vendor/OrbitControls.js"></script>
+  <script src="js/bloch3d.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/labs.js"></script>
+  <script src="js/algorithms-data.js"></script>
+  <script src="js/algorithms-engine.js"></script>
+  <script src="js/algorithms.js"></script>
+  <script src="js/learn.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

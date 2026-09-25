@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Measurement & Wavefunction Collapse – QuantumLab Virtual Labs</title>
+  <meta name="description" content="Perform projective measurements in arbitrary bases. Observe single-shot state collapse, accumulate statistical distributions, and verify Born's rule." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/virtual-lab-environment.css" />
+</head>
+<body class="vlab-body">
+
+  <!-- TOP BAR -->
+  <header class="vlab-topbar">
+    <div class="vlab-topbar__main">
+      <div class="vlab-topbar__left">
+        <a href="index.html" class="vlab-back-portal" id="back-to-vlabs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Virtual Labs
+        </a>
+        <div class="vlab-title-group">
+          <div class="vlab-category-badge"><span>📐</span> Quantum Measurement & Foundations</div>
+          <h1 class="vlab-exp-name">Quantum Measurement Lab</h1>
+        </div>
+      </div>
+      <div class="vlab-topbar__center">
+        <div class="vlab-rating-pill">
+          <span class="vlab-rating-stars">★★★★★</span>
+          <span>4.9</span>
+          <span style="opacity:0.6;font-size:0.7rem">(115 reviews)</span>
+        </div>
+      </div>
+      <div class="vlab-topbar__actions">
+        <button class="vlab-action-btn" id="btn-rate-lab">★ Rate Lab</button>
+        <button class="vlab-action-btn" id="btn-report-bug">🐞 Report Bug</button>
+        <button class="vlab-action-btn" id="btn-reset-lab">↺ Reset Lab</button>
+        <button class="vlab-action-btn vlab-action-btn--primary" id="btn-fullscreen-lab">⛶ Fullscreen</button>
+      </div>
+    </div>
+    <div class="vlab-breadcrumb-bar">
+      <div class="vlab-breadcrumbs">
+        <a href="../index.html">QuantumLab</a>
+        <span class="sep">></span>
+        <a href="index.html">Virtual Labs</a>
+        <span class="sep">></span>
+        <a href="index.html#labs-list">Quantum Measurement</a>
+        <span class="sep">></span>
+        <span class="current">Quantum Measurement Lab (Exp 03)</span>
+      </div>
+      <div class="vlab-status-indicator">
+        <span class="vlab-status-pulse"></span>
+        <span id="meas-sim-status">Simulation Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="vlab-workspace" id="vlab-workspace">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="vlab-sidebar">
+      <div class="vlab-sidebar__title">Laboratory Workflow</div>
+      <nav id="vlab-nav-tabs">
+        <button class="vlab-nav-tab" data-tab="aim"><span class="vlab-nav-tab__icon">🎯</span><span>Aim</span></button>
+        <button class="vlab-nav-tab" data-tab="theory"><span class="vlab-nav-tab__icon">📖</span><span>Theory</span></button>
+        <button class="vlab-nav-tab" data-tab="objectives"><span class="vlab-nav-tab__icon">🎓</span><span>Learning Objectives</span></button>
+        <button class="vlab-nav-tab" data-tab="procedure"><span class="vlab-nav-tab__icon">📋</span><span>Procedure</span></button>
+        <button class="vlab-nav-tab active" data-tab="simulation"><span class="vlab-nav-tab__icon">🔬</span><span>Simulation</span><span class="vlab-nav-tab__badge">Live</span></button>
+        <button class="vlab-nav-tab" data-tab="observation"><span class="vlab-nav-tab__icon">👁️</span><span>Observation</span></button>
+        <button class="vlab-nav-tab" data-tab="results"><span class="vlab-nav-tab__icon">📊</span><span>Results</span></button>
+        <button class="vlab-nav-tab" data-tab="self-eval"><span class="vlab-nav-tab__icon">📝</span><span>Self Evaluation</span></button>
+        <button class="vlab-nav-tab" data-tab="assignment"><span class="vlab-nav-tab__icon">✍️</span><span>Assignment</span></button>
+        <button class="vlab-nav-tab" data-tab="references"><span class="vlab-nav-tab__icon">📚</span><span>References</span></button>
+        <button class="vlab-nav-tab" data-tab="feedback"><span class="vlab-nav-tab__icon">💬</span><span>Feedback</span></button>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="vlab-main-content">
+
+      <!-- TAB: AIM -->
+      <section class="vlab-tab-panel" id="panel-aim">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>🎯</span> Section 01</div>
+            <h2 class="vlab-edu-title">Experiment Aim</h2>
+          </div>
+          <p style="font-size:1.05rem;color:var(--vlab-text);line-height:1.8">
+            To investigate the quantum measurement postulate by preparing arbitrary single-qubit states, choosing projective measurement bases (Z-basis, X-basis, Y-basis), performing repeated shot measurements to accumulate statistical distributions, and verifying that empirical outcome frequencies converge to the theoretical Born-rule probabilities |⟨m|ψ⟩|² as the number of shots increases.
+          </p>
+          <div style="margin-top:1rem">
+            <button class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem" onclick="switchVLabTab('simulation')">
+              Launch Live Simulation →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: THEORY -->
+      <section class="vlab-tab-panel" id="panel-theory">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📖</span> Section 02</div>
+            <h2 class="vlab-edu-title">Theoretical Foundations</h2>
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:0.5rem">1. The Quantum Measurement Postulate</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Quantum measurement is the interface between the quantum system and the classical observer. Every observable A corresponds to a Hermitian operator. For a measurement of observable M with spectral decomposition M = Σ mₖ Pₖ where Pₖ are orthogonal projectors, acting on state |ψ⟩:
+          </p>
+          <div class="vlab-math-block">
+            Born Rule: P(outcome m) = ⟨ψ|Pₘ|ψ⟩ = |⟨m|ψ⟩|²<br/>
+            <br/>
+            Post-measurement state: |ψ'⟩ = Pₘ|ψ⟩ / √P(m)  (state collapse)
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">2. Measurement Bases</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            The Z-basis {|0⟩, |1⟩} is the computational basis. To measure in the X-basis {|+⟩, |-⟩} or Y-basis {|i⟩, |-i⟩}, a basis rotation must be applied before the standard Z measurement:
+          </p>
+          <div class="vlab-math-block">
+            Z-basis: measure directly (no pre-rotation)<br/>
+            X-basis: apply H†  before measurement  (H|+⟩=|0⟩, H|-⟩=|1⟩)<br/>
+            Y-basis: apply S†·H† before measurement (transforms Y eigenstates to Z)<br/>
+            <br/>
+            For state |ψ⟩ = α|0⟩ + β|1⟩ measured in Z-basis:<br/>
+            P(0) = |α|²,   P(1) = |β|²
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">3. Statistical Convergence (Law of Large Numbers)</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Each measurement is an independent Bernoulli trial. After N shots, empirical frequencies fₙ = nₘ/N converge to P(m) by the law of large numbers. The statistical error scales as:
+          </p>
+          <div class="vlab-math-block">
+            σ(f) = √(P(1-P)/N)   →   0 as N → ∞
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: LEARNING OBJECTIVES -->
+      <section class="vlab-tab-panel" id="panel-objectives">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>🎓</span> Section 03</div>
+            <h2 class="vlab-edu-title">Learning Objectives</h2>
+          </div>
+          <ul style="color:var(--vlab-text-secondary);font-size:0.95rem;display:flex;flex-direction:column;gap:1rem;padding-left:1.5rem">
+            <li>Apply Born's rule to compute theoretical measurement probabilities from complex amplitudes α and β.</li>
+            <li>Distinguish between projective measurement in the Z-basis, X-basis, and Y-basis using appropriate pre-rotations.</li>
+            <li>Observe irreversible wavefunction collapse: after measuring |1⟩, the state is no longer in superposition.</li>
+            <li>Quantify statistical convergence: track how empirical shot frequencies approach theoretical probabilities as shot count N increases.</li>
+            <li>Interpret histograms of repeated quantum measurements and relate them to probability distributions.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- TAB: PROCEDURE -->
+      <section class="vlab-tab-panel" id="panel-procedure">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📋</span> Section 04</div>
+            <h2 class="vlab-edu-title">Step-by-Step Procedure</h2>
+          </div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item"><div class="vlab-step-number">01</div><div class="vlab-step-content"><h4>Prepare Quantum State</h4><p>Use the amplitude sliders to set the real amplitude |α| of the state |ψ⟩ = α|0⟩ + e^(iφ)β|1⟩. The normalization |α|²+|β|²=1 is enforced automatically.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">02</div><div class="vlab-step-content"><h4>Choose Measurement Basis</h4><p>Select the measurement basis: Z-basis (default), X-basis (applies H before readout), or Y-basis (applies S†H before readout). Observe how the theoretical probabilities change.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">03</div><div class="vlab-step-content"><h4>Set Shot Count</h4><p>Adjust the shots slider from 1 to 1024. For small N, observe high variance; for large N (≥ 512), the empirical histogram converges to Born-rule theoretical values.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">04</div><div class="vlab-step-content"><h4>Run Measurement</h4><p>Click "Run Measurement" to execute all shots. The histogram animates, showing the accumulated statistics bar by bar, with a theoretical dotted reference line shown in cyan.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">05</div><div class="vlab-step-content"><h4>Analyze & Repeat</h4><p>Compare the empirical frequency (green bar) with the theoretical probability (cyan dashed line). Change the shot count and re-run to observe statistical variance narrowing.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: SIMULATION -->
+      <section class="vlab-tab-panel active" id="panel-simulation">
+        <div class="vlab-sim-layout">
+
+          <!-- APPARATUS: Measurement Visualization -->
+          <div class="vlab-apparatus-box">
+            <div class="vlab-apparatus-header">
+              <div class="vlab-apparatus-title"><span>📐</span> Quantum Measurement Apparatus</div>
+              <div class="vlab-apparatus-controls-bar">
+                <button class="vlab-tool-btn" id="btn-clear-meas">✕ Clear Results</button>
+              </div>
+            </div>
+
+            <!-- State visualization and measurement display -->
+            <div class="vlab-canvas-stage" style="min-height:320px;padding:1.5rem">
+              <!-- State display -->
+              <div style="text-align:center;margin-bottom:1.5rem">
+                <div style="font-size:0.75rem;color:var(--vlab-text-muted);margin-bottom:0.5rem">PREPARED STATE</div>
+                <div id="state-formula" style="font-family:var(--vlab-mono);font-size:1.4rem;color:#fff;letter-spacing:0.02em">
+                  |ψ⟩ = 1.000|0⟩ + 0.000|1⟩
+                </div>
+              </div>
+
+              <!-- Measurement outcome visualization -->
+              <div id="meas-shot-display" style="display:flex;flex-direction:column;gap:0.75rem">
+                <div id="meas-histogram" style="width:100%">
+                  <div style="color:var(--vlab-text-muted);font-size:0.85rem;text-align:center;padding:2rem 0">
+                    Configure state and run measurement to see results.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- State presets -->
+            <div class="vlab-apparatus-footer">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--vlab-text-muted);text-transform:uppercase">State Presets:</div>
+              <div class="vlab-presets-bar">
+                <button class="vlab-preset-chip active" data-mpreset="|0⟩">|0⟩</button>
+                <button class="vlab-preset-chip" data-mpreset="|1⟩">|1⟩</button>
+                <button class="vlab-preset-chip" data-mpreset="|+⟩">|+⟩</button>
+                <button class="vlab-preset-chip" data-mpreset="|i⟩">|i⟩</button>
+                <button class="vlab-preset-chip" data-mpreset="custom">Custom</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTROLS PANEL -->
+          <div class="vlab-controls-panel">
+
+            <!-- State Amplitude -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Amplitude |α| = cos(θ/2)</span>
+                <span class="vlab-variable-val" id="alpha-val">1.000</span>
+              </div>
+              <input type="range" class="vlab-slider" id="alpha-slider" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <!-- Phase -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Relative Phase φ</span>
+                <span class="vlab-variable-val" id="phase-val">0°</span>
+              </div>
+              <input type="range" class="vlab-slider" id="phase-slider" min="0" max="360" step="1" value="0" />
+            </div>
+
+            <!-- Measurement Basis -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head"><span>Measurement Basis</span></div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.25rem">
+                <button class="vlab-tool-btn active" id="basis-Z" data-basis="Z" style="flex:1">Z-basis</button>
+                <button class="vlab-tool-btn" id="basis-X" data-basis="X" style="flex:1">X-basis</button>
+                <button class="vlab-tool-btn" id="basis-Y" data-basis="Y" style="flex:1">Y-basis</button>
+              </div>
+            </div>
+
+            <!-- Shots Slider -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Measurement Shots</span>
+                <span class="vlab-variable-val" id="mshots-val">256</span>
+              </div>
+              <input type="range" class="vlab-slider" id="mshots-slider" min="1" max="1024" step="1" value="256" />
+            </div>
+
+            <!-- Run Buttons -->
+            <div class="vlab-run-buttons">
+              <button class="vlab-btn-run" id="run-meas-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                RUN MEASUREMENT
+              </button>
+              <button class="vlab-btn-secondary" id="reset-meas-btn">↺ Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS GRID -->
+        <div class="vlab-analytics-grid">
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title"><span>📐</span> Measurement Observation</div>
+              <div class="vlab-card__badge" id="meas-badge">Ready</div>
+            </div>
+            <div class="vlab-observation-box" id="meas-observation-text">
+              State initialized to |0⟩. In Z-basis: P(0) = 100%, P(1) = 0%. Click Run Measurement to sample outcomes.
+            </div>
+          </div>
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title"><span>📊</span> Born Rule Verification</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+              <div style="background:rgba(10,13,38,0.6);border-radius:8px;padding:0.75rem;border:1px solid var(--vlab-border)">
+                <div style="font-size:0.7rem;color:var(--vlab-text-muted);margin-bottom:0.5rem">THEORETICAL</div>
+                <div style="font-family:var(--vlab-mono);font-size:0.85rem">
+                  <div>P(0) = <strong id="theory-p0" style="color:#34d399">100%</strong></div>
+                  <div>P(1) = <strong id="theory-p1" style="color:#fb7185">0%</strong></div>
+                </div>
+              </div>
+              <div style="background:rgba(10,13,38,0.6);border-radius:8px;padding:0.75rem;border:1px solid var(--vlab-border)">
+                <div style="font-size:0.7rem;color:var(--vlab-text-muted);margin-bottom:0.5rem">EMPIRICAL</div>
+                <div style="font-family:var(--vlab-mono);font-size:0.85rem">
+                  <div>f(0) = <strong id="emp-p0" style="color:#34d399">—</strong></div>
+                  <div>f(1) = <strong id="emp-p1" style="color:#fb7185">—</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: OBSERVATION -->
+      <section class="vlab-tab-panel" id="panel-observation">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>👁️</span> Section 06</div>
+            <h2 class="vlab-edu-title">Observation Analysis</h2>
+          </div>
+          <div class="vlab-steps-list" style="margin-top:1rem">
+            <div class="vlab-step-item"><div class="vlab-step-number">A</div><div class="vlab-step-content"><h4>State Collapse Irreversibility</h4><p>After measuring a superposition state (|+⟩) in the Z-basis and obtaining result 0, the state collapses to |0⟩. A second Z-measurement now always gives 0 — the coherence is permanently destroyed.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">B</div><div class="vlab-step-content"><h4>Basis-Dependent Statistics</h4><p>The state |+⟩ gives P(0)=P(1)=50% in the Z-basis, but P(+)=100%, P(-)=0% in the X-basis. The same quantum state gives deterministic outcomes in one basis but random in another.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">C</div><div class="vlab-step-content"><h4>Statistical Convergence</h4><p>With N=10 shots, empirical frequencies may deviate significantly from theory (σ≈16%). At N=1024, the histogram closely matches theory with σ≈1.5%, visually demonstrating the law of large numbers.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: RESULTS -->
+      <section class="vlab-tab-panel" id="panel-results">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📊</span> Section 07</div>
+            <h2 class="vlab-edu-title">Experimental Results</h2>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:1rem;color:var(--vlab-text)">
+            <thead>
+              <tr style="border-bottom:1px solid var(--vlab-border);color:var(--vlab-primary-light);text-align:left">
+                <th style="padding:0.75rem">Initial State</th>
+                <th style="padding:0.75rem">Measurement Basis</th>
+                <th style="padding:0.75rem">Theoretical P(0)</th>
+                <th style="padding:0.75rem">Observation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|0⟩</td><td style="padding:0.75rem">Z-basis</td><td style="padding:0.75rem;color:#34d399">100%</td><td style="padding:0.75rem">Deterministic — always 0</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|+⟩</td><td style="padding:0.75rem">Z-basis</td><td style="padding:0.75rem;color:#34d399">50%</td><td style="padding:0.75rem">Random — uniform distribution</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|+⟩</td><td style="padding:0.75rem">X-basis</td><td style="padding:0.75rem;color:#34d399">100%</td><td style="padding:0.75rem">Deterministic — always |+⟩</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|0⟩</td><td style="padding:0.75rem">X-basis</td><td style="padding:0.75rem;color:#34d399">50%</td><td style="padding:0.75rem">Random — uniform</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: SELF EVALUATION -->
+      <section class="vlab-tab-panel" id="panel-self-eval">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📝</span> Section 08</div>
+            <h2 class="vlab-edu-title">Self Evaluation Quiz</h2>
+          </div>
+          <div id="meas-quiz"></div>
+        </div>
+      </section>
+
+      <!-- TAB: ASSIGNMENT -->
+      <section class="vlab-tab-panel" id="panel-assignment">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>✍️</span> Section 09</div>
+            <h2 class="vlab-edu-title">Assignments</h2>
+          </div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item"><div class="vlab-step-number">A1</div><div class="vlab-step-content"><h4>Determine State from Statistics</h4><p>Given a state that produces P(0) = 75% in the Z-basis and P(+) = 50% in the X-basis, determine the polar angle θ and azimuthal phase φ. Verify using the simulator.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">A2</div><div class="vlab-step-content"><h4>Statistical Sampling Error Analysis</h4><p>For the state |+⟩ measured in Z-basis (P=0.5), run the experiment at shots N = {10, 50, 200, 1024}. Record the empirical frequency each time and compute the observed standard deviation. Compare against the predicted σ = √(0.25/N).</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: REFERENCES -->
+      <section class="vlab-tab-panel" id="panel-references">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📚</span> Section 10</div>
+            <h2 class="vlab-edu-title">References & Bibliography</h2>
+          </div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item"><div class="vlab-step-number">R1</div><div class="vlab-step-content"><h4>Quantum Computation and Quantum Information — Nielsen & Chuang</h4><p>Section 2.2.3: Measurement in quantum mechanics, Born rule, and projective measurements. Cambridge, 2010.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">R2</div><div class="vlab-step-content"><h4>Principles of Quantum Mechanics — P.A.M. Dirac</h4><p>Original formulation of the measurement postulate and state collapse. Oxford, 4th edition.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: FEEDBACK -->
+      <section class="vlab-tab-panel" id="panel-feedback">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>💬</span> Section 11</div>
+            <h2 class="vlab-edu-title">Experiment Feedback</h2>
+          </div>
+          <form id="exp-feedback-form">
+            <div class="vlab-variable-row" style="flex-direction:column;gap:0.5rem">
+              <label style="font-size:0.85rem;color:var(--vlab-text-secondary)">Your Comments</label>
+              <textarea rows="4" style="width:100%;background:rgba(10,13,38,0.8);border:1px solid var(--vlab-border);border-radius:8px;color:#fff;padding:0.75rem;font-size:0.9rem;outline:none;resize:vertical" placeholder="Share your experience..."></textarea>
+            </div>
+            <button type="submit" class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem;margin-top:0.5rem">Submit Feedback</button>
+          </form>
+          <div id="feedback-sent-msg" style="display:none;padding:1rem;background:rgba(5,150,105,0.2);border:1px solid rgba(52,211,153,0.3);border-radius:8px;color:#34d399;margin-top:1rem">✅ Thank you for your feedback!</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/virtual-lab-data.js"></script>
+  <script>
+    // ============================================================
+    // MEASUREMENT LAB ENGINE
+    // ============================================================
+    (function() {
+      let alpha = 1.0;   // |alpha|
+      let phase = 0;     // relative phase in degrees
+      let basis = 'Z';
+      let shots = 256;
+      let running = false;
+
+      function getP0() {
+        // P(0) in Z-basis is |alpha|^2
+        const p0Z = alpha * alpha;
+        if (basis === 'Z') return p0Z;
+        // X-basis: P(|+⟩) = |⟨+|ψ⟩|² where |ψ⟩ = α|0⟩ + βe^(iφ)|1⟩
+        // ⟨+|ψ⟩ = (α + β·e^(iφ))/√2
+        // |⟨+|ψ⟩|² = (|α|² + |β|² + 2αβcos(φ))/2 = (1 + 2αβcos(φ))/2
+        if (basis === 'X') {
+          const beta = Math.sqrt(1 - alpha*alpha);
+          const ph = phase * Math.PI / 180;
+          return (1 + 2*alpha*beta*Math.cos(ph)) / 2;
+        }
+        // Y-basis: P(|i⟩) = |⟨+i|ψ⟩|²
+        // |+i⟩ = (|0⟩+i|1⟩)/√2
+        // ⟨+i|ψ⟩ = (α - β·i·e^(iφ))/√2
+        // |⟨+i|ψ⟩|² = (1 + 2αβsin(φ))/2
+        if (basis === 'Y') {
+          const beta = Math.sqrt(1 - alpha*alpha);
+          const ph = phase * Math.PI / 180;
+          return (1 + 2*alpha*beta*Math.sin(ph)) / 2;
+        }
+        return p0Z;
+      }
+
+      function getOutcomeLabel(outcome) {
+        if (basis === 'Z') return outcome === 0 ? '|0⟩' : '|1⟩';
+        if (basis === 'X') return outcome === 0 ? '|+⟩' : '|-⟩';
+        return outcome === 0 ? '|+i⟩' : '|-i⟩';
+      }
+
+      function updateFormula() {
+        const beta = Math.sqrt(1 - alpha*alpha);
+        const ph = phase;
+        const phStr = ph === 0 ? '' : ` e^(i${ph}°)·`;
+        document.getElementById('state-formula').innerHTML =
+          `|ψ⟩ = ${alpha.toFixed(3)}|0⟩ + ${phStr}${beta.toFixed(3)}|1⟩`;
+        const p0 = getP0();
+        document.getElementById('theory-p0').textContent = Math.round(p0*100) + '%';
+        document.getElementById('theory-p1').textContent = Math.round((1-p0)*100) + '%';
+        const lbl0 = getOutcomeLabel(0), lbl1 = getOutcomeLabel(1);
+        document.getElementById('meas-observation-text').textContent =
+          `State prepared. In ${basis}-basis: P(${lbl0}) = ${Math.round(p0*100)}%, P(${lbl1}) = ${Math.round((1-p0)*100)}%. Run measurement to sample.`;
+      }
+
+      // Sliders
+      document.getElementById('alpha-slider').addEventListener('input', e => {
+        alpha = parseInt(e.target.value) / 100;
+        document.getElementById('alpha-val').textContent = alpha.toFixed(3);
+        updateFormula();
+      });
+
+      document.getElementById('phase-slider').addEventListener('input', e => {
+        phase = parseInt(e.target.value);
+        document.getElementById('phase-val').textContent = phase + '°';
+        updateFormula();
+      });
+
+      document.getElementById('mshots-slider').addEventListener('input', e => {
+        shots = parseInt(e.target.value);
+        document.getElementById('mshots-val').textContent = shots;
+      });
+
+      // Basis buttons
+      document.querySelectorAll('[data-basis]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          basis = btn.dataset.basis;
+          document.querySelectorAll('[data-basis]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          updateFormula();
+        });
+      });
+
+      // Presets
+      const presets = {
+        '|0⟩': [1.0, 0], '|1⟩': [0.0, 0],
+        '|+⟩': [Math.sqrt(0.5), 0], '|i⟩': [Math.sqrt(0.5), 90]
+      };
+      document.querySelectorAll('[data-mpreset]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = presets[btn.dataset.mpreset];
+          if (p) {
+            alpha = p[0]; phase = p[1];
+            document.getElementById('alpha-slider').value = Math.round(alpha*100);
+            document.getElementById('phase-slider').value = phase;
+            document.getElementById('alpha-val').textContent = alpha.toFixed(3);
+            document.getElementById('phase-val').textContent = phase + '°';
+            document.querySelectorAll('[data-mpreset]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateFormula();
+          }
+        });
+      });
+
+      // Run measurement
+      document.getElementById('run-meas-btn').addEventListener('click', () => {
+        if (running) return;
+        running = true;
+        const p0 = getP0();
+        const results = Array.from({length: shots}, () => Math.random() < p0 ? 0 : 1);
+        const n0 = results.filter(r => r === 0).length;
+        const n1 = shots - n0;
+        const f0 = n0 / shots;
+        const f1 = n1 / shots;
+
+        document.getElementById('emp-p0').textContent = (f0*100).toFixed(1) + '%';
+        document.getElementById('emp-p1').textContent = (f1*100).toFixed(1) + '%';
+        document.getElementById('meas-badge').textContent = `${shots} shots completed`;
+
+        const lbl0 = getOutcomeLabel(0), lbl1 = getOutcomeLabel(1);
+
+        const hist = document.getElementById('meas-histogram');
+        hist.innerHTML = `
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.75rem">
+            ${basis}-basis Measurement Distribution (${shots} shots)
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem">
+            ${[[lbl0, f0, p0, '#34d399'], [lbl1, f1, (1-p0), '#fb7185']].map(([lbl, freq, theory, clr]) => `
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem">
+                  <span style="font-family:var(--vlab-mono);font-size:0.85rem">${lbl}</span>
+                  <span style="font-size:0.75rem;color:var(--vlab-text-muted)">empirical: <strong style="color:${clr}">${(freq*100).toFixed(1)}%</strong> | theory: <strong style="color:#67e8f9">${Math.round(theory*100)}%</strong></span>
+                </div>
+                <div style="position:relative;height:28px;background:rgba(255,255,255,0.05);border-radius:6px;overflow:hidden">
+                  <div style="height:100%;width:${(freq*100).toFixed(1)}%;background:${clr}33;border-right:2px solid ${clr};transition:width 0.8s;display:flex;align-items:center;padding-left:0.5rem">
+                    <span style="font-size:0.7rem;color:${clr}">${Math.round(freq*shots)}</span>
+                  </div>
+                  <div style="position:absolute;top:0;left:${Math.round(theory*100)}%;width:2px;height:100%;background:#06b6d4;opacity:0.8"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--vlab-text-muted);display:flex;align-items:center;gap:0.75rem">
+            <span><span style="display:inline-block;width:12px;height:4px;background:#34d399;border-radius:2px;margin-right:4px"></span>Empirical bars</span>
+            <span><span style="display:inline-block;width:2px;height:12px;background:#06b6d4;margin-right:4px;vertical-align:middle"></span>Born rule (theoretical)</span>
+          </div>
+        `;
+        document.getElementById('meas-observation-text').textContent =
+          `${shots} shots completed. Outcome ${lbl0}: ${n0} times (${(f0*100).toFixed(1)}%), ${lbl1}: ${n1} times (${(f1*100).toFixed(1)}%). Theoretical Born-rule: P(${lbl0})=${Math.round(p0*100)}%.`;
+        running = false;
+      });
+
+      // Clear
+      document.getElementById('btn-clear-meas').addEventListener('click', () => {
+        document.getElementById('meas-histogram').innerHTML = '<div style="color:var(--vlab-text-muted);font-size:0.85rem;text-align:center;padding:2rem 0">Configure state and run measurement to see results.</div>';
+        document.getElementById('emp-p0').textContent = '—';
+        document.getElementById('emp-p1').textContent = '—';
+        document.getElementById('meas-badge').textContent = 'Ready';
+      });
+
+      document.getElementById('reset-meas-btn').addEventListener('click', () => {
+        document.getElementById('btn-clear-meas').click();
+        alpha = 1.0; phase = 0; shots = 256; basis = 'Z';
+        document.getElementById('alpha-slider').value = 100;
+        document.getElementById('phase-slider').value = 0;
+        document.getElementById('mshots-slider').value = 256;
+        document.getElementById('alpha-val').textContent = '1.000';
+        document.getElementById('phase-val').textContent = '0°';
+        document.getElementById('mshots-val').textContent = '256';
+        document.querySelectorAll('[data-basis]').forEach((b,i) => b.classList.toggle('active', i===0));
+        document.querySelectorAll('[data-mpreset]').forEach((b,i) => b.classList.toggle('active', i===0));
+        updateFormula();
+      });
+
+      // Quiz
+      const quizData = [
+        { q: 'According to Born\'s rule, if |ψ⟩ = 0.6|0⟩ + 0.8|1⟩, what is P(|0⟩) in the Z-basis?', opts: ['60%', '36%', '64%', '80%'], ans: 1, exp: 'P(|0⟩) = |α|² = |0.6|² = 0.36 = 36%.' },
+        { q: 'After measuring the state |+⟩ in the Z-basis and getting outcome 1, what is the post-measurement state?', opts: ['Still |+⟩', '(|0⟩+|1⟩)/√2', '|1⟩', '|−⟩'], ans: 2, exp: 'Measurement collapses the wavefunction. Getting outcome 1 projects to |1⟩ irreversibly.' },
+        { q: 'What measurement basis makes |+⟩ = (|0⟩+|1⟩)/√2 a deterministic (certain) outcome?', opts: ['Z-basis', 'Y-basis', 'X-basis', 'It is always random'], ans: 2, exp: '|+⟩ is an eigenstate of the X-basis (σx). Measuring in X-basis gives outcome |+⟩ with probability 1.' }
+      ];
+      const quizEl = document.getElementById('meas-quiz');
+      if (quizEl) {
+        quizEl.innerHTML = quizData.map((q, qi) => `
+          <div style="margin-bottom:2rem;padding:1.25rem;background:rgba(10,13,38,0.6);border:1px solid var(--vlab-border);border-radius:10px">
+            <p style="font-weight:600;margin-bottom:1rem;color:#fff">${qi+1}. ${q.q}</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              ${q.opts.map((o, oi) => `<button onclick="measQuizAnswer(${qi},${oi})" style="text-align:left;padding:0.6rem 1rem;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--vlab-text-secondary);cursor:pointer;transition:all 0.2s" id="mq-${qi}-${oi}">${o}</button>`).join('')}
+            </div>
+            <div id="mexp-${qi}" style="display:none;margin-top:0.75rem;padding:0.75rem;background:rgba(5,150,105,0.1);border-radius:7px;color:#34d399;font-size:0.85rem">${q.exp}</div>
+          </div>`).join('');
+      }
+      window.measQuizAnswer = (qi, oi) => {
+        const correct = oi === quizData[qi].ans;
+        const btn = document.getElementById(`mq-${qi}-${oi}`);
+        btn.style.background = correct ? 'rgba(5,150,105,0.3)' : 'rgba(225,29,72,0.3)';
+        btn.style.borderColor = correct ? '#34d399' : '#fb7185';
+        btn.style.color = '#fff';
+        document.getElementById(`mexp-${qi}`).style.display = 'block';
+      };
+
+      // Feedback form
+      const fbForm = document.getElementById('exp-feedback-form');
+      const fbMsg = document.getElementById('feedback-sent-msg');
+      if (fbForm && fbMsg) fbForm.addEventListener('submit', e => { e.preventDefault(); fbForm.style.display='none'; fbMsg.style.display='block'; });
+
+      updateFormula();
+    })();
+
+    function switchVLabTab(tabId) {
+      document.querySelectorAll('.vlab-nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.vlab-tab-panel').forEach(p => p.classList.remove('active'));
+      const tab = document.querySelector(`.vlab-nav-tab[data-tab="${tabId}"]`);
+      const panel = document.getElementById(`panel-${tabId}`);
+      if (tab) tab.classList.add('active');
+      if (panel) panel.classList.add('active');
+    }
+    document.querySelectorAll('.vlab-nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchVLabTab(btn.dataset.tab));
+    });
+
+    document.getElementById('btn-reset-lab').addEventListener('click', () => document.getElementById('reset-meas-btn')?.click());
+    document.getElementById('btn-rate-lab').addEventListener('click', () => switchVLabTab('feedback'));
+    document.getElementById('btn-report-bug').addEventListener('click', () => { alert('Use Feedback tab to report bugs.'); switchVLabTab('feedback'); });
+    document.getElementById('btn-fullscreen-lab').addEventListener('click', function() {
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(console.log); this.textContent = '✕ Exit Fullscreen'; }
+      else { document.exitFullscreen().catch(console.log); this.textContent = '⛶ Fullscreen'; }
+    });
+  </script>
+</body>
+</html>

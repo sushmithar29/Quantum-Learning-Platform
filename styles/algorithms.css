@@ -1,0 +1,1001 @@
+/* ============================================================
+   QUANTUMLAB – QUANTUM ALGORITHMS DESIGN SYSTEM & STYLES
+   Professional University-Grade Scientific & Interactive UI
+   ============================================================ */
+
+:root {
+  --algo-bg: #070913;
+  --algo-card-bg: rgba(15, 18, 35, 0.85);
+  --algo-panel-bg: rgba(13, 16, 32, 0.95);
+  --algo-border: rgba(255, 255, 255, 0.08);
+  --algo-border-glow: rgba(6, 182, 212, 0.35);
+  --algo-cyan: #06b6d4;
+  --algo-cyan-glow: rgba(6, 182, 212, 0.25);
+  --algo-violet: #7c3aed;
+  --algo-violet-glow: rgba(124, 58, 237, 0.25);
+  --algo-emerald: #10b981;
+  --algo-amber: #f59e0b;
+  --algo-rose: #f43f5e;
+  --algo-text-main: #f8fafc;
+  --algo-text-sub: #94a3b8;
+  --algo-text-muted: #64748b;
+  --algo-font-mono: 'JetBrains Mono', monospace;
+  --algo-radius: 12px;
+}
+
+/* ============================================================
+   GLOBAL & LAYOUT RESETS FOR ALGORITHMS
+   ============================================================ */
+.algo-page {
+  background-color: var(--algo-bg);
+  color: var(--algo-text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   ALGORITHMS LANDING PAGE
+   ============================================================ */
+.algo-hero {
+  position: relative;
+  padding: 7rem 2rem 3.5rem;
+  background: radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.12) 0%, transparent 60%),
+              radial-gradient(circle at 80% 40%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+              var(--algo-bg);
+  border-bottom: 1px solid var(--algo-border);
+  text-align: center;
+}
+
+.algo-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: var(--algo-cyan);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(8px);
+}
+
+.algo-hero__title {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.algo-hero__title-accent {
+  background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.algo-hero__subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--algo-text-sub);
+  max-width: 680px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+.algo-categories-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.algo-cat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--algo-border);
+  color: var(--algo-text-sub);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
+}
+
+.algo-cat-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--algo-text-main);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.algo-cat-btn.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.2));
+  border-color: var(--algo-cyan);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+}
+
+.algo-cat-btn__count {
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.7rem;
+  font-family: var(--algo-font-mono);
+}
+
+/* ============================================================
+   ALGORITHM CARDS GRID & CARD DESIGN
+   ============================================================ */
+.algo-grid-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+  width: 100%;
+}
+
+.algo-category-block {
+  margin-bottom: 3.5rem;
+}
+
+.algo-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--algo-border);
+  padding-bottom: 0.75rem;
+}
+
+.algo-category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.algo-category-icon {
+  font-size: 1.4rem;
+}
+
+.algo-category-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--algo-text-main);
+}
+
+.algo-category-count {
+  font-size: 0.8rem;
+  color: var(--algo-text-muted);
+  font-family: var(--algo-font-mono);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.algo-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.algo-explorer-card {
+  position: relative;
+  background: var(--algo-card-bg);
+  border: 1px solid var(--algo-border);
+  border-radius: var(--algo-radius);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+
+.algo-explorer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--card-accent, var(--algo-cyan)), transparent);
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.algo-explorer-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 20px var(--card-glow, rgba(6, 182, 212, 0.15));
+}
+
+.algo-explorer-card:hover::before {
+  opacity: 1;
+  height: 4px;
+}
+
+.algo-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.algo-card__num {
+  font-family: var(--algo-font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--card-accent, var(--algo-cyan));
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.algo-card__difficulty {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.diff--beginner { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.diff--intermediate { background: rgba(6, 182, 212, 0.15); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3); }
+.diff--advanced { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+.algo-card__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.65rem;
+  color: var(--algo-text-main);
+}
+
+.algo-card__desc {
+  font-size: 0.88rem;
+  color: var(--algo-text-sub);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.algo-card__concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.algo-concept-tag {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  color: var(--algo-text-muted);
+}
+
+.algo-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1rem;
+}
+
+.algo-card__indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--algo-cyan);
+}
+
+.algo-card__indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--algo-cyan);
+  box-shadow: 0 0 8px var(--algo-cyan);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.algo-card__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.algo-explorer-card:hover .algo-card__btn {
+  background: var(--algo-cyan);
+  color: #000;
+  border-color: var(--algo-cyan);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.4);
+}
+
+/* ============================================================
+   INDIVIDUAL ALGORITHM PAGE HEADER & TOOLBAR
+   ============================================================ */
+.algo-topbar {
+  background: rgba(10, 12, 24, 0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--algo-border);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 60px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.algo-topbar__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.algo-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: var(--algo-text-muted);
+}
+
+.algo-breadcrumbs a {
+  color: var(--algo-text-sub);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.algo-breadcrumbs a:hover {
+  color: var(--algo-cyan);
+}
+
+.algo-breadcrumbs__sep {
+  opacity: 0.5;
+}
+
+.algo-topbar__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.algo-topbar__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--algo-text-main);
+  letter-spacing: -0.01em;
+}
+
+.algo-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.algo-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--algo-border);
+}
+
+.algo-btn--primary {
+  background: linear-gradient(135deg, #06b6d4, #0284c7);
+  color: #000;
+  border-color: #38bdf8;
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3);
+}
+
+.algo-btn--primary:hover {
+  box-shadow: 0 0 24px rgba(6, 182, 212, 0.6);
+  transform: translateY(-1px);
+}
+
+.algo-btn--secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--algo-text-main);
+}
+
+.algo-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.algo-btn--danger {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+.algo-btn--danger:hover {
+  background: rgba(244, 63, 94, 0.25);
+}
+
+/* ============================================================
+   INDIVIDUAL ALGORITHM 3-COLUMN WORKSPACE
+   ============================================================ */
+.algo-workspace-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr 340px;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  max-width: 1700px;
+  margin: 0 auto;
+  width: 100%;
+  align-items: stretch;
+}
+
+@media (max-width: 1280px) {
+  .algo-workspace-grid {
+    grid-template-columns: 280px 1fr 300px;
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1080px) {
+  .algo-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   LEFT PANEL: TIMELINE & STEP-BY-STEP BREAKDOWN
+   ============================================================ */
+.algo-panel {
+  background: var(--algo-panel-bg);
+  border: 1px solid var(--algo-border);
+  border-radius: var(--algo-radius);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+.algo-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--algo-border);
+}
+
+.algo-panel__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--algo-text-sub);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.algo-steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.algo-step-node {
+  position: relative;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.algo-step-node:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.algo-step-node.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15));
+  border-color: var(--algo-cyan);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.15);
+}
+
+.algo-step-node__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.algo-step-node__num {
+  font-family: var(--algo-font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--algo-cyan);
+}
+
+.algo-step-node__status {
+  font-size: 0.68rem;
+  color: var(--algo-text-muted);
+}
+
+.algo-step-node.active .algo-step-node__status {
+  color: var(--algo-emerald);
+  font-weight: 600;
+}
+
+.algo-step-node__name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--algo-text-main);
+  margin-bottom: 0.2rem;
+}
+
+.algo-step-node__desc {
+  font-size: 0.76rem;
+  color: var(--algo-text-sub);
+  line-height: 1.45;
+}
+
+/* ============================================================
+   CENTER STAGE: CIRCUIT & 3D VISUALIZER
+   ============================================================ */
+.algo-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Circuit Display */
+.algo-circuit-card {
+  background: var(--algo-panel-bg);
+  border: 1px solid var(--algo-border);
+  border-radius: var(--algo-radius);
+  padding: 1.25rem;
+}
+
+.algo-circuit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.algo-circuit-screen {
+  background: rgba(7, 9, 18, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-family: var(--algo-font-mono);
+  font-size: 0.88rem;
+  overflow-x: auto;
+  line-height: 1.7;
+}
+
+.algo-circuit-line {
+  white-space: pre;
+  color: var(--algo-text-sub);
+}
+
+.circuit-gate {
+  color: #c084fc;
+  font-weight: 700;
+  background: rgba(124, 58, 237, 0.15);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  transition: all 0.2s ease;
+}
+
+.circuit-gate.active {
+  background: var(--algo-cyan);
+  color: #000;
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px var(--algo-cyan);
+}
+
+.circuit-qubit {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.circuit-meas {
+  color: #34d399;
+  font-weight: 700;
+}
+
+/* Visualizer Canvas / 3D Stage */
+.algo-canvas-card {
+  background: var(--algo-panel-bg);
+  border: 1px solid var(--algo-border);
+  border-radius: var(--algo-radius);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 380px;
+  position: relative;
+}
+
+.algo-canvas-container {
+  flex-grow: 1;
+  min-height: 340px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, rgba(20, 25, 50, 0.6) 0%, rgba(8, 10, 20, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.algo-canvas-overlay-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(10, 12, 24, 0.8);
+  border: 1px solid var(--algo-border);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  color: var(--algo-text-muted);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.algo-status-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+  font-family: var(--algo-font-mono);
+}
+
+.algo-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--algo-cyan);
+}
+
+/* ============================================================
+   RIGHT PANEL: CONTROLS & LIVE STATS
+   ============================================================ */
+.algo-controls-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.algo-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.algo-control-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--algo-text-main);
+}
+
+.algo-control-val {
+  font-family: var(--algo-font-mono);
+  font-size: 0.78rem;
+  color: var(--algo-cyan);
+}
+
+.algo-input, .algo-select {
+  background: rgba(7, 9, 18, 0.8);
+  border: 1px solid var(--algo-border);
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  color: var(--algo-text-main);
+  font-size: 0.84rem;
+  font-family: var(--algo-font-mono);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.algo-input:focus, .algo-select:focus {
+  border-color: var(--algo-cyan);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+}
+
+.algo-range {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+.algo-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--algo-cyan);
+  box-shadow: 0 0 8px var(--algo-cyan);
+  cursor: pointer;
+}
+
+/* ============================================================
+   BOTTOM SECTION: SCIENTIFIC DEEP DIVE TABS
+   ============================================================ */
+.algo-details-section {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 5rem;
+  width: 100%;
+}
+
+.algo-tabs-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--algo-border);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.algo-tab-btn {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--algo-text-sub);
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.algo-tab-btn:hover {
+  color: var(--algo-text-main);
+}
+
+.algo-tab-btn.active {
+  color: var(--algo-cyan);
+}
+
+.algo-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.3rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--algo-cyan);
+  box-shadow: 0 0 10px var(--algo-cyan);
+}
+
+.algo-tab-pane {
+  display: none;
+  background: var(--algo-panel-bg);
+  border: 1px solid var(--algo-border);
+  border-radius: var(--algo-radius);
+  padding: 2rem;
+  backdrop-filter: blur(12px);
+  animation: fadeInPane 0.3s ease;
+}
+
+.algo-tab-pane.active {
+  display: block;
+}
+
+@keyframes fadeInPane {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.algo-text-block {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.algo-math-box {
+  background: rgba(7, 9, 20, 0.7);
+  border-left: 3px solid var(--algo-cyan);
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  font-family: var(--algo-font-mono);
+  font-size: 0.88rem;
+  color: #e2e8f0;
+  margin: 1rem 0 1.5rem;
+  overflow-x: auto;
+}
+
+.algo-complexity-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.88rem;
+}
+
+.algo-complexity-table th, .algo-complexity-table td {
+  padding: 0.85rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--algo-border);
+}
+
+.algo-complexity-table th {
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 700;
+  color: var(--algo-cyan);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.algo-complexity-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.algo-takeaway-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.algo-takeaway-dot {
+  color: var(--algo-emerald);
+  margin-top: 0.15rem;
+}
+
+.algo-reference-item {
+  font-size: 0.85rem;
+  color: var(--algo-text-sub);
+  margin-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.algo-reference-item::before {
+  content: '▪';
+  position: absolute;
+  left: 0;
+  color: var(--algo-violet);
+}
+
+/* ============================================================
+   RESULTS VISUALIZATIONS (HEATMAP, BARS, CHARTS)
+   ============================================================ */
+.algo-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.algo-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--algo-font-mono);
+  font-size: 0.78rem;
+}
+
+.algo-bar-label {
+  width: 70px;
+  text-align: right;
+  color: var(--algo-text-sub);
+  font-weight: 600;
+}
+
+.algo-bar-track {
+  flex-grow: 1;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.algo-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+.algo-bar-val {
+  width: 55px;
+  color: var(--algo-text-main);
+  font-weight: 700;
+}
+
+/* Heatmap Grid */
+.algo-heatmap-grid {
+  display: grid;
+  gap: 2px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  border: 1px solid var(--algo-border);
+  margin-top: 1rem;
+}
+
+.algo-heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  transition: transform 0.15s;
+  cursor: pointer;
+}
+
+.algo-heatmap-cell:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 0 8px #fff;
+}
+
+/* Fullscreen mode */
+.algo-fullscreen-active {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  border-radius: 0 !important;
+}

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum State Preparation & Tomography – QuantumLab Virtual Labs</title>
+  <meta name="description" content="Interactively adjust quantum state amplitudes and phases. Observe real-time state vectors, calculate expectation values, and reconstruct density matrices." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/virtual-lab-environment.css" />
+</head>
+<body class="vlab-body">
+
+  <header class="vlab-topbar">
+    <div class="vlab-topbar__main">
+      <div class="vlab-topbar__left">
+        <a href="index.html" class="vlab-back-portal">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Virtual Labs
+        </a>
+        <div class="vlab-title-group">
+          <div class="vlab-category-badge"><span>⚡</span> Quantum State Physics</div>
+          <h1 class="vlab-exp-name">Quantum State Preparation Lab</h1>
+        </div>
+      </div>
+      <div class="vlab-topbar__center">
+        <div class="vlab-rating-pill">
+          <span class="vlab-rating-stars">★★★★★</span>
+          <span>4.8</span>
+          <span style="opacity:0.6;font-size:0.7rem">(84 reviews)</span>
+        </div>
+      </div>
+      <div class="vlab-topbar__actions">
+        <button class="vlab-action-btn" id="btn-rate-lab">★ Rate Lab</button>
+        <button class="vlab-action-btn" id="btn-report-bug">🐞 Report Bug</button>
+        <button class="vlab-action-btn" id="btn-reset-lab">↺ Reset Lab</button>
+        <button class="vlab-action-btn vlab-action-btn--primary" id="btn-fullscreen-lab">⛶ Fullscreen</button>
+      </div>
+    </div>
+    <div class="vlab-breadcrumb-bar">
+      <div class="vlab-breadcrumbs">
+        <a href="../index.html">QuantumLab</a><span class="sep">></span>
+        <a href="index.html">Virtual Labs</a><span class="sep">></span>
+        <a href="index.html#labs-list">Quantum State Physics</a><span class="sep">></span>
+        <span class="current">Quantum State Preparation Lab (Exp 05)</span>
+      </div>
+      <div class="vlab-status-indicator">
+        <span class="vlab-status-pulse"></span>
+        <span id="state-sim-status">Simulation Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="vlab-workspace">
+    <aside class="vlab-sidebar">
+      <div class="vlab-sidebar__title">Laboratory Workflow</div>
+      <nav id="vlab-nav-tabs">
+        <button class="vlab-nav-tab" data-tab="aim"><span class="vlab-nav-tab__icon">🎯</span><span>Aim</span></button>
+        <button class="vlab-nav-tab" data-tab="theory"><span class="vlab-nav-tab__icon">📖</span><span>Theory</span></button>
+        <button class="vlab-nav-tab" data-tab="objectives"><span class="vlab-nav-tab__icon">🎓</span><span>Learning Objectives</span></button>
+        <button class="vlab-nav-tab" data-tab="procedure"><span class="vlab-nav-tab__icon">📋</span><span>Procedure</span></button>
+        <button class="vlab-nav-tab active" data-tab="simulation"><span class="vlab-nav-tab__icon">🔬</span><span>Simulation</span><span class="vlab-nav-tab__badge">Live</span></button>
+        <button class="vlab-nav-tab" data-tab="observation"><span class="vlab-nav-tab__icon">👁️</span><span>Observation</span></button>
+        <button class="vlab-nav-tab" data-tab="results"><span class="vlab-nav-tab__icon">📊</span><span>Results</span></button>
+        <button class="vlab-nav-tab" data-tab="self-eval"><span class="vlab-nav-tab__icon">📝</span><span>Self Evaluation</span></button>
+        <button class="vlab-nav-tab" data-tab="assignment"><span class="vlab-nav-tab__icon">✍️</span><span>Assignment</span></button>
+        <button class="vlab-nav-tab" data-tab="references"><span class="vlab-nav-tab__icon">📚</span><span>References</span></button>
+        <button class="vlab-nav-tab" data-tab="feedback"><span class="vlab-nav-tab__icon">💬</span><span>Feedback</span></button>
+      </nav>
+    </aside>
+
+    <main class="vlab-main-content">
+
+      <!-- AIM -->
+      <section class="vlab-tab-panel" id="panel-aim">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>🎯</span> Section 01</div><h2 class="vlab-edu-title">Experiment Aim</h2></div>
+          <p style="font-size:1.05rem;color:var(--vlab-text);line-height:1.8">
+            To prepare arbitrary single-qubit quantum states |ψ⟩ = α|0⟩ + e^(iφ)β|1⟩ through interactive manipulation of probability amplitudes α, β (subject to normalization |α|² + |β|² = 1) and relative phase φ. The experiment computes expectation values ⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩ of the Pauli operators, reconstructs the 2×2 density matrix ρ, and visualizes the state as a point on the Bloch sphere, demonstrating how complex amplitudes encode physically measurable quantum information.
+          </p>
+          <div style="margin-top:1rem">
+            <button class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem" onclick="switchVLabTab('simulation')">Launch Live Simulation →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- THEORY -->
+      <section class="vlab-tab-panel" id="panel-theory">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>📖</span> Section 02</div><h2 class="vlab-edu-title">Theoretical Foundations</h2></div>
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:0.5rem">1. Qubit State Parameterization</h3>
+          <p style="color:var(--vlab-text-secondary)">A single qubit state |ψ⟩ lives in a 2D complex Hilbert space C². Using the Bloch parameterization up to global phase:</p>
+          <div class="vlab-math-block">
+            |ψ⟩ = α|0⟩ + β·e^(iφ)|1⟩,    α,β ∈ ℝ≥0,   α² + β² = 1<br/>
+            <br/>
+            Equivalently:  α = cos(θ/2),   β = sin(θ/2),   φ ∈ [0, 2π)<br/>
+            <br/>
+            Global phase: e^(iγ)|ψ⟩ is physically identical to |ψ⟩<br/>
+            Relative phase φ: physically observable via conjugate-basis measurements
+          </div>
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">2. Density Matrix and Expectation Values</h3>
+          <div class="vlab-math-block">
+            ρ = |ψ⟩⟨ψ| = [[|α|², α·β·e^(-iφ)], [α·β·e^(iφ), |β|²]]<br/>
+            <br/>
+            Pauli Expectation Values (Bloch vector components):<br/>
+            ⟨σ_z⟩ = Tr(ρ·Z) = |α|² − |β|² = cos(θ)<br/>
+            ⟨σ_x⟩ = Tr(ρ·X) = 2αβ·cos(φ) = sin(θ)cos(φ)<br/>
+            ⟨σ_y⟩ = Tr(ρ·Y) = 2αβ·sin(φ) = sin(θ)sin(φ)
+          </div>
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">3. Normalization and State Purity</h3>
+          <div class="vlab-math-block">
+            Normalization: |α|² + |β|² = 1  (Born rule constraint)<br/>
+            Purity: Tr(ρ²) = 1 for pure states,  Tr(ρ²) < 1 for mixed states<br/>
+            von Neumann Entropy: S(ρ) = −Tr(ρ·log₂(ρ)) ∈ [0, 1]<br/>
+            S = 0 (pure state),  S = 1 (maximally mixed)
+          </div>
+        </div>
+      </section>
+
+      <!-- OBJECTIVES -->
+      <section class="vlab-tab-panel" id="panel-objectives">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>🎓</span> Section 03</div><h2 class="vlab-edu-title">Learning Objectives</h2></div>
+          <ul style="color:var(--vlab-text-secondary);font-size:0.95rem;display:flex;flex-direction:column;gap:1rem;padding-left:1.5rem">
+            <li>Verify normalization |α|² + |β|² = 1 for physical quantum states and understand how it constrains the state space.</li>
+            <li>Understand why global phases e^(iγ) are physically unobservable (do not affect any measurement outcomes) while relative phase φ does.</li>
+            <li>Compute Pauli expectation values ⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩ and relate them directly to amplitude and phase parameters.</li>
+            <li>Reconstruct the full 2×2 density matrix ρ from state parameters and identify diagonal vs off-diagonal coherence terms.</li>
+            <li>Visualize how changing amplitude vs changing phase produces different effects on the Bloch sphere position and measurement outcomes.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- PROCEDURE -->
+      <section class="vlab-tab-panel" id="panel-procedure">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>📋</span> Section 04</div><h2 class="vlab-edu-title">Step-by-Step Procedure</h2></div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item"><div class="vlab-step-number">01</div><div class="vlab-step-content"><h4>Set Amplitude α</h4><p>Use the α slider to set the probability amplitude of |0⟩. The system automatically computes β = √(1−α²) to maintain normalization. P(|0⟩) = α² is shown in real time.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">02</div><div class="vlab-step-content"><h4>Adjust Relative Phase φ</h4><p>Use the phase slider to set the relative phase φ ∈ [0°, 360°]. Observe that P(|0⟩) and P(|1⟩) remain unchanged, but ⟨σ_x⟩ and ⟨σ_y⟩ change, showing the phase is physically real in conjugate bases.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">03</div><div class="vlab-step-content"><h4>Read Expectation Values</h4><p>Observe ⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩ in the results panel. These are the Cartesian Bloch coordinates and equal the measurement outcomes averaged over many shots in X, Y, Z bases respectively.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">04</div><div class="vlab-step-content"><h4>Inspect Density Matrix</h4><p>The 2×2 density matrix ρ is displayed with both real and imaginary components. Note the diagonal |α|² = P(|0⟩) and |β|² = P(|1⟩), and off-diagonal coherence terms α·β·e^(±iφ).</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">05</div><div class="vlab-step-content"><h4>Verify Global Phase Invariance</h4><p>Set any α and φ. Record all measurement observables. Then apply any global phase to observe that all ⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩ remain identical — confirming global phase is unphysical.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIMULATION -->
+      <section class="vlab-tab-panel active" id="panel-simulation">
+        <div class="vlab-sim-layout">
+
+          <!-- APPARATUS -->
+          <div class="vlab-apparatus-box">
+            <div class="vlab-apparatus-header">
+              <div class="vlab-apparatus-title"><span>⚡</span> State Vector & Density Matrix Display</div>
+            </div>
+
+            <div class="vlab-canvas-stage" style="min-height:300px;padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem">
+
+              <!-- State formula -->
+              <div style="text-align:center">
+                <div style="font-size:0.72rem;color:var(--vlab-text-muted);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em">Prepared Quantum State</div>
+                <div id="state-label" style="font-family:var(--vlab-mono);font-size:1.3rem;color:#fff"></div>
+              </div>
+
+              <!-- Amplitude visualizer bars -->
+              <div>
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.5rem">Amplitude Magnitudes</div>
+                <div style="display:flex;flex-direction:column;gap:0.4rem">
+                  <div style="display:flex;align-items:center;gap:0.5rem">
+                    <span style="font-family:var(--vlab-mono);font-size:0.8rem;width:3rem">|α|²</span>
+                    <div style="flex:1;height:20px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+                      <div id="amp0-bar" style="height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);transition:width 0.3s"></div>
+                    </div>
+                    <span id="amp0-pct" style="font-size:0.8rem;color:#a78bfa;width:3rem;text-align:right">100%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:0.5rem">
+                    <span style="font-family:var(--vlab-mono);font-size:0.8rem;width:3rem">|β|²</span>
+                    <div style="flex:1;height:20px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden">
+                      <div id="amp1-bar" style="height:100%;background:linear-gradient(90deg,#e11d48,#fb7185);transition:width 0.3s"></div>
+                    </div>
+                    <span id="amp1-pct" style="font-size:0.8rem;color:#fb7185;width:3rem;text-align:right">0%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Density matrix display -->
+              <div>
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.5rem">Density Matrix ρ = |ψ⟩⟨ψ|</div>
+                <div id="density-matrix" style="font-family:var(--vlab-mono);font-size:0.8rem;background:rgba(10,13,38,0.7);border:1px solid var(--vlab-border);border-radius:8px;padding:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 1rem">
+                  <!-- populated by JS -->
+                </div>
+              </div>
+
+              <!-- Expectation values -->
+              <div>
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.5rem">Pauli Expectation Values (Bloch Coordinates)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem">
+                  <div style="background:rgba(10,13,38,0.6);border:1px solid var(--vlab-border);border-radius:8px;padding:0.75rem;text-align:center">
+                    <div style="font-size:0.7rem;color:#a78bfa;margin-bottom:0.3rem">⟨σ_x⟩</div>
+                    <div id="ex-val" style="font-family:var(--vlab-mono);font-size:1rem;color:#fff">0.000</div>
+                  </div>
+                  <div style="background:rgba(10,13,38,0.6);border:1px solid var(--vlab-border);border-radius:8px;padding:0.75rem;text-align:center">
+                    <div style="font-size:0.7rem;color:#06b6d4;margin-bottom:0.3rem">⟨σ_y⟩</div>
+                    <div id="ey-val" style="font-family:var(--vlab-mono);font-size:1rem;color:#fff">0.000</div>
+                  </div>
+                  <div style="background:rgba(10,13,38,0.6);border:1px solid var(--vlab-border);border-radius:8px;padding:0.75rem;text-align:center">
+                    <div style="font-size:0.7rem;color:#34d399;margin-bottom:0.3rem">⟨σ_z⟩</div>
+                    <div id="ez-val" style="font-family:var(--vlab-mono);font-size:1rem;color:#fff">1.000</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="vlab-apparatus-footer">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--vlab-text-muted);text-transform:uppercase">Common States:</div>
+              <div class="vlab-presets-bar">
+                <button class="vlab-preset-chip active" data-spreset="|0⟩">|0⟩</button>
+                <button class="vlab-preset-chip" data-spreset="|1⟩">|1⟩</button>
+                <button class="vlab-preset-chip" data-spreset="|+⟩">|+⟩</button>
+                <button class="vlab-preset-chip" data-spreset="|-⟩">|-⟩</button>
+                <button class="vlab-preset-chip" data-spreset="|i⟩">|i⟩</button>
+                <button class="vlab-preset-chip" data-spreset="75/25">75/25%</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTROLS -->
+          <div class="vlab-controls-panel">
+
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Amplitude α = |⟨0|ψ⟩|</span>
+                <span class="vlab-variable-val" id="alpha-s-val">1.000</span>
+              </div>
+              <input type="range" class="vlab-slider" id="alpha-s-slider" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Relative Phase φ</span>
+                <span class="vlab-variable-val" id="phase-s-val">0°</span>
+              </div>
+              <input type="range" class="vlab-slider" id="phase-s-slider" min="0" max="360" step="1" value="0" />
+            </div>
+
+            <!-- Purity / Entropy display -->
+            <div style="background:rgba(10,13,38,0.5);border:1px solid var(--vlab-border);border-radius:8px;padding:0.75rem">
+              <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.5rem">State Metrics</div>
+              <div style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.82rem;font-family:var(--vlab-mono)">
+                <div>Tr(ρ²) = <strong id="purity-s-val" style="color:#34d399">1.000</strong> (purity)</div>
+                <div>P(|0⟩) = <strong id="p0-s-val" style="color:#a78bfa">100%</strong></div>
+                <div>P(|1⟩) = <strong id="p1-s-val" style="color:#fb7185">0%</strong></div>
+                <div>|α| = <strong id="amp-alpha" style="color:#fff">1.000</strong>, |β| = <strong id="amp-beta" style="color:#fff">0.000</strong></div>
+              </div>
+            </div>
+
+            <div class="vlab-run-buttons">
+              <button class="vlab-btn-run" id="export-state-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                COMPUTE STATE
+              </button>
+              <button class="vlab-btn-secondary" id="reset-state-btn">↺ Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="vlab-analytics-grid">
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title"><span>⚡</span> State Observation</div>
+              <div class="vlab-card__badge" id="state-s-badge">|0⟩ Pure Ground State</div>
+            </div>
+            <div class="vlab-observation-box" id="state-observation-text">
+              State initialized to |0⟩. P(|0⟩)=100%. Bloch vector at north pole (0,0,1). Density matrix diagonal: ρ₀₀=1, ρ₁₁=0. No off-diagonal coherence.
+            </div>
+          </div>
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title"><span>📊</span> Phase Observability Test</div>
+            </div>
+            <div style="font-size:0.82rem;color:var(--vlab-text-secondary);line-height:1.6">
+              <p>Changing relative phase φ does NOT change P(|0⟩) or P(|1⟩) in Z-basis, but DOES change ⟨σ_x⟩ and ⟨σ_y⟩.</p>
+              <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+                <div style="background:rgba(10,13,38,0.6);border-radius:8px;padding:0.6rem;border:1px solid var(--vlab-border)">
+                  <div style="font-size:0.7rem;color:var(--vlab-text-muted)">Z-basis (φ-blind)</div>
+                  <div id="zbasis-display" style="font-family:var(--vlab-mono);font-size:0.8rem;color:#34d399;margin-top:0.25rem">P(0)=100%, P(1)=0%</div>
+                </div>
+                <div style="background:rgba(10,13,38,0.6);border-radius:8px;padding:0.6rem;border:1px solid var(--vlab-border)">
+                  <div style="font-size:0.7rem;color:var(--vlab-text-muted)">X-basis (φ-sensitive)</div>
+                  <div id="xbasis-display" style="font-family:var(--vlab-mono);font-size:0.8rem;color:#a78bfa;margin-top:0.25rem">P(+)=50%, P(-)=50%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OBSERVATION -->
+      <section class="vlab-tab-panel" id="panel-observation">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>👁️</span> Section 06</div><h2 class="vlab-edu-title">Observation Analysis</h2></div>
+          <div class="vlab-steps-list" style="margin-top:1rem">
+            <div class="vlab-step-item"><div class="vlab-step-number">A</div><div class="vlab-step-content"><h4>Amplitude Encodes Population</h4><p>|α|² and |β|² directly encode the probability of measuring |0⟩ and |1⟩ in the Z-basis. These populations can be measured by accumulating many Z-basis shots. Changing α changes the polar angle θ of the Bloch vector.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">B</div><div class="vlab-step-content"><h4>Phase Encodes Coherence</h4><p>The relative phase φ encodes the off-diagonal coherences ρ₀₁ = α·β·e^(-iφ) of the density matrix. These require X-basis or Y-basis measurements to detect. This is why quantum state tomography needs measurements in multiple bases.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">C</div><div class="vlab-step-content"><h4>Maximum Coherence</h4><p>Off-diagonal coherences |ρ₀₁| = α·β are maximized when α = β = 1/√2 (equal superposition). This corresponds to any state on the Bloch sphere equator, regardless of phase φ.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="vlab-tab-panel" id="panel-results">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>📊</span> Section 07</div><h2 class="vlab-edu-title">Experimental Results</h2></div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:1rem;color:var(--vlab-text)">
+            <thead>
+              <tr style="border-bottom:1px solid var(--vlab-border);color:var(--vlab-primary-light);text-align:left">
+                <th style="padding:0.75rem">State</th><th style="padding:0.75rem">α</th><th style="padding:0.75rem">φ</th><th style="padding:0.75rem">⟨σ_z⟩</th><th style="padding:0.75rem">⟨σ_x⟩</th><th style="padding:0.75rem">|ρ₀₁|</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|0⟩</td><td style="padding:0.75rem">1.000</td><td style="padding:0.75rem">0°</td><td style="padding:0.75rem;color:#34d399">+1.00</td><td style="padding:0.75rem">0.00</td><td style="padding:0.75rem">0.000</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|+⟩</td><td style="padding:0.75rem">0.707</td><td style="padding:0.75rem">0°</td><td style="padding:0.75rem;color:#34d399">0.00</td><td style="padding:0.75rem;color:#a78bfa">+1.00</td><td style="padding:0.75rem">0.500</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|-⟩</td><td style="padding:0.75rem">0.707</td><td style="padding:0.75rem">180°</td><td style="padding:0.75rem;color:#34d399">0.00</td><td style="padding:0.75rem;color:#a78bfa">-1.00</td><td style="padding:0.75rem">0.500</td></tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)"><td style="padding:0.75rem;font-family:var(--vlab-mono)">|i⟩</td><td style="padding:0.75rem">0.707</td><td style="padding:0.75rem">90°</td><td style="padding:0.75rem;color:#34d399">0.00</td><td style="padding:0.75rem">0.00</td><td style="padding:0.75rem">0.500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SELF EVAL -->
+      <section class="vlab-tab-panel" id="panel-self-eval">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>📝</span> Section 08</div><h2 class="vlab-edu-title">Self Evaluation Quiz</h2></div>
+          <div id="state-quiz"></div>
+        </div>
+      </section>
+
+      <!-- ASSIGNMENT -->
+      <section class="vlab-tab-panel" id="panel-assignment">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>✍️</span> Section 09</div><h2 class="vlab-edu-title">Assignments</h2></div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item"><div class="vlab-step-number">A1</div><div class="vlab-step-content"><h4>State Identification from Bloch Coordinates</h4><p>Given that a qubit has Bloch coordinates (x=0.5, y=0.5, z=0.707), determine the values of α, β, and φ. Verify using the simulator by matching the displayed ⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩ to the target values.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">A2</div><div class="vlab-step-content"><h4>Phase Sensitivity Demonstration</h4><p>Fix α = 1/√2 (equal superposition). Sweep φ from 0° to 360° in steps of 45°. Record ⟨σ_x⟩ and ⟨σ_y⟩ at each step. Verify that ⟨σ_x⟩ = cos(φ) and ⟨σ_y⟩ = sin(φ), and P(|0⟩) = 50% throughout.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REFERENCES -->
+      <section class="vlab-tab-panel" id="panel-references">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>📚</span> Section 10</div><h2 class="vlab-edu-title">References</h2></div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item"><div class="vlab-step-number">R1</div><div class="vlab-step-content"><h4>Nielsen & Chuang — Quantum Computation and Quantum Information</h4><p>Sections 2.1–2.2: Qubit state space, density operators, and quantum state tomography. Cambridge, 2010.</p></div></div>
+            <div class="vlab-step-item"><div class="vlab-step-number">R2</div><div class="vlab-step-content"><h4>Bloch, F. — Nuclear Induction</h4><p>Physical Review 70, 460 (1946). Original paper introducing the Bloch sphere representation of spin-1/2 states.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEEDBACK -->
+      <section class="vlab-tab-panel" id="panel-feedback">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header"><div class="vlab-edu-tag"><span>💬</span> Section 11</div><h2 class="vlab-edu-title">Experiment Feedback</h2></div>
+          <form id="exp-feedback-form">
+            <div class="vlab-variable-row" style="flex-direction:column;gap:0.5rem">
+              <label style="font-size:0.85rem;color:var(--vlab-text-secondary)">Comments</label>
+              <textarea rows="4" style="width:100%;background:rgba(10,13,38,0.8);border:1px solid var(--vlab-border);border-radius:8px;color:#fff;padding:0.75rem;font-size:0.9rem;outline:none;resize:vertical" placeholder="Share your experience..."></textarea>
+            </div>
+            <button type="submit" class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem;margin-top:0.5rem">Submit Feedback</button>
+          </form>
+          <div id="feedback-sent-msg" style="display:none;padding:1rem;background:rgba(5,150,105,0.2);border:1px solid rgba(52,211,153,0.3);border-radius:8px;color:#34d399;margin-top:1rem">✅ Thank you!</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/virtual-lab-data.js"></script>
+  <script>
+    (function() {
+      let alpha = 1.0;   // amplitude of |0⟩ component
+      let phiDeg = 0;    // relative phase in degrees
+
+      const presets = {
+        '|0⟩': [1.0, 0], '|1⟩': [0.0, 0],
+        '|+⟩': [Math.sqrt(0.5), 0], '|-⟩': [Math.sqrt(0.5), 180],
+        '|i⟩': [Math.sqrt(0.5), 90], '75/25': [Math.sqrt(0.75), 0]
+      };
+
+      function update() {
+        const beta = Math.sqrt(Math.max(0, 1 - alpha*alpha));
+        const phi = phiDeg * Math.PI / 180;
+        const p0 = alpha*alpha, p1 = beta*beta;
+
+        // Expectation values
+        const ex = 2*alpha*beta*Math.cos(phi);
+        const ey = 2*alpha*beta*Math.sin(phi);
+        const ez = p0 - p1;
+
+        // Off-diagonal coherence magnitude
+        const rho01_r = alpha*beta*Math.cos(phi);
+        const rho01_i = -alpha*beta*Math.sin(phi);
+
+        // Update displays
+        document.getElementById('alpha-s-val').textContent = alpha.toFixed(3);
+        document.getElementById('phase-s-val').textContent = phiDeg + '°';
+        document.getElementById('amp0-bar').style.width = (p0*100).toFixed(1) + '%';
+        document.getElementById('amp1-bar').style.width = (p1*100).toFixed(1) + '%';
+        document.getElementById('amp0-pct').textContent = Math.round(p0*100) + '%';
+        document.getElementById('amp1-pct').textContent = Math.round(p1*100) + '%';
+        document.getElementById('ex-val').textContent = ex.toFixed(3);
+        document.getElementById('ey-val').textContent = ey.toFixed(3);
+        document.getElementById('ez-val').textContent = ez.toFixed(3);
+        document.getElementById('purity-s-val').textContent = '1.000';
+        document.getElementById('p0-s-val').textContent = Math.round(p0*100) + '%';
+        document.getElementById('p1-s-val').textContent = Math.round(p1*100) + '%';
+        document.getElementById('amp-alpha').textContent = alpha.toFixed(3);
+        document.getElementById('amp-beta').textContent = beta.toFixed(3);
+
+        // Phase display
+        const phStr = phiDeg === 0 ? '' : `e^(i${phiDeg}°)·`;
+        document.getElementById('state-label').innerHTML =
+          `|ψ⟩ = ${alpha.toFixed(3)}|0⟩ + ${phStr}${beta.toFixed(3)}|1⟩`;
+
+        // Density matrix
+        const dm = document.getElementById('density-matrix');
+        dm.innerHTML = `
+          <div style="color:var(--vlab-text-muted);font-size:0.7rem;grid-column:1/-1;margin-bottom:0.25rem">ρ = </div>
+          <div>ρ₀₀ = <span style="color:#a78bfa">${p0.toFixed(3)}</span></div>
+          <div>ρ₀₁ = <span style="color:#06b6d4">${rho01_r.toFixed(3)}${rho01_i >= 0 ? '+' : ''}${rho01_i.toFixed(3)}i</span></div>
+          <div>ρ₁₀ = <span style="color:#06b6d4">${rho01_r.toFixed(3)}${(-rho01_i) >= 0 ? '+' : ''}${(-rho01_i).toFixed(3)}i</span></div>
+          <div>ρ₁₁ = <span style="color:#fb7185">${p1.toFixed(3)}</span></div>
+        `;
+
+        // Badge
+        const badge = document.getElementById('state-s-badge');
+        if (p0 > 0.99) badge.textContent = '|0⟩ Ground State';
+        else if (p1 > 0.99) badge.textContent = '|1⟩ Excited State';
+        else if (Math.abs(p0 - 0.5) < 0.01) badge.textContent = `Equal Superposition, φ=${phiDeg}°`;
+        else badge.textContent = `Superposition P(0)=${Math.round(p0*100)}%`;
+
+        // Observation text
+        document.getElementById('state-observation-text').textContent =
+          `State: |ψ⟩ = ${alpha.toFixed(3)}|0⟩ + ${beta.toFixed(3)}e^(i${phiDeg}°)|1⟩. Bloch coords: (${ex.toFixed(3)}, ${ey.toFixed(3)}, ${ez.toFixed(3)}). Coherence |ρ₀₁|=${(alpha*beta).toFixed(3)}.`;
+
+        // Phase observability
+        const pPlus_zbasis = p0; // P(|+⟩) in X-basis
+        const pPlus_xbasis = (1 + ex) / 2;
+        document.getElementById('zbasis-display').textContent =
+          `P(0)=${Math.round(p0*100)}%, P(1)=${Math.round(p1*100)}%`;
+        document.getElementById('xbasis-display').textContent =
+          `P(+)=${Math.round(pPlus_xbasis*100)}%, P(-)=${Math.round((1-pPlus_xbasis)*100)}%`;
+      }
+
+      // Sliders
+      document.getElementById('alpha-s-slider').addEventListener('input', e => {
+        alpha = parseInt(e.target.value) / 100;
+        update();
+      });
+      document.getElementById('phase-s-slider').addEventListener('input', e => {
+        phiDeg = parseInt(e.target.value);
+        update();
+      });
+
+      // Presets
+      document.querySelectorAll('[data-spreset]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = presets[btn.dataset.spreset];
+          if (p) {
+            alpha = p[0]; phiDeg = p[1];
+            document.getElementById('alpha-s-slider').value = Math.round(alpha*100);
+            document.getElementById('phase-s-slider').value = phiDeg;
+            document.querySelectorAll('[data-spreset]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            update();
+          }
+        });
+      });
+
+      // Compute button
+      document.getElementById('export-state-btn').addEventListener('click', () => {
+        const status = document.getElementById('state-sim-status');
+        if (status) { status.textContent = 'State computed ✓'; setTimeout(() => status.textContent = 'Simulation Ready', 1500); }
+      });
+
+      // Reset
+      document.getElementById('reset-state-btn').addEventListener('click', () => {
+        alpha = 1.0; phiDeg = 0;
+        document.getElementById('alpha-s-slider').value = 100;
+        document.getElementById('phase-s-slider').value = 0;
+        document.querySelectorAll('[data-spreset]').forEach((b,i) => b.classList.toggle('active', i===0));
+        update();
+      });
+
+      // Quiz
+      const quizData = [
+        { q: 'For state |ψ⟩ = (0.6|0⟩ + 0.8|1⟩), what is the density matrix element ρ₀₀?', opts: ['0.6', '0.36', '0.8', '0.64'], ans: 1, exp: 'ρ₀₀ = |α|² = 0.6² = 0.36, the probability of measuring |0⟩ in the Z-basis.' },
+        { q: 'Changing only the relative phase φ of |ψ⟩ while keeping |α| and |β| constant will change which observable?', opts: ['P(|0⟩) in Z-basis', 'P(|+⟩) in X-basis', '|α|² + |β|²', 'All probabilities equally'], ans: 1, exp: '⟨σ_x⟩ = 2αβcos(φ), so X-basis probabilities P(|+⟩) = (1+⟨σ_x⟩)/2 depend on φ. Z-basis probabilities P(|0⟩) = α² are phase-independent.' },
+        { q: 'Which state has maximum off-diagonal coherence |ρ₀₁|?', opts: ['|0⟩', '|1⟩', 'Any state on the Bloch sphere equator (α=β=1/√2)', 'States near the poles'], ans: 2, exp: '|ρ₀₁| = αβ is maximized when α = β = 1/√2, corresponding to equal superposition. The maximum value is |ρ₀₁|_max = 1/2.' }
+      ];
+      const quizEl = document.getElementById('state-quiz');
+      if (quizEl) {
+        quizEl.innerHTML = quizData.map((q, qi) => `
+          <div style="margin-bottom:2rem;padding:1.25rem;background:rgba(10,13,38,0.6);border:1px solid var(--vlab-border);border-radius:10px">
+            <p style="font-weight:600;margin-bottom:1rem;color:#fff">${qi+1}. ${q.q}</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              ${q.opts.map((o, oi) => `<button onclick="stateQuizAnswer(${qi},${oi})" style="text-align:left;padding:0.6rem 1rem;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--vlab-text-secondary);cursor:pointer;transition:all 0.2s" id="sq-${qi}-${oi}">${o}</button>`).join('')}
+            </div>
+            <div id="sexp-${qi}" style="display:none;margin-top:0.75rem;padding:0.75rem;background:rgba(5,150,105,0.1);border-radius:7px;color:#34d399;font-size:0.85rem">${q.exp}</div>
+          </div>`).join('');
+      }
+      window.stateQuizAnswer = (qi, oi) => {
+        const correct = oi === quizData[qi].ans;
+        const btn = document.getElementById(`sq-${qi}-${oi}`);
+        btn.style.background = correct ? 'rgba(5,150,105,0.3)' : 'rgba(225,29,72,0.3)';
+        btn.style.borderColor = correct ? '#34d399' : '#fb7185';
+        btn.style.color = '#fff';
+        document.getElementById(`sexp-${qi}`).style.display = 'block';
+      };
+
+      const fbForm = document.getElementById('exp-feedback-form'), fbMsg = document.getElementById('feedback-sent-msg');
+      if (fbForm && fbMsg) fbForm.addEventListener('submit', e => { e.preventDefault(); fbForm.style.display='none'; fbMsg.style.display='block'; });
+
+      update();
+    })();
+
+    function switchVLabTab(tabId) {
+      document.querySelectorAll('.vlab-nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.vlab-tab-panel').forEach(p => p.classList.remove('active'));
+      const tab = document.querySelector(`.vlab-nav-tab[data-tab="${tabId}"]`);
+      const panel = document.getElementById(`panel-${tabId}`);
+      if (tab) tab.classList.add('active');
+      if (panel) panel.classList.add('active');
+    }
+    document.querySelectorAll('.vlab-nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchVLabTab(btn.dataset.tab));
+    });
+    document.getElementById('btn-reset-lab').addEventListener('click', () => document.getElementById('reset-state-btn')?.click());
+    document.getElementById('btn-rate-lab').addEventListener('click', () => switchVLabTab('feedback'));
+    document.getElementById('btn-report-bug').addEventListener('click', () => { alert('Use Feedback tab.'); switchVLabTab('feedback'); });
+    document.getElementById('btn-fullscreen-lab').addEventListener('click', function() {
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(console.log); this.textContent = '✕ Exit Fullscreen'; }
+      else { document.exitFullscreen().catch(console.log); this.textContent = '⛶ Fullscreen'; }
+    });
+  </script>
+</body>
+</html>

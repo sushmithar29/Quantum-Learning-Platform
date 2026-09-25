@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Labs – QuantumLab</title>
+  <meta name="description" content="Explore interactive Quantum Virtual Laboratories. Experiment with quantum systems, build circuits, rotate Bloch spheres, simulate measurement collapse, and analyze quantum noise." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/virtual-labs.css" />
+</head>
+<body>
+  <!-- NAVIGATION -->
+  <nav class="nav scrolled" id="main-nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" id="logo-link">
+        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav__logo-text">QuantumLab</span>
+      </a>
+      <div class="nav__links">
+        <a href="/experiments" class="nav__link">Experiments</a>
+        <a href="/virtual-labs" class="nav__link active" id="nav-vlabs">Virtual Labs</a>
+        <a href="index.html#algorithms" class="nav__link">Algorithms</a>
+        <a href="index.html#learn" class="nav__link">Learn</a>
+        <a href="index.html#challenges" class="nav__link">Challenges</a>
+      </div>
+      <div class="nav__actions">
+        <button class="nav__ai-btn" id="ai-tutor-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          AI Tutor
+        </button>
+        <button class="nav__profile-btn" id="profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+      </div>
+      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="/experiments" class="nav__mobile-link">Experiments</a>
+      <a href="/virtual-labs" class="nav__mobile-link active">Virtual Labs</a>
+      <a href="index.html#algorithms" class="nav__mobile-link">Algorithms</a>
+      <a href="index.html#learn" class="nav__mobile-link">Learn</a>
+      <a href="index.html#challenges" class="nav__mobile-link">Challenges</a>
+    </div>
+  </nav>
+
+  <!-- VIRTUAL LABS HEADER -->
+  <header class="vlabs-header-wrap">
+    <div class="vlabs-header-container">
+      <a href="index.html" class="vlabs-back-home">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to Home
+      </a>
+      <div class="vlabs-hero-badge">
+        <span class="vlabs-hero-badge-dot"></span>
+        Interactive Simulation Environment
+      </div>
+      <h1 class="vlabs-hero-title">Quantum <span class="vlabs-hero-title-accent">Virtual Labs</span></h1>
+      <p class="vlabs-hero-subtitle">Experiment with quantum systems through interactive simulations.</p>
+      <p class="vlabs-hero-desc">Explore quantum computing concepts through interactive virtual laboratories. Configure quantum systems, run simulations, visualize quantum states, and analyze results in real time.</p>
+      
+      <div class="vlabs-stats-row">
+        <div class="vlabs-stat-item">
+          <span class="vlabs-stat-num" id="vlabs-count">5</span>
+          <span class="vlabs-stat-label">Virtual Laboratories</span>
+        </div>
+        <div class="vlabs-stat-divider"></div>
+        <div class="vlabs-stat-item">
+          <span class="vlabs-stat-num">Full 3D</span>
+          <span class="vlabs-stat-label">Bloch Sphere Dynamics</span>
+        </div>
+        <div class="vlabs-stat-divider"></div>
+        <div class="vlabs-stat-item">
+          <span class="vlabs-stat-num">Real-Time</span>
+          <span class="vlabs-stat-label">Quantum State Evolution</span>
+        </div>
+        <div class="vlabs-stat-divider"></div>
+        <div class="vlabs-stat-item">
+          <span class="vlabs-stat-num">Noisy & Ideal</span>
+          <span class="vlabs-stat-label">Simulation Channels</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE HORIZONTAL SCROLL NAV -->
+  <nav class="vlabs-mobile-nav" id="vlabs-mobile-nav" aria-label="Virtual Labs Sections">
+    <a href="#introduction" class="vlabs-mobile-pill active"><span>📖</span> Introduction</a>
+    <a href="#objective" class="vlabs-mobile-pill"><span>🎯</span> Objective</a>
+    <a href="#labs-list" class="vlabs-mobile-pill"><span>🔬</span> List of Labs</a>
+    <a href="#target-audience" class="vlabs-mobile-pill"><span>👥</span> Target Audience</a>
+    <a href="#learning-outcomes" class="vlabs-mobile-pill"><span>🎓</span> Learning Outcomes</a>
+    <a href="#course-alignment" class="vlabs-mobile-pill"><span>📚</span> Course Alignment</a>
+    <a href="#feedback" class="vlabs-mobile-pill"><span>💬</span> Feedback</a>
+  </nav>
+
+  <!-- MAIN TWO-COLUMN CONTAINER -->
+  <main class="vlabs-container">
+    <div class="vlabs-layout">
+
+      <!-- LEFT SIDEBAR -->
+      <aside class="vlabs-sidebar-wrap">
+        <div class="vlabs-sidebar">
+          <div class="vlabs-sidebar-title">
+            <span>Lab Navigation</span>
+            <span class="vlabs-nav-badge">7 Sections</span>
+          </div>
+          <nav class="vlabs-sidebar-nav" id="vlabs-sidebar-nav">
+            <a href="#introduction" class="vlabs-nav-item active">
+              <span class="vlabs-nav-icon">📖</span>
+              <span>Introduction</span>
+            </a>
+            <a href="#objective" class="vlabs-nav-item">
+              <span class="vlabs-nav-icon">🎯</span>
+              <span>Objective</span>
+            </a>
+            <a href="#labs-list" class="vlabs-nav-item">
+              <span class="vlabs-nav-icon">🔬</span>
+              <span>List of Virtual Labs</span>
+              <span class="vlabs-nav-badge" id="vlabs-sidebar-count">5</span>
+            </a>
+            <a href="#target-audience" class="vlabs-nav-item">
+              <span class="vlabs-nav-icon">👥</span>
+              <span>Target Audience</span>
+            </a>
+            <a href="#learning-outcomes" class="vlabs-nav-item">
+              <span class="vlabs-nav-icon">🎓</span>
+              <span>Learning Outcomes</span>
+            </a>
+            <a href="#course-alignment" class="vlabs-nav-item">
+              <span class="vlabs-nav-icon">📚</span>
+              <span>Course Alignment</span>
+            </a>
+            <a href="#feedback" class="vlabs-nav-item">
+              <span class="vlabs-nav-icon">💬</span>
+              <span>Feedback</span>
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <div class="vlabs-content">
+
+        <!-- 1. INTRODUCTION SECTION -->
+        <section class="vlabs-section" id="introduction">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>⚛</span> Platform Overview
+            </div>
+            <h2 class="vlabs-section-title">Introduction</h2>
+            <p class="vlabs-section-subtitle">About QuantumLab Virtual Labs</p>
+          </div>
+          <div class="vlabs-intro-text">
+            QuantumLab Virtual Labs provide interactive environments for learning quantum computing through experimentation and visualization. Unlike conventional lecture-based learning, the Virtual Labs empower students, educators, and researchers to directly interact with quantum states, test circuit topologies, and observe probabilistic collapse in real time.
+          </div>
+          <div class="vlabs-features-grid">
+            <div class="vlabs-feature-card">
+              <span class="vlabs-feature-icon">⚡</span>
+              <h3 class="vlabs-feature-title">Construct Quantum Circuits</h3>
+              <p class="vlabs-feature-desc">Build multi-qubit circuits by connecting standard quantum gates including Hadamard, Pauli-X, Y, Z, S, T, CNOT, and SWAP.</p>
+            </div>
+            <div class="vlabs-feature-card">
+              <span class="vlabs-feature-icon">🌐</span>
+              <h3 class="vlabs-feature-title">Manipulate Quantum States</h3>
+              <p class="vlabs-feature-desc">Adjust complex amplitudes and relative phases while tracking dynamic unitary state transformations.</p>
+            </div>
+            <div class="vlabs-feature-card">
+              <span class="vlabs-feature-icon">📊</span>
+              <h3 class="vlabs-feature-title">Perform Measurements</h3>
+              <p class="vlabs-feature-desc">Simulate projective measurements across Z, X, and Y bases and analyze empirical outcome distributions from multi-shot runs.</p>
+            </div>
+            <div class="vlabs-feature-card">
+              <span class="vlabs-feature-icon">🔮</span>
+              <h3 class="vlabs-feature-title">Visualize Bloch Spheres</h3>
+              <p class="vlabs-feature-desc">Observe state vectors rotate on the 3D unit sphere under continuous Euler rotations (θ, φ) and discrete gate actions.</p>
+            </div>
+            <div class="vlabs-feature-card">
+              <span class="vlabs-feature-icon">🌪️</span>
+              <h3 class="vlabs-feature-title">Experiment with Quantum Noise</h3>
+              <p class="vlabs-feature-desc">Investigate bit-flip, phase-damping, and depolarizing noise channels to observe decoherence and fidelity degradation.</p>
+            </div>
+            <div class="vlabs-feature-card">
+              <span class="vlabs-feature-icon">📈</span>
+              <h3 class="vlabs-feature-title">Analyze Results</h3>
+              <p class="vlabs-feature-desc">Evaluate probability histograms, calculate fidelity metrics, and compare experimental simulations against theoretical predictions.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. OBJECTIVE SECTION -->
+        <section class="vlabs-section" id="objective">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>🎯</span> Pedagogical Philosophy
+            </div>
+            <h2 class="vlabs-section-title">Objective</h2>
+            <p class="vlabs-section-subtitle">Why these virtual laboratories exist</p>
+          </div>
+          <div class="vlabs-objective-card">
+            <p class="vlabs-objective-text">
+              The objective of QuantumLab Virtual Labs is to help students understand quantum computing concepts through interactive, simulation-based experimentation. By grounding complex linear algebra and quantum mechanics in responsive, visual tools, students develop an intuitive grasp of quantum phenomena.
+            </p>
+          </div>
+
+          <div class="vlabs-flow-title">
+            <span>🔄</span> Experimental Learning Methodology
+          </div>
+          <div class="vlabs-flow-container">
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">01</div>
+              <div class="vlabs-flow-name">LEARN</div>
+              <div class="vlabs-flow-desc">Explore theoretical concepts & postulates</div>
+            </div>
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">02</div>
+              <div class="vlabs-flow-name">CONFIGURE</div>
+              <div class="vlabs-flow-desc">Set state vectors, gates, or noise parameters</div>
+            </div>
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">03</div>
+              <div class="vlabs-flow-name">RUN</div>
+              <div class="vlabs-flow-desc">Execute quantum simulation routines</div>
+            </div>
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">04</div>
+              <div class="vlabs-flow-name">OBSERVE</div>
+              <div class="vlabs-flow-desc">Track Bloch vectors & wavefunction evolution</div>
+            </div>
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">05</div>
+              <div class="vlabs-flow-name">MEASURE</div>
+              <div class="vlabs-flow-desc">Collapse states and record shot distributions</div>
+            </div>
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">06</div>
+              <div class="vlabs-flow-name">ANALYZE</div>
+              <div class="vlabs-flow-desc">Inspect outcome probabilities & state fidelity</div>
+            </div>
+            <div class="vlabs-flow-step">
+              <div class="vlabs-flow-num">07</div>
+              <div class="vlabs-flow-name">UNDERSTAND</div>
+              <div class="vlabs-flow-desc">Connect physical intuition to mathematical models</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. LIST OF VIRTUAL LABS SECTION -->
+        <section class="vlabs-section" id="labs-list">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>🔬</span> Interactive Simulation Suite
+            </div>
+            <h2 class="vlabs-section-title">List of Virtual Labs</h2>
+            <p class="vlabs-section-subtitle">All currently available interactive quantum laboratories</p>
+          </div>
+
+          <div class="vlabs-grid-toolbar">
+            <div class="vlabs-grid-counter">
+              <span>Available Laboratories</span>
+              <span class="vlabs-grid-badge" id="vlabs-badge-count">5 Labs</span>
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted)">
+              Click <strong>Open Lab</strong> on any card to launch the interactive simulation
+            </div>
+          </div>
+
+          <!-- DYNAMIC GRID CONTAINER POPULATED VIA QL.renderLabs() -->
+          <div class="labs-grid" id="labs-grid"></div>
+        </section>
+
+        <!-- 4. TARGET AUDIENCE SECTION -->
+        <section class="vlabs-section" id="target-audience">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>👥</span> Who It Is For
+            </div>
+            <h2 class="vlabs-section-title">Target Audience</h2>
+            <p class="vlabs-section-subtitle">Designed to support diverse learning and research backgrounds</p>
+          </div>
+          <div class="vlabs-audience-grid">
+            <div class="vlabs-audience-card">
+              <div class="vlabs-audience-header">
+                <div class="vlabs-audience-icon">🎓</div>
+                <h3 class="vlabs-audience-title">Undergraduate Students</h3>
+              </div>
+              <p class="vlabs-audience-desc">Students enrolled in physics, computer science, mathematics, or electrical engineering seeking practical intuition alongside theoretical coursework.</p>
+            </div>
+            <div class="vlabs-audience-card">
+              <div class="vlabs-audience-header">
+                <div class="vlabs-audience-icon">🚀</div>
+                <h3 class="vlabs-audience-title">Quantum Beginners</h3>
+              </div>
+              <p class="vlabs-audience-desc">Self-directed learners and software developers seeking an approachable, visual gateway into qubits, superposition, and quantum algorithms.</p>
+            </div>
+            <div class="vlabs-audience-card">
+              <div class="vlabs-audience-header">
+                <div class="vlabs-audience-icon">💻</div>
+                <h3 class="vlabs-audience-title">Computer Science Students</h3>
+              </div>
+              <p class="vlabs-audience-desc">Programmers transitioning from Boolean logic and classical circuits to unitary gates, quantum circuits, and computational complexity.</p>
+            </div>
+            <div class="vlabs-audience-card">
+              <div class="vlabs-audience-header">
+                <div class="vlabs-audience-icon">⚛️</div>
+                <h3 class="vlabs-audience-title">Physics Students</h3>
+              </div>
+              <p class="vlabs-audience-desc">Students studying quantum mechanics, wave mechanics, Hilbert spaces, density matrices, and measurement postulates through visual simulation.</p>
+            </div>
+            <div class="vlabs-audience-card">
+              <div class="vlabs-audience-header">
+                <div class="vlabs-audience-icon">🔬</div>
+                <h3 class="vlabs-audience-title">Researchers & Educators</h3>
+              </div>
+              <p class="vlabs-audience-desc">Instructors and academic researchers seeking interactive visual demonstrations for lectures, assignments, and quantum laboratory coursework.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. LEARNING OUTCOMES SECTION -->
+        <section class="vlabs-section" id="learning-outcomes">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>🎓</span> Educational Milestones
+            </div>
+            <h2 class="vlabs-section-title">Learning Outcomes</h2>
+            <p class="vlabs-section-subtitle">Key competencies acquired upon completing virtual lab experiments</p>
+          </div>
+          <div class="vlabs-outcomes-grid">
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Understand Basic Quantum States</h3>
+                <p class="vlabs-outcome-desc">Represent quantum states using Dirac bra-ket notation, complex amplitudes, and state vectors across orthogonal computational bases.</p>
+              </div>
+            </div>
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Build Simple Quantum Circuits</h3>
+                <p class="vlabs-outcome-desc">Construct, wire, and execute quantum circuits using fundamental single-qubit and multi-qubit entangling gates.</p>
+              </div>
+            </div>
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Interpret Measurement Probabilities</h3>
+                <p class="vlabs-outcome-desc">Apply the Born rule to calculate theoretical probabilities and analyze empirical measurement histograms from simulated shots.</p>
+              </div>
+            </div>
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Visualize Single-Qubit States</h3>
+                <p class="vlabs-outcome-desc">Map arbitrary single-qubit pure states onto the 3D Bloch sphere using polar angle θ and azimuthal angle φ.</p>
+              </div>
+            </div>
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Understand Quantum Gates</h3>
+                <p class="vlabs-outcome-desc">Master the unitary matrix transformations and geometric rotations produced by Pauli X, Y, Z, Hadamard, S, T, and CNOT.</p>
+              </div>
+            </div>
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Explore Quantum Noise</h3>
+                <p class="vlabs-outcome-desc">Model the effects of environmental decoherence, bit-flip, and phase-damping noise channels on quantum state purity and fidelity.</p>
+              </div>
+            </div>
+            <div class="vlabs-outcome-card">
+              <div class="vlabs-outcome-check">✓</div>
+              <div>
+                <h3 class="vlabs-outcome-title">Analyze Simulation Results</h3>
+                <p class="vlabs-outcome-desc">Critically evaluate quantum simulation outputs, comparing theoretical mathematical predictions against experimental outcomes.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. COURSE ALIGNMENT SECTION -->
+        <section class="vlabs-section" id="course-alignment">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>📚</span> Curriculum Mapping
+            </div>
+            <h2 class="vlabs-section-title">Course Alignment</h2>
+            <p class="vlabs-section-subtitle">Academic subject areas and curriculum topics covered</p>
+          </div>
+          <div class="vlabs-courses-grid">
+            <div class="vlabs-course-card">
+              <div class="vlabs-course-header">
+                <h3 class="vlabs-course-name">Quantum Computing</h3>
+                <span class="vlabs-course-tag">Core</span>
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Foundations of quantum information, qubits, quantum registers, unitary evolution, and circuit-based quantum computation.</p>
+              <div class="vlabs-course-topics">
+                <span class="vlabs-topic-chip">Qubits</span>
+                <span class="vlabs-topic-chip">Superposition</span>
+                <span class="vlabs-topic-chip">Unitary Gates</span>
+                <span class="vlabs-topic-chip">Circuit Models</span>
+              </div>
+            </div>
+            <div class="vlabs-course-card">
+              <div class="vlabs-course-header">
+                <h3 class="vlabs-course-name">Quantum Information</h3>
+                <span class="vlabs-course-tag">Information</span>
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Entanglement measures, Bell inequalities, state fidelity, quantum entropy, and quantum communication protocols.</p>
+              <div class="vlabs-course-topics">
+                <span class="vlabs-topic-chip">Entanglement</span>
+                <span class="vlabs-topic-chip">Bell States</span>
+                <span class="vlabs-topic-chip">Fidelity</span>
+                <span class="vlabs-topic-chip">Channels</span>
+              </div>
+            </div>
+            <div class="vlabs-course-card">
+              <div class="vlabs-course-header">
+                <h3 class="vlabs-course-name">Quantum Physics</h3>
+                <span class="vlabs-course-tag">Physics</span>
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Postulates of quantum mechanics, Hilbert spaces, observable operators, state vectors, and wave function collapse.</p>
+              <div class="vlabs-course-topics">
+                <span class="vlabs-topic-chip">Postulates</span>
+                <span class="vlabs-topic-chip">Spin-1/2</span>
+                <span class="vlabs-topic-chip">Wavefunction</span>
+                <span class="vlabs-topic-chip">Collapse</span>
+              </div>
+            </div>
+            <div class="vlabs-course-card">
+              <div class="vlabs-course-header">
+                <h3 class="vlabs-course-name">Quantum Algorithms</h3>
+                <span class="vlabs-course-tag">Algorithms</span>
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Algorithmic primitives, quantum phase kickback, quantum interference amplification, and complexity advantages.</p>
+              <div class="vlabs-course-topics">
+                <span class="vlabs-topic-chip">Deutsch-Jozsa</span>
+                <span class="vlabs-topic-chip">Grover Search</span>
+                <span class="vlabs-topic-chip">QFT</span>
+                <span class="vlabs-topic-chip">Speedup</span>
+              </div>
+            </div>
+            <div class="vlabs-course-card">
+              <div class="vlabs-course-header">
+                <h3 class="vlabs-course-name">Quantum Circuits</h3>
+                <span class="vlabs-course-tag">Engineering</span>
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Circuit synthesis, multi-qubit gate decompositions, circuit depth optimization, and reversible logic operations.</p>
+              <div class="vlabs-course-topics">
+                <span class="vlabs-topic-chip">Gate Synthesis</span>
+                <span class="vlabs-topic-chip">Circuit Depth</span>
+                <span class="vlabs-topic-chip">CNOT / SWAP</span>
+                <span class="vlabs-topic-chip">Compilation</span>
+              </div>
+            </div>
+            <div class="vlabs-course-card">
+              <div class="vlabs-course-header">
+                <h3 class="vlabs-course-name">Quantum Measurement</h3>
+                <span class="vlabs-course-tag">Measurement</span>
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Projective measurements, POVMs, basis rotations, measurement statistics, quantum noise models, and decoherence.</p>
+              <div class="vlabs-course-topics">
+                <span class="vlabs-topic-chip">Born Rule</span>
+                <span class="vlabs-topic-chip">Basis Choice</span>
+                <span class="vlabs-topic-chip">Decoherence</span>
+                <span class="vlabs-topic-chip">Statistics</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. FEEDBACK SECTION -->
+        <section class="vlabs-section" id="feedback">
+          <div class="vlabs-section-header">
+            <div class="vlabs-section-tag">
+              <span>💬</span> Student & Researcher Input
+            </div>
+            <h2 class="vlabs-section-title">Feedback</h2>
+            <p class="vlabs-section-subtitle">How was your Virtual Lab experience?</p>
+          </div>
+
+          <div class="vlabs-feedback-box">
+            <p class="vlabs-feedback-intro">
+              Your feedback directly shapes our interactive simulation modules, scientific visualizations, and educational tools. Please share your experience or suggest improvements.
+            </p>
+
+            <form id="vlabs-feedback-form">
+              <div class="vlabs-rating-group">
+                <label class="vlabs-rating-label">Rate Your Experience</label>
+                <div class="vlabs-stars" id="star-rating">
+                  <button type="button" class="vlabs-star-btn" data-value="1" title="1 Star - Poor">★</button>
+                  <button type="button" class="vlabs-star-btn" data-value="2" title="2 Stars - Fair">★</button>
+                  <button type="button" class="vlabs-star-btn" data-value="3" title="3 Stars - Good">★</button>
+                  <button type="button" class="vlabs-star-btn" data-value="4" title="4 Stars - Very Good">★</button>
+                  <button type="button" class="vlabs-star-btn" data-value="5" title="5 Stars - Excellent">★</button>
+                </div>
+                <input type="hidden" id="selected-rating" value="5" />
+              </div>
+
+              <div class="vlabs-form-grid">
+                <div class="vlabs-form-group">
+                  <label class="vlabs-form-label" for="feedback-lab-select">Selected Laboratory</label>
+                  <select class="vlabs-select" id="feedback-lab-select">
+                    <option value="all">General Virtual Lab Platform</option>
+                    <option value="circuit-lab">Quantum Circuit Lab</option>
+                    <option value="bloch-sphere">Bloch Sphere Lab</option>
+                    <option value="measurement-lab">Quantum Measurement Lab</option>
+                    <option value="noise-lab">Quantum Noise Lab</option>
+                    <option value="state-lab">Quantum State Lab</option>
+                  </select>
+                </div>
+                <div class="vlabs-form-group">
+                  <label class="vlabs-form-label" for="feedback-category">Feedback Category</label>
+                  <select class="vlabs-select" id="feedback-category">
+                    <option value="overall">Overall Educational Experience</option>
+                    <option value="usability">Interface & Usability</option>
+                    <option value="physics">Scientific Accuracy & Simulation</option>
+                    <option value="visualization">3D & Visualizations</option>
+                    <option value="feature">Feature Request</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="vlabs-form-group" style="margin-bottom:1.25rem;">
+                <label class="vlabs-form-label" for="feedback-text">Your Comments & Suggestions</label>
+                <textarea class="vlabs-textarea" id="feedback-text" placeholder="Write feedback regarding simulations, clarity of concepts, or feature ideas..." required></textarea>
+              </div>
+
+              <div class="vlabs-feedback-actions">
+                <button type="submit" class="btn btn--primary btn--md" id="submit-feedback-btn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Submit Feedback
+                </button>
+              </div>
+            </form>
+
+            <div class="vlabs-feedback-status" id="feedback-status">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <div>
+                <strong>Thank you for your feedback!</strong> Your insights help us continually enhance the QuantumLab Virtual Laboratory platform.
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
+          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#fg)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs><linearGradient id="fg" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+        </svg>
+        <span>QuantumLab</span>
+      </div>
+      <p class="footer__tagline">A virtual quantum learning laboratory platform.</p>
+      <p class="footer__copy">© 2026 QuantumLab. Built for explorers.</p>
+    </div>
+  </footer>
+
+  <!-- OVERLAY & MODAL (Used by QL.openLabModal) -->
+  <div class="overlay" id="overlay"></div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal__inner">
+      <button class="modal__close" id="modal-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="modal__content" id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- AI TUTOR PANEL -->
+  <div class="ai-panel" id="ai-panel">
+    <div class="ai-panel__header">
+      <div class="ai-panel__title">
+        <span>🤖</span> AI Tutor
+      </div>
+      <button class="ai-panel__close" id="ai-panel-close">✕</button>
+    </div>
+    <div class="ai-panel__messages" id="ai-messages">
+      <div class="ai-msg ai-msg--bot">
+        <div class="ai-msg__avatar">🤖</div>
+        <div class="ai-msg__bubble">Hello! I'm your quantum AI tutor. Ask me anything about quantum computing, or click "Explain this" on any virtual lab or visualization.</div>
+      </div>
+    </div>
+    <div class="ai-panel__input">
+      <input type="text" class="ai-panel__field" id="ai-input" placeholder="Ask about quantum concepts..." />
+      <button class="ai-panel__send" id="ai-send">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/virtual-lab-data.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/labs.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Virtual Labs Page-specific Interactive Enhancements
+    document.addEventListener('DOMContentLoaded', () => {
+      // Dynamic count badges
+      if (window.QL && QL.data && QL.data.labs) {
+        const count = QL.data.labs.length;
+        const countEl = document.getElementById('vlabs-count');
+        const badgeEl = document.getElementById('vlabs-badge-count');
+        const sideCountEl = document.getElementById('vlabs-sidebar-count');
+        if (countEl) countEl.textContent = count;
+        if (badgeEl) badgeEl.textContent = `${count} Labs`;
+        if (sideCountEl) sideCountEl.textContent = count;
+      }
+
+      // Check URL parameters for direct lab deep linking (e.g. ?lab=circuit-lab)
+      const params = new URLSearchParams(window.location.search);
+      const labParam = params.get('lab');
+      if (labParam && window.QL && typeof QL.openLabModal === 'function') {
+        setTimeout(() => QL.openLabModal(labParam), 300);
+      }
+
+      // Star rating interaction
+      const starBtns = document.querySelectorAll('.vlabs-star-btn');
+      const ratingInput = document.getElementById('selected-rating');
+
+      function updateStars(val) {
+        starBtns.forEach(btn => {
+          const btnVal = parseInt(btn.dataset.value, 10);
+          btn.classList.toggle('active', btnVal <= val);
+        });
+      }
+
+      updateStars(5); // default 5 stars
+
+      starBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = parseInt(btn.dataset.value, 10);
+          if (ratingInput) ratingInput.value = val;
+          updateStars(val);
+        });
+        btn.addEventListener('mouseenter', () => {
+          const val = parseInt(btn.dataset.value, 10);
+          starBtns.forEach(b => {
+            b.classList.toggle('hovered', parseInt(b.dataset.value, 10) <= val);
+          });
+        });
+        btn.addEventListener('mouseleave', () => {
+          starBtns.forEach(b => b.classList.remove('hovered'));
+        });
+      });
+
+      // Feedback form submission
+      const feedbackForm = document.getElementById('vlabs-feedback-form');
+      const feedbackStatus = document.getElementById('feedback-status');
+      if (feedbackForm && feedbackStatus) {
+        feedbackForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          feedbackForm.style.display = 'none';
+          feedbackStatus.classList.add('visible');
+        });
+      }
+
+      // Sidebar and mobile pill scrollspy
+      const sections = ['introduction', 'objective', 'labs-list', 'target-audience', 'learning-outcomes', 'course-alignment', 'feedback'];
+      const navLinks = document.querySelectorAll('.vlabs-nav-item, .vlabs-mobile-pill');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(id => {
+          const sec = document.getElementById(id);
+          if (sec && window.scrollY >= sec.offsetTop - 140) {
+            current = id;
+          }
+        });
+        if (!current && sections.length > 0) current = sections[0];
+
+        navLinks.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === `#${current}`) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }, { passive: true });
+    });
+  </script>
+</body>
+</html>

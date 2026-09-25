@@ -1,0 +1,426 @@
+/* ============================================================
+   QUANTUMLAB – COMPONENTS (Lab modals, algorithm workspace)
+   ============================================================ */
+
+/* ============================================================
+   ALGORITHM WORKSPACE MODAL
+   ============================================================ */
+.algo-workspace {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.5rem;
+}
+.algo-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.algo-step {
+  position: relative;
+  padding: 0.8rem 0.9rem;
+  border-left: 2px solid var(--border-white);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.algo-step.active {
+  border-left-color: var(--cyan);
+  background: rgba(6,182,212,0.05);
+}
+.algo-step::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-white);
+  border: 2px solid var(--bg-card);
+  transition: all var(--transition);
+}
+.algo-step.active::before,
+.algo-step:hover::before {
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.algo-step__num {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.15rem;
+}
+.algo-step__name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color var(--transition);
+}
+.algo-step.active .algo-step__name,
+.algo-step:hover .algo-step__name {
+  color: var(--cyan-light);
+}
+.algo-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.algo-circuit-view {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 2.1;
+  color: var(--text-muted);
+  overflow-x: auto;
+}
+.algo-circuit-view .highlight { background: rgba(6,182,212,0.12); border-radius: 3px; color: var(--cyan-light); }
+.algo-circuit-view .gate { color: var(--violet-light); font-weight: 700; }
+.algo-circuit-view .wire { color: var(--text-muted); }
+.algo-result-panel {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+.algo-result-panel__title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.9rem;
+}
+.algo-run-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 1rem;
+}
+.algo-run-btn:hover {
+  box-shadow: var(--glow-sm);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   LEARN MODAL / VISUAL LESSON
+   ============================================================ */
+.lesson-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.lesson-step {
+  position: relative;
+  padding: 1.25rem;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition);
+}
+.lesson-step:hover { border-color: rgba(124,58,237,0.25); }
+.lesson-step__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--violet-dim);
+  border: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--violet-light);
+  margin-bottom: 0.6rem;
+}
+.lesson-step__title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.lesson-step__body {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+.lesson-step__viz {
+  margin-top: 1rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+.lesson-eq {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--cyan-light);
+  line-height: 2;
+  text-align: center;
+}
+.lesson-eq .arrow { color: var(--violet-light); }
+.lesson-eq .state { color: #a78bfa; }
+.lesson-challenge {
+  background: rgba(124,58,237,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+.lesson-challenge__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   NOISE LAB
+   ============================================================ */
+.noise-lab {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.25rem;
+}
+.noise-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.noise-control {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius);
+  padding: 0.9rem;
+}
+.noise-control__name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.noise-control__val {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--cyan-light);
+}
+.noise-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.noise-panel {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+}
+.noise-panel__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ============================================================
+   MEASUREMENT LAB
+   ============================================================ */
+.meas-lab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.meas-basis-btns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.basis-btn {
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-white);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.basis-btn.active, .basis-btn:hover {
+  color: var(--cyan-light);
+  border-color: var(--border-cyan);
+  background: var(--cyan-dim);
+}
+.shots-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.shots-label { font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap; }
+.shots-val { font-family: var(--font-mono); font-size: 0.82rem; color: var(--cyan-light); width: 48px; text-align: right; }
+.meas-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ============================================================
+   CHALLENGE MODAL
+   ============================================================ */
+.chal-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.chal-modal__desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  background: rgba(124,58,237,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+}
+.chal-modal__goal {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+.chal-modal__hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: rgba(6,182,212,0.05);
+  border: 1px solid rgba(6,182,212,0.12);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+}
+.chal-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.chal-success {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(5,150,105,0.1);
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  color: #34d399;
+}
+
+/* ============================================================
+   STATE EXPLORER
+   ============================================================ */
+.state-explorer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+.state-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.state-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.state-btn.active, .state-btn:hover {
+  border-color: var(--border);
+  background: var(--violet-dim);
+}
+.state-btn__ket {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--violet-light);
+  width: 40px;
+  text-align: center;
+}
+.state-btn__label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+.state-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.state-amp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.amp-card {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-white);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  text-align: center;
+}
+.amp-card__ket {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--violet-light);
+  margin-bottom: 0.2rem;
+}
+.amp-card__val {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--cyan-light);
+}
+.amp-card__prob {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* ============================================================
+   GRID SEPARATORS
+   ============================================================ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr; }
+  .algo-workspace { grid-template-columns: 1fr; }
+  .noise-lab { grid-template-columns: 1fr; }
+  .noise-compare { grid-template-columns: 1fr; }
+  .state-explorer { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,216 @@
+/* ============================================================
+   QUANTUMLAB – ANIMATIONS
+   ============================================================ */
+
+/* ---- FADE IN ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---- GLOW PULSE ---- */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(124,58,237,0.2); }
+  50%       { box-shadow: 0 0 28px rgba(124,58,237,0.45), 0 0 50px rgba(6,182,212,0.15); }
+}
+@keyframes cyanGlowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(6,182,212,0.15); }
+  50%       { box-shadow: 0 0 24px rgba(6,182,212,0.4); }
+}
+
+/* ---- ORBIT ---- */
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+@keyframes orbitReverse {
+  from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+  to   { transform: rotate(-360deg) translateX(80px) rotate(360deg); }
+}
+
+/* ---- SPIN ---- */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ---- FLOAT ---- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%       { transform: translateY(-6px) rotate(2deg); }
+  66%       { transform: translateY(3px) rotate(-1deg); }
+}
+
+/* ---- WAVE ---- */
+@keyframes wave {
+  0%   { transform: scaleX(1) scaleY(1); }
+  25%  { transform: scaleX(1.05) scaleY(0.95); }
+  50%  { transform: scaleX(0.95) scaleY(1.05); }
+  75%  { transform: scaleX(1.02) scaleY(0.98); }
+  100% { transform: scaleX(1) scaleY(1); }
+}
+
+/* ---- BLOCH ROTATION ---- */
+@keyframes blochSpin {
+  from { transform: rotateY(0deg) rotateX(15deg); }
+  to   { transform: rotateY(360deg) rotateX(15deg); }
+}
+
+/* ---- BAR ANIMATE ---- */
+@keyframes barGrow {
+  from { width: 0; }
+}
+
+/* ---- APPEAR ---- */
+@keyframes appear {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- SHIMMER ---- */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-text {
+  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 25%, #7c3aed 50%, #06b6d4 75%, #7c3aed 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ---- QUANTUM DOTS (hero bg) ---- */
+@keyframes quantumDot {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.4); }
+}
+
+/* ---- PARTICLE DRIFT ---- */
+@keyframes drift {
+  0%   { transform: translateX(0) translateY(0); opacity: 0.4; }
+  25%  { opacity: 0.7; }
+  50%  { transform: translateX(var(--dx, 20px)) translateY(var(--dy, -30px)); opacity: 0.4; }
+  75%  { opacity: 0.6; }
+  100% { transform: translateX(0) translateY(0); opacity: 0.4; }
+}
+
+/* ---- ENTANGLE FLASH ---- */
+@keyframes entangleFlash {
+  0%, 100% { stroke-opacity: 0.3; }
+  50%       { stroke-opacity: 1; }
+}
+
+/* ---- PAGE SECTION ENTRANCE ---- */
+.section-entrance {
+  animation: appear 0.7s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+/* ---- CARD HOVER LIFT ---- */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
+              box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.card-lift:hover {
+  transform: translateY(-5px);
+}
+
+/* ---- TYPING ---- */
+@keyframes typing {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ---- LOADING DOTS ---- */
+@keyframes loadDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+  40%           { transform: scale(1); opacity: 1; }
+}
+.loading-dots span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  margin: 0 2px;
+  animation: loadDot 1.2s ease-in-out infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ---- SECTION SEPARATOR ---- */
+.section-sep {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.25), rgba(6,182,212,0.2), transparent);
+  margin: 0 auto;
+}
+
+/* ---- HERO CANVAS PARTICLES ---- */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--bg-deep));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---- ANIMATE ON SCROLL ---- */
+.anim-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- PROB BAR ANIMATION ---- */
+.prob-bar__fill { animation: barGrow 1.2s cubic-bezier(0.4,0,0.2,1) both; }
+
+/* ---- TOOLTIP ---- */
+.tooltip {
+  position: relative;
+}
+.tooltip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(11,18,33,0.95);
+  border: 1px solid var(--border-white);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 20;
+}
+.tooltip:hover::after { opacity: 1; }

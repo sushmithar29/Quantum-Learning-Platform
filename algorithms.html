@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Algorithms Explorer – QuantumLab</title>
+  <meta name="description" content="Explore, understand, and interact with the 12 foundational quantum algorithms through visual mathematical simulations, circuit execution, and 3D quantum representations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/algorithms.css" />
+</head>
+<body class="algo-page">
+  <!-- NAVIGATION -->
+  <nav class="nav scrolled" id="main-nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" id="logo-link">
+        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav__logo-text">QuantumLab</span>
+      </a>
+      <div class="nav__links">
+        <a href="/experiments" class="nav__link">Experiments</a>
+        <a href="/virtual-labs" class="nav__link">Virtual Labs</a>
+        <a href="/algorithms" class="nav__link active" id="nav-algos">Algorithms</a>
+        <a href="index.html#learn" class="nav__link">Learn</a>
+        <a href="index.html#challenges" class="nav__link">Challenges</a>
+      </div>
+      <div class="nav__actions">
+        <button class="nav__ai-btn" id="ai-tutor-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          AI Tutor
+        </button>
+        <button class="nav__profile-btn" id="profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+      </div>
+      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="/experiments" class="nav__mobile-link">Experiments</a>
+      <a href="/virtual-labs" class="nav__mobile-link">Virtual Labs</a>
+      <a href="/algorithms" class="nav__mobile-link active">Algorithms</a>
+      <a href="index.html#learn" class="nav__mobile-link">Learn</a>
+      <a href="index.html#challenges" class="nav__mobile-link">Challenges</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="algo-hero">
+    <div class="algo-hero__badge">
+      <span class="algo-card__indicator-dot"></span>
+      Interactive Simulation Platform
+    </div>
+    <h1 class="algo-hero__title">
+      QUANTUM <span class="algo-hero__title-accent">ALGORITHMS</span>
+    </h1>
+    <p class="algo-hero__subtitle">
+      Explore, understand, and interact with quantum algorithms through visual simulations.
+    </p>
+
+    <!-- CATEGORY FILTER PILLS -->
+    <div class="algo-categories-nav" id="category-filters">
+      <button class="algo-cat-btn active" data-cat="all">
+        <span>All Algorithms</span>
+        <span class="algo-cat-btn__count">12</span>
+      </button>
+      <button class="algo-cat-btn" data-cat="fundamentals">
+        <span>⚛️ Quantum Fundamentals</span>
+        <span class="algo-cat-btn__count">4</span>
+      </button>
+      <button class="algo-cat-btn" data-cat="optimization">
+        <span>⚡ Quantum Optimization</span>
+        <span class="algo-cat-btn__count">2</span>
+      </button>
+      <button class="algo-cat-btn" data-cat="qml">
+        <span>🧠 Quantum Machine Learning</span>
+        <span class="algo-cat-btn__count">4</span>
+      </button>
+      <button class="algo-cat-btn" data-cat="simulation">
+        <span>🔬 Quantum Simulation</span>
+        <span class="algo-cat-btn__count">2</span>
+      </button>
+    </div>
+
+    <!-- SEARCH & FILTER INPUT -->
+    <div style="max-width: 480px; margin: 0 auto; position: relative;">
+      <input type="text" id="algo-search-input" placeholder="Search algorithms, concepts, or terms..." class="algo-input" style="width: 100%; border-radius: 9999px; padding: 0.75rem 1.25rem 0.75rem 2.8rem; background: rgba(15, 18, 35, 0.75); border: 1px solid var(--algo-border); font-size: 0.9rem;" />
+      <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--algo-text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ALGORITHMS GRID BY CATEGORY -->
+  <main class="algo-grid-section" id="algo-container">
+    <!-- Populated by JavaScript from QL.algorithmsList -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
+          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#fg)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs><linearGradient id="fg" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+        </svg>
+        <span>QuantumLab</span>
+      </div>
+      <p class="footer__tagline">Interactive Quantum Computing Algorithm Explorer.</p>
+      <p class="footer__copy">© 2026 QuantumLab. Built for explorers and researchers.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/algorithms-data.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('algo-container');
+      const searchInput = document.getElementById('algo-search-input');
+      const filterBtns = document.querySelectorAll('.algo-cat-btn');
+
+      let currentCategory = 'all';
+      let searchQuery = '';
+
+      const categories = [
+        { id: 'fundamentals', name: 'Quantum Fundamentals', icon: '⚛️', count: 4 },
+        { id: 'optimization', name: 'Quantum Optimization', icon: '⚡', count: 2 },
+        { id: 'qml', name: 'Quantum Machine Learning', icon: '🧠', count: 4 },
+        { id: 'simulation', name: 'Quantum Simulation', icon: '🔬', count: 2 }
+      ];
+
+      function renderAlgorithms() {
+        const algos = QL.algorithmsList || [];
+        container.innerHTML = '';
+
+        const filteredCats = categories.filter(cat => currentCategory === 'all' || currentCategory === cat.id);
+
+        let totalShown = 0;
+
+        filteredCats.forEach(cat => {
+          let catAlgos = algos.filter(a => a.categoryId === cat.id);
+          if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            catAlgos = catAlgos.filter(a => 
+              a.name.toLowerCase().includes(q) ||
+              a.desc.toLowerCase().includes(q) ||
+              a.concepts.some(c => c.toLowerCase().includes(q))
+            );
+          }
+
+          if (catAlgos.length === 0) return;
+          totalShown += catAlgos.length;
+
+          const section = document.createElement('div');
+          section.className = 'algo-category-block';
+          section.innerHTML = `
+            <div class="algo-category-header">
+              <div class="algo-category-title-wrap">
+                <span class="algo-category-icon">${cat.icon}</span>
+                <h2 class="algo-category-title">${cat.name}</h2>
+              </div>
+              <span class="algo-category-count">${catAlgos.length} Algorithm${catAlgos.length > 1 ? 's' : ''}</span>
+            </div>
+            <div class="algo-cards-grid">
+              ${catAlgos.map(algo => `
+                <a href="algorithms/${algo.id}.html" class="algo-explorer-card" style="--card-accent: ${algo.color}; --card-glow: ${algo.accentColor}33;">
+                  <div>
+                    <div class="algo-card__top">
+                      <span class="algo-card__num">${algo.number}</span>
+                      <span class="algo-card__difficulty diff--${algo.difficulty.toLowerCase()}">${algo.difficulty}</span>
+                    </div>
+                    <h3 class="algo-card__title">${algo.name}</h3>
+                    <p class="algo-card__desc">${algo.desc}</p>
+                    <div class="algo-card__concepts">
+                      ${algo.concepts.map(c => `<span class="algo-concept-tag">${c}</span>`).join('')}
+                    </div>
+                  </div>
+                  <div class="algo-card__bottom">
+                    <div class="algo-card__indicator">
+                      <span class="algo-card__indicator-dot"></span>
+                      Interactive Simulation
+                    </div>
+                    <span class="algo-card__btn">
+                      EXPLORE ALGORITHM
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                  </div>
+                </a>
+              `).join('')}
+            </div>
+          `;
+          container.appendChild(section);
+        });
+
+        if (totalShown === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 4rem 1rem; color: var(--algo-text-muted);">
+              <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
+              <p style="font-size: 1.1rem; color: var(--algo-text-sub);">No algorithms match "${searchQuery}".</p>
+              <button class="algo-cat-btn" style="margin-top: 1rem;" onclick="document.getElementById('algo-search-input').value=''; document.getElementById('algo-search-input').dispatchEvent(new Event('input'));">Clear Search</button>
+            </div>
+          `;
+        }
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.cat;
+          renderAlgorithms();
+        });
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderAlgorithms();
+      });
+
+      // Mobile Menu
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+        });
+      }
+
+      renderAlgorithms();
+    });
+  </script>
+</body>
+</html>

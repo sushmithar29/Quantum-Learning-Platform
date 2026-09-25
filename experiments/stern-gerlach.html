@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stern&#8211;Gerlach Experiment &#8212; QuantumLab Virtual Laboratory</title>
+  <meta name="description" content="Perform the Stern-Gerlach experiment interactively. Watch spin-quantization as particles travel through an inhomogeneous magnetic field." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#050714;--bg-s:#0b0f2a;--bg-c:#0f1535;--bg-c2:#131a3e;
+      --border:rgba(139,92,246,.18);--border-g:rgba(139,92,246,.45);
+      --violet:#7c3aed;--violet-lt:#a78bfa;--cyan:#06b6d4;--cyan-lt:#67e8f9;
+      --emerald:#059669;--emerald-lt:#34d399;
+      --t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;
+      --mono:"JetBrains Mono",monospace;--sans:"Inter",sans-serif;
+      --r:12px;--rlg:18px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(124,58,237,.4);border-radius:3px}
+
+    /* ---- NAV ---- */
+    .lab-nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.75rem 2rem;background:rgba(5,7,20,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);gap:1rem;min-height:60px}
+    .lab-nav__left{display:flex;align-items:center;gap:1.5rem}
+    .back-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .9rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--t2);font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap}
+    .back-btn:hover{background:rgba(124,58,237,.18);border-color:rgba(124,58,237,.5);color:var(--t1);transform:translateX(-2px)}
+    .nav-title-wrap{display:flex;flex-direction:column;gap:.05rem}
+    .nav-label{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet-lt);opacity:.8}
+    .nav-name{font-size:1rem;font-weight:700}
+    .lab-nav__right{display:flex;align-items:center;gap:.75rem}
+    .badge-lvl{padding:.3rem .75rem;background:rgba(5,150,105,.15);border:1px solid rgba(5,150,105,.4);border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--emerald-lt)}
+    .status-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .8rem;background:rgba(15,21,53,.8);border:1px solid var(--border);border-radius:20px;font-size:.7rem;font-family:var(--mono);color:var(--t2);transition:all .3s}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);transition:background .3s;flex-shrink:0}
+    .status-badge.running .status-dot{background:var(--emerald-lt);box-shadow:0 0 8px var(--emerald);animation:pdot 1s ease-in-out infinite}
+    .status-badge.complete .status-dot{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+    @keyframes pdot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.7}}
+
+    /* ---- BUTTONS ---- */
+    .btn{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--sans);font-size:.8rem;font-weight:600;cursor:pointer;border-radius:8px;border:none;transition:all .2s;white-space:nowrap}
+    .btn-primary{padding:.55rem 1.2rem;background:linear-gradient(135deg,var(--violet),#5b21b6);color:#fff;box-shadow:0 0 16px rgba(124,58,237,.3)}
+    .btn-primary:hover{background:linear-gradient(135deg,#8b5cf6,var(--violet));box-shadow:0 0 24px rgba(124,58,237,.5);transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .btn-ghost{padding:.5rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:var(--t2)}
+    .btn-ghost:hover{background:rgba(255,255,255,.08);color:var(--t1)}
+    .btn-cyan{padding:.55rem 1.2rem;background:linear-gradient(135deg,var(--cyan),#0891b2);color:#fff;box-shadow:0 0 16px rgba(6,182,212,.25)}
+    .btn-cyan:hover{box-shadow:0 0 24px rgba(6,182,212,.45);transform:translateY(-1px)}
+
+    /* ---- LAYOUT ---- */
+    .lab-body{display:grid;grid-template-columns:1fr 320px;min-height:calc(100vh - 60px)}
+    .lab-main{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+    .lab-sidebar{display:flex;flex-direction:column;background:var(--bg-s);overflow-y:auto;max-height:calc(100vh - 60px);position:sticky;top:60px}
+
+    /* ---- STAGE ---- */
+    .exp-stage{position:relative;background:radial-gradient(ellipse at 50% 0%,#0d1240 0%,#050714 70%);border-bottom:1px solid var(--border)}
+    .stage-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.5rem 0}
+    .stage-label{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet-lt)}
+    .stage-hint{font-size:.67rem;color:var(--t3);font-family:var(--mono)}
+    #sg-canvas{display:block;width:100%;height:380px;cursor:default}
+
+    /* ---- TIMELINE ---- */
+    .timeline{display:flex;align-items:center;padding:.8rem 1.5rem;background:rgba(11,15,42,.7);border-bottom:1px solid var(--border);overflow-x:auto;gap:0}
+    .tl-step{display:flex;align-items:center;flex-shrink:0}
+    .tl-node{display:flex;align-items:center;gap:.4rem;padding:.32rem .7rem;border-radius:20px;border:1px solid transparent;font-size:.68rem;font-weight:600;color:var(--t3);transition:all .3s;white-space:nowrap}
+    .tl-num{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--t3);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-family:var(--mono);flex-shrink:0;transition:all .3s}
+    .tl-step.active .tl-node{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.4);color:var(--violet-lt)}
+    .tl-step.active .tl-num{background:var(--violet);border-color:var(--violet);color:#fff}
+    .tl-step.done .tl-node{color:var(--t2)}
+    .tl-step.done .tl-num{background:var(--emerald);border-color:var(--emerald);color:#fff}
+    .tl-conn{width:24px;height:1px;background:linear-gradient(90deg,rgba(124,58,237,.4),rgba(124,58,237,.1));flex-shrink:0}
+
+    /* ---- RESULTS ---- */
+    .results-sec{padding:1.5rem;display:none;flex-direction:column;gap:1.25rem;animation:fiu .5s ease}
+    .results-sec.show{display:flex}
+    @keyframes fiu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    .res-title{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t2)}
+    .res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+    .res-stat{background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center}
+    .res-val{font-size:2rem;font-weight:800;font-family:var(--mono);line-height:1;margin-bottom:.2rem}
+    .res-lbl{font-size:.63rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+    .res-stat.up .res-val{color:var(--cyan-lt)}
+    .res-stat.down .res-val{color:var(--violet-lt)}
+    .result-bars{background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
+    .rbars-title{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:.25rem}
+    .rbar{display:flex;flex-direction:column;gap:.35rem}
+    .rbar-head{display:flex;justify-content:space-between;align-items:center}
+    .rbar-name{font-size:.77rem;font-weight:600}
+    .rbar-pct{font-size:.8rem;font-weight:700;font-family:var(--mono)}
+    .rbar-track{height:10px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden}
+    .rbar-fill{height:100%;border-radius:5px;width:0%;transition:width .9s cubic-bezier(.34,1.56,.64,1)}
+    .rbar.up .rbar-fill{background:linear-gradient(90deg,var(--cyan),var(--cyan-lt))}
+    .rbar.up .rbar-pct{color:var(--cyan-lt)}
+    .rbar.down .rbar-fill{background:linear-gradient(90deg,var(--violet),var(--violet-lt))}
+    .rbar.down .rbar-pct{color:var(--violet-lt)}
+
+    /* ---- BLOCH ---- */
+    .bloch-sec{padding:0 1.5rem 1.5rem;display:none}
+    .bloch-sec.show{display:block}
+    .bloch-title{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .bloch-title::after{content:"";flex:1;height:1px;background:var(--border)}
+    .bloch-card{background:var(--bg-c);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden}
+    #sg-bloch{width:100%;height:280px}
+
+    /* ---- EXPLAIN ---- */
+    .explain-sec{padding:0 1.5rem 1.5rem;display:none;flex-direction:column;gap:1rem}
+    .explain-sec.show{display:flex}
+    .exp-card{background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem}
+    .exp-card-title{font-size:.8rem;font-weight:700;color:var(--violet-lt);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+    .exp-card-body{font-size:.83rem;color:var(--t2);line-height:1.7}
+    .exp-card-body strong{color:var(--t1)}
+
+    /* ---- OBS ---- */
+    .obs-sec{padding:0 1.5rem 1.5rem;display:none}
+    .obs-sec.show{display:block}
+    .obs-card{background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem}
+    .obs-title{font-size:.75rem;font-weight:700;color:var(--cyan-lt);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em}
+    .obs-ta{width:100%;min-height:80px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:.75rem;font-family:var(--sans);font-size:.8rem;color:var(--t1);resize:vertical;outline:none;transition:border-color .2s}
+    .obs-ta:focus{border-color:var(--cyan)}
+    .obs-ta::placeholder{color:var(--t3)}
+    .obs-actions{display:flex;gap:.75rem;margin-top:.75rem}
+    .obs-fb{margin-top:.75rem;padding:.75rem 1rem;border-radius:8px;font-size:.78rem;display:none}
+    .obs-fb.show{display:block}
+
+    /* ---- AI ---- */
+    .ai-sec{padding:0 1.5rem 2rem;display:none}
+    .ai-sec.show{display:block}
+    .ai-card{background:linear-gradient(135deg,#0f1535,#111b40);border:1px solid rgba(124,58,237,.3);border-radius:var(--rlg);padding:1.25rem}
+    .ai-head{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+    .ai-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--violet),var(--cyan));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .ai-t1{font-size:.86rem;font-weight:700}
+    .ai-t2{font-size:.68rem;color:var(--t3)}
+    .ai-msgs{display:flex;flex-direction:column;gap:.6rem;max-height:240px;overflow-y:auto;margin-bottom:.75rem;padding-right:4px}
+    .ai-msg{display:flex;gap:.5rem;align-items:flex-start}
+    .ai-ava{width:26px;height:26px;border-radius:50%;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:.73rem;flex-shrink:0}
+    .ai-msg.user .ai-ava{background:rgba(6,182,212,.15);border-color:rgba(6,182,212,.3)}
+    .ai-bubble{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.5rem .75rem;font-size:.77rem;color:var(--t2);line-height:1.6}
+    .ai-msg.user .ai-bubble{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.25)}
+    .ai-row{display:flex;gap:.5rem}
+    .ai-field{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-family:var(--sans);font-size:.77rem;color:var(--t1);outline:none;transition:border-color .2s}
+    .ai-field:focus{border-color:var(--violet)}
+    .ai-field::placeholder{color:var(--t3)}
+
+    /* ---- RUN AGAIN ---- */
+    .run-again{padding:1rem 1.5rem;border-top:1px solid var(--border);display:none;align-items:center;justify-content:space-between;background:rgba(5,7,20,.5)}
+    .run-again.show{display:flex}
+    .run-again-txt{font-size:.77rem;color:var(--t2)}
+    .run-again-txt strong{color:var(--emerald-lt)}
+
+    /* ---- SIDEBAR ---- */
+    .sb-sec{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+    .sb-sec:last-child{border-bottom:none}
+    .sb-title{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet-lt);margin-bottom:1rem}
+    .ctrl-grp{margin-bottom:1.1rem}
+    .ctrl-grp:last-child{margin-bottom:0}
+    .ctrl-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+    .ctrl-lbl{font-size:.73rem;font-weight:600;color:var(--t2)}
+    .ctrl-val{font-size:.7rem;font-family:var(--mono);color:var(--violet-lt);background:rgba(124,58,237,.12);padding:.14rem .4rem;border-radius:4px}
+    input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:rgba(255,255,255,.08);outline:none;cursor:pointer}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--cyan));box-shadow:0 0 8px rgba(124,58,237,.5);cursor:pointer}
+    .ctrl-desc{font-size:.63rem;color:var(--t3);margin-top:.3rem}
+    .ctrl-sel{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-family:var(--sans);font-size:.78rem;color:var(--t1);cursor:pointer;outline:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;transition:border-color .2s}
+    .ctrl-sel:focus{border-color:var(--violet)}
+    .axis-ind{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.5rem;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);border-radius:8px;font-size:.7rem;color:var(--cyan-lt);font-weight:600;margin-top:.75rem;font-family:var(--mono)}
+    .sb-actions{padding:1rem 1.25rem;display:flex;flex-direction:column;gap:.6rem;border-bottom:1px solid var(--border)}
+    .det-card{background:rgba(15,21,53,.5);border:1px solid var(--border);border-radius:8px;padding:.75rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+    .det-card:last-child{margin-bottom:0}
+    .det-card.up{border-color:rgba(6,182,212,.25);background:rgba(6,182,212,.06)}
+    .det-card.down{border-color:rgba(124,58,237,.25);background:rgba(124,58,237,.06)}
+    .det-lbl{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .det-card.up .det-lbl{color:var(--cyan-lt)}
+    .det-card.down .det-lbl{color:var(--violet-lt)}
+    .det-sub{font-size:.63rem;color:var(--t3);margin-top:.15rem}
+    .det-count{font-size:1.8rem;font-weight:800;font-family:var(--mono)}
+    .det-card.up .det-count{color:var(--cyan-lt)}
+    .det-card.down .det-count{color:var(--violet-lt)}
+    .phys-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:.75rem;margin-bottom:.6rem}
+    .phys-card:last-child{margin-bottom:0}
+    .phys-lbl{font-size:.63rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+    .phys-eq{font-family:var(--mono);font-size:.73rem;color:var(--cyan-lt)}
+    .phys-note{font-size:.63rem;color:var(--t3);margin-top:.3rem}
+    .spin-row{display:flex;gap:.5rem;flex-wrap:wrap}
+    .spin-tag{font-family:var(--mono);font-size:.7rem;padding:.2rem .5rem;border-radius:4px}
+    .spin-up{background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.3);color:var(--cyan-lt)}
+    .spin-dn{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);color:var(--violet-lt)}
+
+    /* ---- RESPONSIVE ---- */
+    @media(max-width:960px){
+      .lab-body{grid-template-columns:1fr}
+      .lab-sidebar{position:static;max-height:none;border-top:1px solid var(--border)}
+      .lab-main{border-right:none}
+      #sg-canvas{height:280px}
+    }
+    @media(max-width:600px){
+      .lab-nav{padding:.6rem 1rem}
+      .nav-name{font-size:.85rem}
+      .badge-lvl{display:none}
+      .res-grid{grid-template-columns:1fr 1fr}
+      #sg-canvas{height:230px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="lab-nav">
+  <div class="lab-nav__left">
+    <a href="index.html" class="back-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Experiments
+    </a>
+    <div class="nav-title-wrap">
+      <div class="nav-label">Virtual Laboratory</div>
+      <div class="nav-name">Stern&#8211;Gerlach Experiment</div>
+    </div>
+  </div>
+  <div class="lab-nav__right">
+    <div class="status-badge" id="status-badge">
+      <span class="status-dot"></span>
+      <span id="status-text">Ready</span>
+    </div>
+    <span class="badge-lvl">Beginner</span>
+  </div>
+</nav>
+
+<div class="lab-body">
+
+  <!-- MAIN -->
+  <div class="lab-main">
+
+    <!-- STAGE -->
+    <div class="exp-stage">
+      <div class="stage-header">
+        <span class="stage-label">&#x2697;&#xFE0F; Apparatus Visualization</span>
+        <span class="stage-hint" id="stage-hint">Configure parameters &#x2192; Run Experiment</span>
+      </div>
+      <canvas id="sg-canvas"></canvas>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline" id="timeline">
+      <div class="tl-step" id="tl0"><div class="tl-node"><span class="tl-num">1</span>Prepare</div></div>
+      <div class="tl-conn"></div>
+      <div class="tl-step" id="tl1"><div class="tl-node"><span class="tl-num">2</span>Launch</div></div>
+      <div class="tl-conn"></div>
+      <div class="tl-step" id="tl2"><div class="tl-node"><span class="tl-num">3</span>Magnetic Field</div></div>
+      <div class="tl-conn"></div>
+      <div class="tl-step" id="tl3"><div class="tl-node"><span class="tl-num">4</span>Beam Splitting</div></div>
+      <div class="tl-conn"></div>
+      <div class="tl-step" id="tl4"><div class="tl-node"><span class="tl-num">5</span>Detection</div></div>
+      <div class="tl-conn"></div>
+      <div class="tl-step" id="tl5"><div class="tl-node"><span class="tl-num">6</span>Results</div></div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-sec" id="results-sec">
+      <div class="res-title">Measurement Results</div>
+      <div class="res-grid">
+        <div class="res-stat"><div class="res-val" id="res-total">&#8212;</div><div class="res-lbl">Total</div></div>
+        <div class="res-stat up"><div class="res-val" id="res-up">&#8212;</div><div class="res-lbl">Spin Up &#x2191;</div></div>
+        <div class="res-stat down"><div class="res-val" id="res-dn">&#8212;</div><div class="res-lbl">Spin Down &#x2193;</div></div>
+      </div>
+      <div class="result-bars">
+        <div class="rbars-title">Spin Probability Distribution</div>
+        <div class="rbar up">
+          <div class="rbar-head"><span class="rbar-name" id="lbl-up">Spin Up</span><span class="rbar-pct" id="pct-up">0%</span></div>
+          <div class="rbar-track"><div class="rbar-fill" id="bar-up"></div></div>
+        </div>
+        <div class="rbar down">
+          <div class="rbar-head"><span class="rbar-name" id="lbl-dn">Spin Down</span><span class="rbar-pct" id="pct-dn">0%</span></div>
+          <div class="rbar-track"><div class="rbar-fill" id="bar-dn"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCH SPHERE -->
+    <div class="bloch-sec" id="bloch-sec">
+      <div class="bloch-title">Quantum State &#8212; Bloch Sphere</div>
+      <div class="bloch-card"><div id="sg-bloch"></div></div>
+    </div>
+
+    <!-- EXPLANATIONS -->
+    <div class="explain-sec" id="explain-sec">
+      <div class="exp-card">
+        <div class="exp-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          What Happened?
+        </div>
+        <div class="exp-card-body" id="what-text">Loading...</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><path d="M12 17h.01"/></svg>
+          Why Did This Happen?
+        </div>
+        <div class="exp-card-body" id="why-text">Loading...</div>
+      </div>
+    </div>
+
+    <!-- OBSERVATION -->
+    <div class="obs-sec" id="obs-sec">
+      <div class="obs-card">
+        <div class="obs-title">&#x1F4DD; What Did You Observe?</div>
+        <textarea class="obs-ta" id="obs-ta" placeholder="Describe what you observed. For example: The beam split into two distinct paths..."></textarea>
+        <div class="obs-actions">
+          <button class="btn btn-cyan" id="check-obs" style="font-size:.73rem;padding:.43rem .9rem;">Check My Understanding</button>
+          <button class="btn btn-ghost" id="clear-obs" style="font-size:.73rem;padding:.43rem .9rem;">Clear</button>
+        </div>
+        <div class="obs-fb" id="obs-fb"></div>
+      </div>
+    </div>
+
+    <!-- AI TUTOR -->
+    <div class="ai-sec" id="ai-sec">
+      <div class="ai-card">
+        <div class="ai-head">
+          <div class="ai-icon">&#x1F916;</div>
+          <div><div class="ai-t1">AI Tutor</div><div class="ai-t2">Ask anything about this experiment</div></div>
+        </div>
+        <div class="ai-msgs" id="ai-msgs">
+          <div class="ai-msg">
+            <div class="ai-ava">&#x1F916;</div>
+            <div class="ai-bubble">Hello! I know the Stern&#8211;Gerlach experiment inside-out. Try asking: "What happens if I increase the field gradient?" or "Why does the beam split into exactly two parts?"</div>
+          </div>
+        </div>
+        <div class="ai-row">
+          <input type="text" class="ai-field" id="ai-field" placeholder="Ask about the Stern&#8211;Gerlach experiment..." />
+          <button class="btn btn-primary" id="ai-send" style="padding:.5rem .9rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RUN AGAIN -->
+    <div class="run-again" id="run-again">
+      <div class="run-again-txt">Experiment complete &#8212; <strong>change parameters and run again</strong></div>
+      <button class="btn btn-cyan" id="run-again-btn">Run Again</button>
+    </div>
+
+  </div><!-- /.lab-main -->
+
+  <!-- SIDEBAR -->
+  <div class="lab-sidebar">
+    <div class="sb-sec">
+      <div class="sb-title">Experiment Controls</div>
+      <div class="ctrl-grp">
+        <div class="ctrl-hd"><span class="ctrl-lbl">Particle Count</span><span class="ctrl-val" id="v-particles">100</span></div>
+        <input type="range" id="c-particles" min="10" max="500" value="100" step="10" />
+        <div class="ctrl-desc">Number of atoms fired through the apparatus</div>
+      </div>
+      <div class="ctrl-grp">
+        <div class="ctrl-hd"><span class="ctrl-lbl">Magnetic Field Strength</span><span class="ctrl-val" id="v-field">50</span></div>
+        <input type="range" id="c-field" min="0" max="100" value="50" />
+        <div class="ctrl-desc">Stronger fields increase deflection force on atoms</div>
+      </div>
+      <div class="ctrl-grp">
+        <div class="ctrl-hd"><span class="ctrl-lbl">Field Gradient</span><span class="ctrl-val" id="v-grad">50</span></div>
+        <input type="range" id="c-grad" min="0" max="100" value="50" />
+        <div class="ctrl-desc">Gradient controls how far the beams separate</div>
+      </div>
+      <div class="ctrl-grp">
+        <div class="ctrl-hd"><span class="ctrl-lbl">Measurement Axis</span></div>
+        <select class="ctrl-sel" id="c-axis">
+          <option value="Z">Z axis (Standard)</option>
+          <option value="X">X axis</option>
+          <option value="Y">Y axis</option>
+        </select>
+        <div class="axis-ind" id="axis-ind">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Measurement Axis: Z
+        </div>
+        <div class="ctrl-desc">Defines spin quantization direction</div>
+      </div>
+    </div>
+
+    <div class="sb-actions">
+      <button class="btn btn-primary" id="run-btn" style="width:100%;justify-content:center;padding:.7rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run Experiment
+      </button>
+      <button class="btn btn-ghost" id="reset-btn" style="width:100%;justify-content:center;padding:.65rem;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset
+      </button>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-title">Physics Reference</div>
+      <div class="phys-card"><div class="phys-lbl">Force Equation</div><div class="phys-eq">F = &#x3BC; &#x00B7; &#x2202;B/&#x2202;z</div><div class="phys-note">&#x3BC; = magnetic moment, &#x2202;B/&#x2202;z = field gradient</div></div>
+      <div class="phys-card"><div class="phys-lbl">Spin States</div><div class="spin-row"><span class="spin-tag spin-up">|&#x2191;&#x27E9; = +&#x210F;/2</span><span class="spin-tag spin-dn">|&#x2193;&#x27E9; = &#x2212;&#x210F;/2</span></div></div>
+      <div class="phys-card"><div class="phys-lbl">Equal Superposition</div><div class="phys-eq" style="color:var(--violet-lt)">|&#x3C8;&#x27E9; = (|&#x2191;&#x27E9; + |&#x2193;&#x27E9;)/&#x221A;2</div><div class="phys-note">P(&#x2191;) = P(&#x2193;) &#x2248; 50%</div></div>
+    </div>
+
+    <div class="sb-sec" id="det-sec">
+      <div class="sb-title">Live Detector Counts</div>
+      <div class="det-card up">
+        <div><div class="det-lbl">Spin Up Detector</div><div class="det-sub">Upper beam trajectory</div></div>
+        <div class="det-count" id="live-up">0</div>
+      </div>
+      <div class="det-card down">
+        <div><div class="det-lbl">Spin Down Detector</div><div class="det-sub">Lower beam trajectory</div></div>
+        <div class="det-count" id="live-dn">0</div>
+      </div>
+    </div>
+
+  </div><!-- /.lab-sidebar -->
+
+</div><!-- /.lab-body -->
+
+<script src="../js/vendor/three.min.js"></script>
+<script src="../js/vendor/OrbitControls.js"></script>
+<script>
+/* ======================================================
+   STERN-GERLACH VIRTUAL LAB  |  QuantumLab
+   ====================================================== */
+
+/* --- SIMULATION STATE --- */
+var SG = {
+  params: { n: 100, field: 50, grad: 50, axis: 'Z' },
+  state: { status: 'idle', stage: -1, results: null, particles: [], frame: null, t0: null }
+};
+
+/* --- PHYSICS ENGINE --- */
+SG.physics = {
+  generate: function(p) {
+    var arr = [];
+    var dScale = (p.field / 100) * (p.grad / 100);
+    for (var i = 0; i < p.n; i++) {
+      var spin = Math.random() < 0.5 ? 1 : -1;
+      var jitter = 1 + (Math.random() - 0.5) * 0.08;
+      arr.push({
+        id: i, spin: spin,
+        deflScale: dScale * jitter,
+        delay: (i / p.n) * 0.45,
+        speed: 0.5 + Math.random() * 0.15,
+        detected: false
+      });
+    }
+    return arr;
+  },
+  results: function(particles) {
+    var up = particles.filter(function(p){ return p.spin === 1; }).length;
+    return { total: particles.length, up: up, dn: particles.length - up };
+  }
+};
+
+/* --- CANVAS SETUP --- */
+var canvas = document.getElementById('sg-canvas');
+var ctx = canvas.getContext('2d');
+var L = {};
+
+function resize() {
+  var r = canvas.getBoundingClientRect();
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width  = r.width  * dpr;
+  canvas.height = r.height * dpr;
+  ctx.scale(dpr, dpr);
+  var W = r.width, H = r.height;
+  L = {
+    W: W, H: H,
+    srcX: W * 0.05, srcY: H * 0.5,
+    mx1: W * 0.38, mx2: W * 0.62, my: H * 0.5,
+    detUX: W * 0.9, detUY: H * 0.22,
+    detDX: W * 0.9, detDY: H * 0.78,
+    splEndX: W * 0.80
+  };
+  if (SG.state.status === 'idle') drawIdle();
+  if (SG.state.status === 'complete') drawComplete();
+}
+window.addEventListener('resize', resize);
+
+/* --- DRAWING HELPERS --- */
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(255,255,255,0.018)';
+  ctx.lineWidth = 1;
+  for (var x = 0; x < L.W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, L.H); ctx.stroke(); }
+  for (var y = 0; y < L.H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(L.W, y); ctx.stroke(); }
+}
+
+function drawSource() {
+  var x = L.srcX, y = L.srcY;
+  var grd = ctx.createRadialGradient(x, y, 0, x, y, 28);
+  grd.addColorStop(0, 'rgba(59,130,246,0.35)');
+  grd.addColorStop(1, 'rgba(59,130,246,0)');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(x, y, 28, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#1e3a5f';
+  ctx.strokeStyle = 'rgba(96,165,250,0.8)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(x - 22, y - 16, 44, 32, 6); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(147,197,253,0.9)';
+  ctx.beginPath(); ctx.arc(x + 22, y, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.font = '600 9px Inter,sans-serif';
+  ctx.fillStyle = 'rgba(147,197,253,0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText('SOURCE', x, y + 28);
+}
+
+function drawBeam(x1, x2, y) {
+  ctx.strokeStyle = 'rgba(100,180,255,0.45)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawMagnet(showLines) {
+  var mx1 = L.mx1, mx2 = L.mx2, my = L.my;
+  var mh = L.H * 0.26, mw = mx2 - mx1;
+  // North
+  var ng = ctx.createLinearGradient(mx1, my - mh - 30, mx1, my - mh);
+  ng.addColorStop(0, '#1e1b4b'); ng.addColorStop(1, '#312e81');
+  ctx.fillStyle = ng; ctx.strokeStyle = 'rgba(139,92,246,0.55)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(mx1, my - mh - 30, mw, 30, [6,6,0,0]); ctx.fill(); ctx.stroke();
+  ctx.font = '700 14px Inter'; ctx.fillStyle = 'rgba(167,139,250,0.9)'; ctx.textAlign = 'center';
+  ctx.fillText('N', (mx1 + mx2) / 2, my - mh - 10);
+  // South
+  var sg = ctx.createLinearGradient(mx1, my + mh, mx1, my + mh + 30);
+  sg.addColorStop(0, '#312e81'); sg.addColorStop(1, '#1e1b4b');
+  ctx.fillStyle = sg; ctx.strokeStyle = 'rgba(139,92,246,0.55)';
+  ctx.beginPath(); ctx.roundRect(mx1, my + mh, mw, 30, [0,0,6,6]); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(167,139,250,0.9)';
+  ctx.fillText('S', (mx1 + mx2) / 2, my + mh + 22);
+  // Gap
+  ctx.fillStyle = 'rgba(30,27,75,0.38)';
+  ctx.fillRect(mx1, my - mh, mw, mh * 2);
+  ctx.strokeStyle = 'rgba(139,92,246,0.25)'; ctx.lineWidth = 1;
+  ctx.strokeRect(mx1, my - mh, mw, mh * 2);
+  if (showLines) {
+    var density = Math.floor(6 + SG.params.grad * 0.08);
+    for (var i = 0; i <= density; i++) {
+      var lx = mx1 + (mw / density) * i;
+      var al = 0.12 + 0.28 * (1 - i / density);
+      var gl = ctx.createLinearGradient(lx, my - mh, lx, my + mh);
+      gl.addColorStop(0, 'rgba(139,92,246,' + (al + 0.2) + ')');
+      gl.addColorStop(0.5, 'rgba(6,182,212,' + al + ')');
+      gl.addColorStop(1, 'rgba(139,92,246,' + (al * 0.3) + ')');
+      ctx.strokeStyle = gl; ctx.lineWidth = 0.8;
+      ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(lx, my - mh); ctx.lineTo(lx, my + mh); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.font = '600 9px Inter'; ctx.fillStyle = 'rgba(6,182,212,0.65)'; ctx.textAlign = 'left';
+    ctx.fillText('\u2202B/\u2202z', mx1 + 5, my - mh + 14);
+    ctx.strokeStyle = 'rgba(6,182,212,0.4)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(mx1 + 5, my - mh + 18); ctx.lineTo(mx1 + 5, my + mh - 4); ctx.stroke();
+    ctx.fillStyle = 'rgba(6,182,212,0.4)';
+    ctx.beginPath(); ctx.moveTo(mx1 + 5, my + mh - 4); ctx.lineTo(mx1 + 1, my + mh - 10); ctx.lineTo(mx1 + 9, my + mh - 10); ctx.fill();
+    ctx.font = '600 9px Inter'; ctx.fillStyle = 'rgba(139,92,246,0.65)'; ctx.textAlign = 'center';
+    ctx.fillText('MAGNETIC FIELD', (mx1 + mx2) / 2, my + mh + 46);
+  }
+}
+
+function drawSplitPath(x1, x2, y1, y2, color, width) {
+  ctx.strokeStyle = color; ctx.lineWidth = width;
+  ctx.beginPath(); ctx.moveTo(x1, y1);
+  ctx.bezierCurveTo(x1 + (x2 - x1) * 0.3, y1, x2 - (x2 - x1) * 0.3, y2, x2, y2);
+  ctx.stroke();
+}
+
+function drawDetector(x, y, sym, color, count) {
+  var grd = ctx.createRadialGradient(x, y, 0, x, y, 22);
+  grd.addColorStop(0, color.replace('A', '0.22,')); grd.addColorStop(1, color.replace('A', '0,'));
+  ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = color.replace('A', '0.12,'); ctx.strokeStyle = color.replace('A', '0.7,'); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(x - 12, y - 20, 24, 40, 4); ctx.fill(); ctx.stroke();
+  ctx.font = '700 11px Inter'; ctx.fillStyle = color.replace('A', '1,'); ctx.textAlign = 'center';
+  ctx.fillText('Spin ' + sym, x, y - 28);
+}
+
+function drawApparatus(alpha, showLines) {
+  ctx.save(); ctx.globalAlpha = alpha;
+  drawSource();
+  drawBeam(L.srcX + 30, L.mx1, L.srcY);
+  drawMagnet(showLines);
+  if (showLines) {
+    drawSplitPath(L.mx2, L.splEndX, L.my, L.detUY, 'rgba(103,232,249,0.14)', 1);
+    drawSplitPath(L.mx2, L.splEndX, L.my, L.detDY, 'rgba(167,139,250,0.14)', 1);
+  } else {
+    drawSplitPath(L.mx2, L.splEndX, L.my, L.detUY, 'rgba(100,180,255,0.07)', 1);
+    drawSplitPath(L.mx2, L.splEndX, L.my, L.detDY, 'rgba(100,180,255,0.07)', 1);
+  }
+  drawDetector(L.detUX, L.detUY, '\u2191', 'rgba(A6,182,212)', 0);
+  drawDetector(L.detDX, L.detDY, '\u2193', 'rgba(A124,58,237)', 0);
+  ctx.restore();
+}
+
+function drawIdle() {
+  ctx.clearRect(0, 0, L.W, L.H);
+  drawGrid();
+  drawApparatus(0.35, false);
+  ctx.font = '500 12px Inter'; ctx.fillStyle = 'rgba(148,163,184,0.38)'; ctx.textAlign = 'center';
+  ctx.fillText('Configure parameters and click Run Experiment', L.W / 2, L.H * 0.95);
+}
+
+function drawComplete() {
+  ctx.clearRect(0, 0, L.W, L.H);
+  drawGrid();
+  drawApparatus(1.0, true);
+  var results = SG.state.results;
+  if (!results) return;
+  var dM = L.H * 0.26 * (SG.params.field / 100) * (SG.params.grad / 100);
+  for (var i = 0; i < Math.min(results.up, 60); i++) {
+    var dx = (Math.random() - 0.5) * 18, dy = (Math.random() - 0.5) * 32;
+    ctx.fillStyle = 'rgba(103,232,249,' + (0.3 + Math.random() * 0.5) + ')';
+    ctx.beginPath(); ctx.arc(L.detUX + dx, L.detUY + dy, 1.8, 0, Math.PI * 2); ctx.fill();
+  }
+  for (var i = 0; i < Math.min(results.dn, 60); i++) {
+    var dx = (Math.random() - 0.5) * 18, dy = (Math.random() - 0.5) * 32;
+    ctx.fillStyle = 'rgba(167,139,250,' + (0.3 + Math.random() * 0.5) + ')';
+    ctx.beginPath(); ctx.arc(L.detDX + dx, L.detDY + dy, 1.8, 0, Math.PI * 2); ctx.fill();
+  }
+  drawSplitPath(L.mx2, L.splEndX, L.my, L.detUY, 'rgba(103,232,249,0.5)', 2.5);
+  drawSplitPath(L.mx2, L.splEndX, L.my, L.detDY, 'rgba(167,139,250,0.5)', 2.5);
+  ctx.font = '700 11px Inter'; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(103,232,249,0.9)';
+  ctx.fillText('Spin \u2191', L.mx2 + (L.splEndX - L.mx2) * 0.55, L.detUY - 14);
+  ctx.fillStyle = 'rgba(167,139,250,0.9)';
+  ctx.fillText('Spin \u2193', L.mx2 + (L.splEndX - L.mx2) * 0.55, L.detDY + 22);
+  ctx.font = '700 13px Inter';
+  ctx.fillStyle = 'rgba(103,232,249,1)'; ctx.fillText('' + results.up, L.detUX, L.detUY - 40);
+  ctx.fillStyle = 'rgba(167,139,250,1)'; ctx.fillText('' + results.dn, L.detDX, L.detDY + 52);
+  document.getElementById('live-up').textContent = results.up;
+  document.getElementById('live-dn').textContent = results.dn;
+}
+
+/* --- ANIMATION LOOP --- */
+var STAGE_STARTS = [0, 0.4, 0.7, 1.2, 2.0, 2.6, 3.0]; // 6 stages
+var STAGE_LABELS = ['Preparing...', 'Launching beam...', 'Entering magnetic field...', 'Beam splitting...', 'Detecting particles...', 'Calculating results...'];
+
+function animate(ts) {
+  if (!SG.state.t0) SG.state.t0 = ts;
+  var elapsed = (ts - SG.state.t0) / 1000;
+
+  ctx.clearRect(0, 0, L.W, L.H);
+  drawGrid();
+  drawApparatus(0.88, true);
+
+  var curStage = 5;
+  for (var i = 0; i < STAGE_STARTS.length - 1; i++) {
+    if (elapsed >= STAGE_STARTS[i]) curStage = i;
+  }
+  setTimeline(curStage);
+  setStatus('running', STAGE_LABELS[curStage] || 'Running...');
+
+  var dM = L.H * 0.26 * (SG.params.field / 100) * (SG.params.grad / 100);
+  var upDet = 0, dnDet = 0;
+
+  for (var pi = 0; pi < SG.state.particles.length; pi++) {
+    var p = SG.state.particles[pi];
+    var t = elapsed - p.delay;
+    if (t < 0) continue;
+
+    var jDur = 1.4 + (1 - p.speed) * 0.8;
+    var prog = Math.min(t / jDur, 1.0);
+
+    var mx1n = (L.mx1 - L.srcX) / (L.detUX - L.srcX);
+    var mx2n = (L.mx2 - L.srcX) / (L.detUX - L.srcX);
+
+    var px, py;
+    if (prog < mx1n) {
+      px = L.srcX + (L.mx1 - L.srcX) * (prog / mx1n);
+      py = L.srcY;
+    } else if (prog < mx2n) {
+      var mp = (prog - mx1n) / (mx2n - mx1n);
+      px = L.mx1 + (L.mx2 - L.mx1) * mp;
+      py = L.srcY - p.spin * dM * 0.3 * mp * mp;
+    } else {
+      var pp = (prog - mx2n) / (1 - mx2n);
+      var ease = pp * pp * (3 - 2 * pp);
+      var tY = p.spin === 1 ? L.detUY : L.detDY;
+      var exitY = L.srcY - p.spin * dM * 0.3;
+      px = L.mx2 + (L.detUX - L.mx2) * pp;
+      py = exitY + (tY - exitY) * ease;
+    }
+
+    if (prog >= 0.97) { if (p.spin === 1) upDet++; else dnDet++; }
+
+    var al = prog < 0.05 ? prog / 0.05 : (prog > 0.95 ? (1 - prog) / 0.05 : 1);
+    var col = p.spin === 1 ? 'rgba(103,232,249,' : 'rgba(167,139,250,';
+    var gcol = p.spin === 1 ? 'rgba(6,182,212,' : 'rgba(124,58,237,';
+    var gr = ctx.createRadialGradient(px, py, 0, px, py, 7);
+    gr.addColorStop(0, gcol + (0.28 * al) + ')'); gr.addColorStop(1, 'transparent');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = col + (0.85 * al) + ')'; ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  document.getElementById('live-up').textContent = upDet;
+  document.getElementById('live-dn').textContent = dnDet;
+
+  if (elapsed >= 3.5) { finish(); return; }
+  SG.state.frame = requestAnimationFrame(animate);
+}
+
+/* --- SIM CONTROLLER --- */
+function runSim() {
+  if (SG.state.status === 'running') return;
+  SG.params.n     = parseInt(document.getElementById('c-particles').value);
+  SG.params.field = parseInt(document.getElementById('c-field').value);
+  SG.params.grad  = parseInt(document.getElementById('c-grad').value);
+  SG.params.axis  = document.getElementById('c-axis').value;
+  SG.state.particles = SG.physics.generate(SG.params);
+  SG.state.status = 'running'; SG.state.t0 = null;
+  setStatus('running', 'Preparing...');
+  setRunBtn(true);
+  hideResults(); hidePost(); setTimeline(-1);
+  document.getElementById('live-up').textContent = '0';
+  document.getElementById('live-dn').textContent = '0';
+  document.getElementById('stage-hint').textContent = 'Experiment running \u2014 watch the beam split!';
+  if (SG.state.frame) cancelAnimationFrame(SG.state.frame);
+  SG.state.frame = requestAnimationFrame(animate);
+}
+
+function finish() {
+  var r = SG.physics.results(SG.state.particles);
+  SG.state.results = r; SG.state.status = 'complete';
+  setStatus('complete', 'Complete'); setTimeline(5, true); setRunBtn(false);
+  showResults(r); updateBloch(SG.params.axis); showPost();
+  document.getElementById('stage-hint').textContent = 'Experiment complete \u2014 inspect results below';
+}
+
+function resetSim() {
+  if (SG.state.frame) { cancelAnimationFrame(SG.state.frame); SG.state.frame = null; }
+  SG.state.status = 'idle'; SG.state.t0 = null; SG.state.particles = []; SG.state.results = null;
+  document.getElementById('c-particles').value = 100; document.getElementById('v-particles').textContent = '100';
+  document.getElementById('c-field').value = 50;      document.getElementById('v-field').textContent = '50';
+  document.getElementById('c-grad').value = 50;       document.getElementById('v-grad').textContent = '50';
+  document.getElementById('c-axis').value = 'Z';
+  document.getElementById('axis-ind').innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Measurement Axis: Z';
+  SG.params = { n: 100, field: 50, grad: 50, axis: 'Z' };
+  document.getElementById('live-up').textContent = '0'; document.getElementById('live-dn').textContent = '0';
+  setStatus('idle', 'Ready'); setRunBtn(false); hideResults(); hidePost(); resetTimeline();
+  drawIdle();
+  document.getElementById('stage-hint').textContent = 'Configure parameters \u2192 Run Experiment';
+  if (bloch.initialized) updateBloch('Z', true);
+}
+
+/* --- UI HELPERS --- */
+function setStatus(type, text) {
+  var b = document.getElementById('status-badge'), t = document.getElementById('status-text');
+  b.className = 'status-badge ' + (type === 'idle' ? '' : type);
+  t.textContent = text;
+}
+function setRunBtn(dis) {
+  var b = document.getElementById('run-btn'); b.disabled = dis;
+  b.innerHTML = dis
+    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="10" y1="10" x2="14" y2="14"/></svg> Running...'
+    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Experiment';
+}
+function setTimeline(stage, allDone) {
+  for (var i = 0; i <= 5; i++) {
+    var el = document.getElementById('tl' + i); if (!el) continue;
+    el.className = 'tl-step';
+    if (allDone && i <= stage) el.classList.add('done');
+    else if (i < stage) el.classList.add('done');
+    else if (i === stage) el.classList.add('active');
+  }
+}
+function resetTimeline() { for (var i = 0; i <= 5; i++) { var e = document.getElementById('tl' + i); if (e) e.className = 'tl-step'; } }
+
+function showResults(r) {
+  document.getElementById('res-total').textContent = r.total;
+  document.getElementById('res-up').textContent    = r.up;
+  document.getElementById('res-dn').textContent    = r.dn;
+  var upPct  = Math.round((r.up / r.total) * 100);
+  var dnPct  = 100 - upPct;
+  var ax = SG.params.axis;
+  var upLbl  = ax === 'Z' ? 'Spin Up (|\u2191z\u27E9)' : ax === 'X' ? 'Spin Up (|+x\u27E9)' : 'Spin Up (|+y\u27E9)';
+  var dnLbl  = ax === 'Z' ? 'Spin Down (|\u2193z\u27E9)' : ax === 'X' ? 'Spin Down (|\u2212x\u27E9)' : 'Spin Down (|\u2212y\u27E9)';
+  document.getElementById('lbl-up').textContent = upLbl;
+  document.getElementById('lbl-dn').textContent = dnLbl;
+  document.getElementById('pct-up').textContent = upPct + '%';
+  document.getElementById('pct-dn').textContent = dnPct + '%';
+  requestAnimationFrame(function(){
+    document.getElementById('bar-up').style.width = upPct + '%';
+    document.getElementById('bar-dn').style.width = dnPct + '%';
+  });
+  updateExplanations(r);
+  document.getElementById('results-sec').classList.add('show');
+  document.getElementById('bloch-sec').classList.add('show');
+}
+function hideResults() {
+  document.getElementById('results-sec').classList.remove('show');
+  document.getElementById('bloch-sec').classList.remove('show');
+  document.getElementById('bar-up').style.width = '0%';
+  document.getElementById('bar-dn').style.width = '0%';
+}
+function showPost() {
+  ['explain-sec','obs-sec','ai-sec','run-again'].forEach(function(id){ document.getElementById(id).classList.add('show'); });
+}
+function hidePost() {
+  ['explain-sec','obs-sec','ai-sec','run-again'].forEach(function(id){ document.getElementById(id).classList.remove('show'); });
+}
+function updateExplanations(r) {
+  var ax = SG.params.axis, axL = ax + '-axis';
+  document.getElementById('what-text').innerHTML =
+    'The <strong>' + SG.params.n + '</strong> silver-atom beam entered an <strong>inhomogeneous magnetic field</strong> along the <strong>' + axL + '</strong>. Instead of a classical continuous smear of impacts, the beam separated into <strong>two discrete trajectories</strong>: ' + r.up + ' particles deflected to the Spin Up detector and ' + r.dn + ' to Spin Down \u2014 direct proof of spin quantization.';
+  document.getElementById('why-text').innerHTML =
+    '<strong>Quantum spin is quantized.</strong> Unlike classical angular momentum, spin along any axis takes only the values +\u210F/2 or \u2212\u210F/2. With field strength <strong>' + SG.params.field + '/100</strong> and gradient <strong>' + SG.params.grad + '/100</strong>, the force F\u00A0=\u00A0\u03BC\u00B7\u2202B/\u2202' + ax.toLowerCase() + ' deflects each atom discretely \u2014 upward for spin-up, downward for spin-down. Individual outcomes are probabilistic, but the <em>possible outcomes</em> are always discrete, never a continuous spread.';
+}
+
+/* --- BLOCH SPHERE (Three.js) --- */
+var bloch = { initialized: false, scene: null, cam: null, rend: null, ctrl: null, arrow: null, arrowHead: null, mLine: null, frameId: null };
+
+function initBloch() {
+  var el = document.getElementById('sg-bloch');
+  if (!el || !window.THREE) return;
+  var W = el.clientWidth, H = el.clientHeight || 280;
+  bloch.scene = new THREE.Scene();
+  bloch.cam = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
+  bloch.cam.position.set(2.2, 1.5, 2.2);
+  bloch.rend = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  bloch.rend.setSize(W, H); bloch.rend.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  bloch.rend.setClearColor(0x000000, 0);
+  el.appendChild(bloch.rend.domElement);
+  bloch.ctrl = new THREE.OrbitControls(bloch.cam, bloch.rend.domElement);
+  bloch.ctrl.enableDamping = true; bloch.ctrl.dampingFactor = 0.08;
+  bloch.ctrl.enablePan = false; bloch.ctrl.minDistance = 1.5; bloch.ctrl.maxDistance = 5;
+
+  /* Wireframe sphere */
+  var sGeo = new THREE.SphereGeometry(1, 24, 24);
+  bloch.scene.add(new THREE.LineSegments(new THREE.WireframeGeometry(sGeo),
+    new THREE.LineBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.15 })));
+
+  /* Circles */
+  addCircle(1, 'equator', 0x06b6d4, 0.45);
+  addCircle(1, 'meridYZ', 0x7c3aed, 0.3);
+  addCircle(1, 'meridXY', 0x7c3aed, 0.22);
+
+  /* Axes */
+  addAxis([0, 1, 0], 0x06b6d4); addAxis([0, -1, 0], 0x7c3aed);
+  addAxis([1, 0, 0], 0xf43f5e); addAxis([-1, 0, 0], 0xf43f5e);
+  addAxis([0, 0, 1], 0xfbbf24); addAxis([0, 0, -1], 0xfbbf24);
+
+  /* Labels */
+  addLabel('|0\u27E9', [0, 1.55, 0], '#67e8f9');
+  addLabel('|1\u27E9', [0, -1.55, 0], '#a78bfa');
+  addLabel('X', [1.5, 0, 0], '#fb7185');
+  addLabel('Y', [0, 0, 1.5], '#fbbf24');
+  addLabel('Z', [-1.5, 0, 0], '#fb7185');
+
+  /* State vector */
+  var lPts = [new THREE.Vector3(0,0,0), new THREE.Vector3(0,1,0)];
+  bloch.arrow = new THREE.Line(new THREE.BufferGeometry().setFromPoints(lPts), new THREE.LineBasicMaterial({ color: 0xffffff }));
+  bloch.scene.add(bloch.arrow);
+  bloch.arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 10), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  bloch.arrowHead.position.set(0, 1.09, 0); bloch.scene.add(bloch.arrowHead);
+
+  /* Measurement axis */
+  var mPts = [new THREE.Vector3(0,-1.2,0), new THREE.Vector3(0,1.2,0)];
+  bloch.mLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(mPts),
+    new THREE.LineDashedMaterial({ color: 0x34d399, dashSize: 0.1, gapSize: 0.06 }));
+  bloch.mLine.computeLineDistances(); bloch.scene.add(bloch.mLine);
+
+  bloch.scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  var dl = new THREE.DirectionalLight(0x7c3aed, 0.4); dl.position.set(2,3,2); bloch.scene.add(dl);
+
+  /* Resize */
+  var ro = new ResizeObserver(function(){
+    var w = el.clientWidth, h = el.clientHeight || 280;
+    bloch.cam.aspect = w / h; bloch.cam.updateProjectionMatrix(); bloch.rend.setSize(w, h);
+  });
+  ro.observe(el);
+
+  bloch.initialized = true;
+  (function loop(){ bloch.frameId = requestAnimationFrame(loop); bloch.ctrl.update(); bloch.rend.render(bloch.scene, bloch.cam); })();
+}
+
+function addCircle(r, type, color, op) {
+  var pts = [];
+  for (var i = 0; i <= 64; i++) {
+    var a = (i / 64) * Math.PI * 2;
+    if (type === 'equator') pts.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r));
+    else if (type === 'meridYZ') pts.push(new THREE.Vector3(0, Math.cos(a) * r, Math.sin(a) * r));
+    else pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, 0));
+  }
+  bloch.scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: op })));
+}
+function addAxis(dir, color) {
+  var pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(dir[0]*1.3, dir[1]*1.3, dir[2]*1.3)];
+  bloch.scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.55 })));
+}
+function addLabel(text, pos, color) {
+  var c = document.createElement('canvas'); c.width = 64; c.height = 36;
+  var cx = c.getContext('2d'); cx.font = '700 20px Inter'; cx.fillStyle = color;
+  cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(text, 32, 18);
+  var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false }));
+  sp.position.set(pos[0], pos[1], pos[2]); sp.scale.set(0.35, 0.2, 1); bloch.scene.add(sp);
+}
+
+function updateBloch(axis, reset) {
+  if (!bloch.initialized) return;
+  if (reset) { setArrow(0, 1, 0); setMeasAxis('Z'); return; }
+  var th = Math.PI / 2.5;
+  var phi = axis === 'X' ? 0 : axis === 'Y' ? Math.PI / 2 : Math.PI / 4;
+  setArrow(Math.sin(th) * Math.cos(phi), Math.cos(th), Math.sin(th) * Math.sin(phi));
+  setMeasAxis(axis);
+}
+function setArrow(x, y, z) {
+  var len = Math.sqrt(x*x+y*y+z*z);
+  var nx = x/len, ny = y/len, nz = z/len;
+  var pos = bloch.arrow.geometry.attributes.position;
+  pos.setXYZ(1, nx, ny, nz); pos.needsUpdate = true;
+  bloch.arrowHead.position.set(nx*1.09, ny*1.09, nz*1.09);
+  var q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), new THREE.Vector3(nx,ny,nz).normalize());
+  bloch.arrowHead.setRotationFromQuaternion(q);
+}
+function setMeasAxis(axis) {
+  var axes = { Z:[1,0,0], X:[0,1,0], Y:[0,0,1] };
+  var a = axes[axis] || [0,1,0];
+  var pos = bloch.mLine.geometry.attributes.position;
+  pos.setXYZ(0, -a[0]*1.2, -a[1]*1.2, -a[2]*1.2);
+  pos.setXYZ(1,  a[0]*1.2,  a[1]*1.2,  a[2]*1.2);
+  pos.needsUpdate = true; bloch.mLine.computeLineDistances();
+}
+
+/* --- AI TUTOR --- */
+var aiDB = {
+  grad:    ["The field gradient (dB/dz) is the critical parameter. Even a strong uniform field produces no net force on a magnetic dipole. It's the non-uniform part that creates the deflecting force F = mu * dB/dz. A steeper gradient means larger spatial separation between spin-up and spin-down trajectories.", "In the original 1922 Stern-Gerlach experiment, specially shaped pole pieces created a strong gradient. The gradient determines how far apart the two beam spots appear on the detector, making the quantization more visible with higher values."],
+  field:   ["Increasing the magnetic field strength amplifies the force F = mu * dB/dz on each atom. Stronger fields mean the deflection happens faster, but for beam separation it's the gradient that matters most. Try comparing field 10 vs 100 while keeping the gradient constant.", "A stronger field also increases the Larmor precession frequency of the spin. In Stern-Gerlach, the net translational deflection is what we observe, and that scales with both field strength and gradient."],
+  spin:    ["Quantum spin is intrinsic angular momentum with no classical analogue. For electrons (and silver atoms with one unpaired electron), spin is 1/2, giving exactly two measurement outcomes: +hbar/2 or -hbar/2 along any axis. The Stern-Gerlach experiment proved in 1922 that this discreteness is real, not theoretical.", "Before measurement, each silver atom is in a superposition of spin states. The inhomogeneous field acts as a quantum measurement device, collapsing the superposition into one of two definite outcomes. The probability of each outcome is given by Born's rule."],
+  axis:    ["Changing the measurement axis rotates the 'question' you are asking the quantum system. If you measured Z first (getting |up_z>), then measure X, you get a fresh 50/50 probabilistic result because |up_z> is an equal superposition of |+x> and |-x>. The Bloch sphere shows this geometrically.", "Each axis X, Y, Z corresponds to a different Hermitian observable. In Stern-Gerlach, you physically rotate the magnet to change the measurement axis. The two-outcome structure is universal - you always get exactly two spots, regardless of axis."],
+  particle:["Increasing particle count improves statistical precision. With 10 particles, getting 7 up and 3 down is easily possible by chance. With 1000 particles, you reliably see close to 50/50 for an equal superposition. This is the law of large numbers applied to quantum probability.", "Each individual measurement is truly random - quantum mechanics only predicts probabilities. No amount of information about the particle allows you to predict the individual outcome. Only the probability distribution P(up) = cos^2(theta/2) is predictable."],
+  default: ["Great question! The Stern-Gerlach experiment demonstrates that quantum spin is quantized - only discrete values are possible. This directly contradicts classical predictions which would produce a continuous smear of impacts on the detector.", "The profound insight: measurement in quantum mechanics is not passive observation. The inhomogeneous magnetic field actively forces the atom into a definite spin state. Before the field, the atom was in superposition; after, it has a definite spin projection.", "In the original 1922 experiment, Otto Stern and Walther Gerlach sent silver atoms through a non-uniform magnetic field. They saw exactly two distinct lines - not a continuous band. This shocked the physics community and confirmed Bohr's quantum model of the atom.", "Try running the experiment multiple times with the same parameters and observe how the results vary. With 50 particles the variation can be 5-8 particles. With 500 particles it shrinks to 1-2%. This statistical convergence reflects the law of large numbers in quantum mechanics."]
+};
+
+function aiResponse(q) {
+  var lq = q.toLowerCase();
+  var r = SG.state.results;
+  var ctx_str = r ? ('Based on your last run: ' + SG.params.n + ' particles, field ' + SG.params.field + '/100, gradient ' + SG.params.grad + '/100, ' + SG.params.axis + '-axis. Result: ' + r.up + ' spin-up, ' + r.dn + ' spin-down. ') : '';
+  var pool = aiDB.default;
+  if (lq.includes('gradient') || lq.includes('inhomo')) pool = aiDB.grad;
+  else if (lq.includes('field') || lq.includes('magnet') || lq.includes('strength')) pool = aiDB.field;
+  else if (lq.includes('spin') || lq.includes('quant')) pool = aiDB.spin;
+  else if (lq.includes('axis') || lq.includes('direction') || lq.includes(' x ') || lq.includes(' y ') || lq.includes(' z ')) pool = aiDB.axis;
+  else if (lq.includes('particle') || lq.includes('count') || lq.includes('number')) pool = aiDB.particle;
+  return ctx_str + pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* --- OBSERVATION CHECKER --- */
+var obsKeys = ['split','two','separ','beam','spin','up','down','deflect','discrete','quant','detect','magnet','differ','distinct','path','spot'];
+function checkObs(text) {
+  var lw = text.toLowerCase(), matches = obsKeys.filter(function(k){ return lw.includes(k); });
+  if (text.length < 20) return { ok: false, msg: 'Try to describe what you saw in more detail. Where did the particles go? Did they form one group or two?' };
+  if (matches.length >= 3) return { ok: true, msg: 'Excellent observation! You correctly identified key features (' + matches.slice(0,4).join(', ') + '). The beam splitting into two discrete paths is the hallmark of spin quantization - exactly what Stern and Gerlach observed in 1922. \u2713' };
+  if (matches.length >= 1) return { ok: false, msg: 'Good start! You noticed some key features. Also describe: Did the beam split or remain unified? How many distinct impact spots appeared? How does this compare to classical expectations?' };
+  return { ok: false, msg: 'Think carefully about the particle trajectories. Did the beam remain as one group through the magnetic field, or did something interesting happen? How many distinct groups appeared at the detectors?' };
+}
+
+/* --- INIT --- */
+document.addEventListener('DOMContentLoaded', function() {
+  resize();
+  setTimeout(initBloch, 120);
+
+  document.getElementById('c-particles').addEventListener('input', function(){ document.getElementById('v-particles').textContent = this.value; });
+  document.getElementById('c-field').addEventListener('input', function(){ document.getElementById('v-field').textContent = this.value; });
+  document.getElementById('c-grad').addEventListener('input', function(){ document.getElementById('v-grad').textContent = this.value; });
+  document.getElementById('c-axis').addEventListener('change', function(){
+    document.getElementById('axis-ind').innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Measurement Axis: ' + this.value;
+    if (bloch.initialized) setMeasAxis(this.value);
+  });
+
+  document.getElementById('run-btn').addEventListener('click', runSim);
+  document.getElementById('reset-btn').addEventListener('click', resetSim);
+  document.getElementById('run-again-btn').addEventListener('click', function(){ document.getElementById('run-again').classList.remove('show'); runSim(); });
+
+  document.getElementById('check-obs').addEventListener('click', function(){
+    var text = document.getElementById('obs-ta').value.trim();
+    var r = checkObs(text);
+    var fb = document.getElementById('obs-fb');
+    fb.textContent = r.msg;
+    fb.style.background = r.ok ? 'rgba(5,150,105,0.12)' : 'rgba(245,158,11,0.1)';
+    fb.style.border = r.ok ? '1px solid rgba(5,150,105,0.35)' : '1px solid rgba(245,158,11,0.3)';
+    fb.style.color = r.ok ? '#34d399' : '#fbbf24';
+    fb.classList.add('show');
+  });
+  document.getElementById('clear-obs').addEventListener('click', function(){
+    document.getElementById('obs-ta').value = '';
+    document.getElementById('obs-fb').classList.remove('show');
+  });
+
+  function sendAI(){
+    var f = document.getElementById('ai-field'), q = f.value.trim(); if (!q) return; f.value = '';
+    var msgs = document.getElementById('ai-msgs');
+    var ud = document.createElement('div'); ud.className = 'ai-msg user';
+    ud.innerHTML = '<div class="ai-ava">\uD83D\uDC64</div><div class="ai-bubble">' + q + '</div>';
+    msgs.appendChild(ud);
+    var td = document.createElement('div'); td.className = 'ai-msg'; td.id = 'ai-typing';
+    td.innerHTML = '<div class="ai-ava">\uD83E\uDD16</div><div class="ai-bubble" style="color:var(--t3);font-style:italic">Thinking...</div>';
+    msgs.appendChild(td); msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(function(){
+      var ty = document.getElementById('ai-typing'); if (ty) ty.remove();
+      var bd = document.createElement('div'); bd.className = 'ai-msg';
+      bd.innerHTML = '<div class="ai-ava">\uD83E\uDD16</div><div class="ai-bubble">' + aiResponse(q) + '</div>';
+      msgs.appendChild(bd); msgs.scrollTop = msgs.scrollHeight;
+    }, 700 + Math.random() * 500);
+  }
+  document.getElementById('ai-send').addEventListener('click', sendAI);
+  document.getElementById('ai-field').addEventListener('keydown', function(e){ if (e.key === 'Enter') sendAI(); });
+});
+</script>
+</body>
+</html>

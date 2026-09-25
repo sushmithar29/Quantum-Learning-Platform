@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloch Sphere Dynamics & Qubit State Evolution – QuantumLab Virtual Labs</title>
+  <meta name="description" content="Explore the geometric representation of single-qubit states on the unit Bloch sphere. Apply continuous Euler rotations, observe gate actions, and understand SU(2) state transformations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/virtual-lab-environment.css" />
+</head>
+<body class="vlab-body">
+
+  <!-- TOP BAR -->
+  <header class="vlab-topbar">
+    <div class="vlab-topbar__main">
+      <div class="vlab-topbar__left">
+        <a href="index.html" class="vlab-back-portal" id="back-to-vlabs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Virtual Labs
+        </a>
+        <div class="vlab-title-group">
+          <div class="vlab-category-badge"><span>🔮</span> Quantum State Physics</div>
+          <h1 class="vlab-exp-name">Bloch Sphere Dynamics</h1>
+        </div>
+      </div>
+      <div class="vlab-topbar__center">
+        <div class="vlab-rating-pill">
+          <span class="vlab-rating-stars">★★★★★</span>
+          <span>4.8</span>
+          <span style="opacity:0.6;font-size:0.7rem">(98 reviews)</span>
+        </div>
+      </div>
+      <div class="vlab-topbar__actions">
+        <button class="vlab-action-btn" id="btn-rate-lab">★ Rate Lab</button>
+        <button class="vlab-action-btn" id="btn-report-bug">🐞 Report Bug</button>
+        <button class="vlab-action-btn" id="btn-reset-lab">↺ Reset Lab</button>
+        <button class="vlab-action-btn vlab-action-btn--primary" id="btn-fullscreen-lab">⛶ Fullscreen</button>
+      </div>
+    </div>
+    <div class="vlab-breadcrumb-bar">
+      <div class="vlab-breadcrumbs">
+        <a href="../index.html">QuantumLab</a>
+        <span class="sep">></span>
+        <a href="index.html">Virtual Labs</a>
+        <span class="sep">></span>
+        <a href="index.html#labs-list">Quantum State Physics</a>
+        <span class="sep">></span>
+        <span class="current">Bloch Sphere Dynamics (Exp 02)</span>
+      </div>
+      <div class="vlab-status-indicator">
+        <span class="vlab-status-pulse"></span>
+        <span id="bloch-sim-status">Simulation Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="vlab-workspace" id="vlab-workspace">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="vlab-sidebar">
+      <div class="vlab-sidebar__title">Laboratory Workflow</div>
+      <nav id="vlab-nav-tabs">
+        <button class="vlab-nav-tab" data-tab="aim"><span class="vlab-nav-tab__icon">🎯</span><span>Aim</span></button>
+        <button class="vlab-nav-tab" data-tab="theory"><span class="vlab-nav-tab__icon">📖</span><span>Theory</span></button>
+        <button class="vlab-nav-tab" data-tab="objectives"><span class="vlab-nav-tab__icon">🎓</span><span>Learning Objectives</span></button>
+        <button class="vlab-nav-tab" data-tab="procedure"><span class="vlab-nav-tab__icon">📋</span><span>Procedure</span></button>
+        <button class="vlab-nav-tab active" data-tab="simulation"><span class="vlab-nav-tab__icon">🔬</span><span>Simulation</span><span class="vlab-nav-tab__badge">Live</span></button>
+        <button class="vlab-nav-tab" data-tab="observation"><span class="vlab-nav-tab__icon">👁️</span><span>Observation</span></button>
+        <button class="vlab-nav-tab" data-tab="results"><span class="vlab-nav-tab__icon">📊</span><span>Results</span></button>
+        <button class="vlab-nav-tab" data-tab="self-eval"><span class="vlab-nav-tab__icon">📝</span><span>Self Evaluation</span></button>
+        <button class="vlab-nav-tab" data-tab="assignment"><span class="vlab-nav-tab__icon">✍️</span><span>Assignment</span></button>
+        <button class="vlab-nav-tab" data-tab="references"><span class="vlab-nav-tab__icon">📚</span><span>References</span></button>
+        <button class="vlab-nav-tab" data-tab="feedback"><span class="vlab-nav-tab__icon">💬</span><span>Feedback</span></button>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="vlab-main-content">
+
+      <!-- TAB: AIM -->
+      <section class="vlab-tab-panel" id="panel-aim">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>🎯</span> Section 01</div>
+            <h2 class="vlab-edu-title">Experiment Aim</h2>
+          </div>
+          <p style="font-size:1.05rem;color:var(--vlab-text);line-height:1.8">
+            To visualize and manipulate single-qubit quantum states as points on the unit Bloch sphere S², apply discrete unitary quantum gate transformations (X, Y, Z, H, S, T) which correspond to specific geometric rotations in SU(2), perform continuous Euler angle rotations Rx(θ), Ry(θ), Rz(φ) via interactive sliders, and establish the correspondence between complex probability amplitudes and 3D Cartesian Bloch coordinates.
+          </p>
+          <div style="margin-top:1rem">
+            <button class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem" onclick="switchVLabTab('simulation')">
+              Launch Live Simulation →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: THEORY -->
+      <section class="vlab-tab-panel" id="panel-theory">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📖</span> Section 02</div>
+            <h2 class="vlab-edu-title">Theoretical Foundations</h2>
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:0.5rem">1. Qubit State Space and Bloch Representation</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Any single-qubit pure state is a unit vector in C², parameterized up to global phase by two real angles θ (polar) and φ (azimuthal):
+          </p>
+          <div class="vlab-math-block">
+            |ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩<br/>
+            <br/>
+            Bloch Cartesian coordinates:<br/>
+            x = sin(θ)cos(φ),   y = sin(θ)sin(φ),   z = cos(θ)<br/>
+            <br/>
+            |0⟩ → north pole (0,0,1),   |1⟩ → south pole (0,0,-1)<br/>
+            |+⟩ = (|0⟩+|1⟩)/√2 → (+x axis),   |-⟩ → (-x axis)
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">2. Gates as SO(3) Rotations</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Every single-qubit unitary gate U ∈ SU(2) corresponds to a rotation on the Bloch sphere:
+          </p>
+          <div class="vlab-math-block">
+            • Pauli-X: 180° rotation about x-axis  →  |0⟩ ↔ |1⟩<br/>
+            • Pauli-Y: 180° rotation about y-axis  →  |0⟩ → i|1⟩,  |1⟩ → -i|0⟩<br/>
+            • Pauli-Z: 180° rotation about z-axis  →  relative phase π on |1⟩<br/>
+            • Hadamard H: 180° rotation about (x+z)/√2 axis<br/>
+            • Phase S: 90° rotation about z-axis<br/>
+            • Phase T: 45° rotation about z-axis<br/>
+            <br/>
+            General rotation: Rn̂(θ) = cos(θ/2)·I − i·sin(θ/2)·(nx·X + ny·Y + nz·Z)
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">3. Mixed States and Bloch Ball</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Pure states reside on the sphere surface |r| = 1. Mixed states (introduced by decoherence or tracing) reside inside the Bloch ball |r| < 1. The completely mixed state ρ = I/2 sits at the origin.
+          </p>
+          <div class="vlab-math-block">
+            ρ = (I + r·σ)/2,  where r = (⟨X⟩, ⟨Y⟩, ⟨Z⟩)
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: LEARNING OBJECTIVES -->
+      <section class="vlab-tab-panel" id="panel-objectives">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>🎓</span> Section 03</div>
+            <h2 class="vlab-edu-title">Learning Objectives</h2>
+          </div>
+          <ul style="color:var(--vlab-text-secondary);font-size:0.95rem;display:flex;flex-direction:column;gap:1rem;padding-left:1.5rem">
+            <li>Map complex two-dimensional state vectors (α, β) to 3D Cartesian Bloch coordinates (x, y, z) using polar and azimuthal angles θ and φ.</li>
+            <li>Apply discrete quantum gates (X, Y, Z, H, S, T) and interpret each as a specific geometric rotation on the Bloch sphere surface.</li>
+            <li>Perform continuous Euler angle rotations Rx(θ), Ry(θ), Rz(φ) using interactive sliders and observe the Bloch vector trajectory.</li>
+            <li>Understand why global phases e^(iγ) are physically unobservable (they don't change the Bloch vector position).</li>
+            <li>Analyze how decoherence and environmental noise shrink the Bloch vector from the sphere surface toward the origin (mixed states).</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- TAB: PROCEDURE -->
+      <section class="vlab-tab-panel" id="panel-procedure">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📋</span> Section 04</div>
+            <h2 class="vlab-edu-title">Step-by-Step Procedure</h2>
+          </div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">01</div>
+              <div class="vlab-step-content">
+                <h4>Initialize Qubit State</h4>
+                <p>Navigate to the Simulation tab. The Bloch sphere displays the initial ground state |0⟩ at the north pole (z = +1). Use the state preset buttons to load common starting states.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">02</div>
+              <div class="vlab-step-content">
+                <h4>Apply Gate Transformations</h4>
+                <p>Click any gate button (H, X, Y, Z, S, T) in the Gate Panel. The Bloch vector animates smoothly to its new position showing the rotation axis and resulting state.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">03</div>
+              <div class="vlab-step-content">
+                <h4>Perform Continuous Rotations</h4>
+                <p>Use the Rx(θ), Ry(θ), Rz(φ) sliders to apply arbitrary rotation angles around each axis. Observe the continuous trajectory traced by the Bloch vector on the sphere surface.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">04</div>
+              <div class="vlab-step-content">
+                <h4>Record State Coordinates</h4>
+                <p>Read the live state vector display showing α, β amplitudes and their phases. Note the corresponding (x, y, z) Bloch coordinates and measurement probabilities P(|0⟩) and P(|1⟩).</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">05</div>
+              <div class="vlab-step-content">
+                <h4>Compare Theory with Simulation</h4>
+                <p>Verify that the computed Bloch coordinates from theory (x = sin θ cos φ, y = sin θ sin φ, z = cos θ) match the live coordinates displayed during the simulation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: SIMULATION -->
+      <section class="vlab-tab-panel active" id="panel-simulation">
+        <div class="vlab-sim-layout">
+
+          <!-- APPARATUS: Bloch Sphere Canvas -->
+          <div class="vlab-apparatus-box">
+            <div class="vlab-apparatus-header">
+              <div class="vlab-apparatus-title">
+                <span>🔮</span> Bloch Sphere – 3D State Visualization
+              </div>
+              <div class="vlab-apparatus-controls-bar">
+                <button class="vlab-tool-btn" id="btn-auto-rotate" title="Toggle auto-rotation">⟳ Auto-Rotate</button>
+                <button class="vlab-tool-btn" id="btn-show-axes" title="Toggle axis labels">± Axes</button>
+              </div>
+            </div>
+
+            <!-- Bloch Sphere Canvas Stage -->
+            <div class="vlab-canvas-stage" style="min-height:360px;display:flex;align-items:center;justify-content:center;padding:1rem">
+              <canvas id="bloch-canvas" width="360" height="360" style="max-width:100%;border-radius:8px;background:rgba(10,13,38,0.6)"></canvas>
+            </div>
+
+            <!-- State presets footer -->
+            <div class="vlab-apparatus-footer">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--vlab-text-muted);text-transform:uppercase">State Presets:</div>
+              <div class="vlab-presets-bar">
+                <button class="vlab-preset-chip active" data-preset="|0⟩">|0⟩ North Pole</button>
+                <button class="vlab-preset-chip" data-preset="|1⟩">|1⟩ South Pole</button>
+                <button class="vlab-preset-chip" data-preset="|+⟩">|+⟩ Equator +X</button>
+                <button class="vlab-preset-chip" data-preset="|-⟩">|-⟩ Equator −X</button>
+                <button class="vlab-preset-chip" data-preset="|i⟩">|i⟩ Equator +Y</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTROLS PANEL -->
+          <div class="vlab-controls-panel">
+
+            <!-- Gate Buttons -->
+            <div>
+              <div class="vlab-control-group-title">
+                <span>Gate Operations</span>
+                <span style="color:var(--vlab-cyan-light);font-size:0.65rem">Click to apply</span>
+              </div>
+              <div class="vlab-gate-palette" style="grid-template-columns:repeat(3,1fr)">
+                <div class="vlab-palette-gate active" data-gate="H" title="Hadamard – rotates about (x+z)/√2 axis">H</div>
+                <div class="vlab-palette-gate" data-gate="X" title="Pauli-X – 180° about x-axis">X</div>
+                <div class="vlab-palette-gate" data-gate="Y" title="Pauli-Y – 180° about y-axis">Y</div>
+                <div class="vlab-palette-gate" data-gate="Z" title="Pauli-Z – 180° about z-axis">Z</div>
+                <div class="vlab-palette-gate" data-gate="S" title="S Gate – 90° about z-axis">S</div>
+                <div class="vlab-palette-gate" data-gate="T" title="T Gate – 45° about z-axis">T</div>
+              </div>
+            </div>
+
+            <!-- Rotation Sliders -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Rx(θ) Rotation</span>
+                <span class="vlab-variable-val" id="rx-val">0°</span>
+              </div>
+              <input type="range" class="vlab-slider" id="rx-slider" min="0" max="360" step="1" value="0" />
+            </div>
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Ry(θ) Rotation</span>
+                <span class="vlab-variable-val" id="ry-val">0°</span>
+              </div>
+              <input type="range" class="vlab-slider" id="ry-slider" min="0" max="360" step="1" value="0" />
+            </div>
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Rz(φ) Phase</span>
+                <span class="vlab-variable-val" id="rz-val">0°</span>
+              </div>
+              <input type="range" class="vlab-slider" id="rz-slider" min="0" max="360" step="1" value="0" />
+            </div>
+
+            <!-- Run Buttons -->
+            <div class="vlab-run-buttons">
+              <button class="vlab-btn-run" id="measure-bloch-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                MEASURE STATE
+              </button>
+              <button class="vlab-btn-secondary" id="reset-bloch-btn">↺ Reset State</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS GRID -->
+        <div class="vlab-analytics-grid">
+
+          <!-- Observation -->
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title"><span>🔮</span> Current Quantum State</div>
+              <div class="vlab-card__badge" id="bloch-state-badge">|0⟩ Ground State</div>
+            </div>
+            <div class="vlab-observation-box" id="bloch-observation-text">
+              Qubit initialized to ground state |0⟩. The Bloch vector points to the north pole. Apply gates or rotate sliders to evolve the state.
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title"><span>📊</span> State Coordinates & Probabilities</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem">
+              <div style="background:rgba(10,13,38,0.6);border-radius:8px;padding:0.75rem;border:1px solid var(--vlab-border)">
+                <div style="font-size:0.7rem;color:var(--vlab-text-muted);margin-bottom:0.3rem">Bloch Vector</div>
+                <div style="font-family:var(--vlab-mono);font-size:0.8rem;display:flex;flex-direction:column;gap:0.2rem">
+                  <span>x = <strong id="bx-val" style="color:#a78bfa">0.000</strong></span>
+                  <span>y = <strong id="by-val" style="color:#06b6d4">0.000</strong></span>
+                  <span>z = <strong id="bz-val" style="color:#34d399">1.000</strong></span>
+                </div>
+              </div>
+              <div style="background:rgba(10,13,38,0.6);border-radius:8px;padding:0.75rem;border:1px solid var(--vlab-border)">
+                <div style="font-size:0.7rem;color:var(--vlab-text-muted);margin-bottom:0.3rem">Probabilities</div>
+                <div style="font-family:var(--vlab-mono);font-size:0.8rem;display:flex;flex-direction:column;gap:0.2rem">
+                  <span>P(|0⟩) = <strong id="p0-val" style="color:#34d399">100%</strong></span>
+                  <span>P(|1⟩) = <strong id="p1-val" style="color:#fb7185">0%</strong></span>
+                </div>
+              </div>
+            </div>
+            <!-- Simple measurement histogram -->
+            <div id="bloch-histogram" class="vlab-histogram-container" style="display:none"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: OBSERVATION -->
+      <section class="vlab-tab-panel" id="panel-observation">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>👁️</span> Section 06</div>
+            <h2 class="vlab-edu-title">Observation Analysis</h2>
+          </div>
+          <p style="color:var(--vlab-text-secondary);font-size:0.95rem">Key phenomena observable during the Bloch sphere simulation:</p>
+          <div class="vlab-steps-list" style="margin-top:1rem">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">A</div>
+              <div class="vlab-step-content">
+                <h4>Superposition Equator</h4>
+                <p>All states on the equatorial great circle (θ = π/2) represent maximum superposition states with equal probability P(|0⟩) = P(|1⟩) = 50%, differing only in relative phase φ.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">B</div>
+              <div class="vlab-step-content">
+                <h4>Hadamard Geometry</h4>
+                <p>The Hadamard gate performs a 180° rotation about the (x+z)/√2 diagonal axis, swapping the north and equatorial +x poles: H|0⟩ = |+⟩, H|+⟩ = |0⟩. Applying H twice returns to identity.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">C</div>
+              <div class="vlab-step-content">
+                <h4>Phase Invariance of Measurement</h4>
+                <p>The Z gate applies a 180° z-rotation: |+⟩ → |-⟩. Though the Bloch vector flips along the equator, P(|0⟩) remains unchanged at 50% — demonstrating that z-basis measurement cannot detect relative phase.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: RESULTS -->
+      <section class="vlab-tab-panel" id="panel-results">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📊</span> Section 07</div>
+            <h2 class="vlab-edu-title">Experimental Results</h2>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:1rem;color:var(--vlab-text)">
+            <thead>
+              <tr style="border-bottom:1px solid var(--vlab-border);color:var(--vlab-primary-light);text-align:left">
+                <th style="padding:0.75rem">Gate Applied</th>
+                <th style="padding:0.75rem">Initial State</th>
+                <th style="padding:0.75rem">Final State</th>
+                <th style="padding:0.75rem">Bloch Rotation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">H (Hadamard)</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|0⟩</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|+⟩ = (|0⟩+|1⟩)/√2</td>
+                <td style="padding:0.75rem;color:var(--vlab-cyan-light)">180° about (x+z)/√2</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">X (Pauli-X)</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|0⟩</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|1⟩</td>
+                <td style="padding:0.75rem;color:var(--vlab-cyan-light)">180° about x-axis</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">Z (Pauli-Z)</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|+⟩</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|-⟩ = (|0⟩−|1⟩)/√2</td>
+                <td style="padding:0.75rem;color:var(--vlab-cyan-light)">180° about z-axis</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">S (Phase √Z)</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|+⟩</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">|i⟩ = (|0⟩+i|1⟩)/√2</td>
+                <td style="padding:0.75rem;color:var(--vlab-cyan-light)">90° about z-axis</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: SELF EVALUATION -->
+      <section class="vlab-tab-panel" id="panel-self-eval">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📝</span> Section 08</div>
+            <h2 class="vlab-edu-title">Self Evaluation Quiz</h2>
+          </div>
+          <div class="vlab-quiz-container" id="bloch-quiz"></div>
+        </div>
+      </section>
+
+      <!-- TAB: ASSIGNMENT -->
+      <section class="vlab-tab-panel" id="panel-assignment">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>✍️</span> Section 09</div>
+            <h2 class="vlab-edu-title">Assignments</h2>
+          </div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">A1</div>
+              <div class="vlab-step-content">
+                <h4>Construct Arbitrary State via Euler Rotations</h4>
+                <p>Using only the Ry and Rz sliders (no X/Y/Z gates), prepare the state |ψ⟩ = (√3/2)|0⟩ + (1/2)|1⟩ (which lies at θ = 60° on the Bloch sphere). Record the slider values and verify by comparing P(|0⟩) = 75%.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">A2</div>
+              <div class="vlab-step-content">
+                <h4>Gate Sequence: T gate Power Series</h4>
+                <p>Starting from |+⟩, apply the T gate 8 consecutive times. Predict and verify using the simulation that T⁸ = Z (i.e., 8 × 45° = 360° → identity, but since T acts on |1⟩ component, T⁴ = Z). Document each intermediate Bloch vector position.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: REFERENCES -->
+      <section class="vlab-tab-panel" id="panel-references">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📚</span> Section 10</div>
+            <h2 class="vlab-edu-title">References & Bibliography</h2>
+          </div>
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">R1</div>
+              <div class="vlab-step-content">
+                <h4>Quantum Computation and Quantum Information</h4>
+                <p>Nielsen, M. A. & Chuang, I. L. — Cambridge University Press, 10th Anniversary Edition, 2010. <a href="https://doi.org/10.1017/CBO9780511976667" target="_blank" rel="noopener" style="color:var(--vlab-cyan-light)">doi.org/10.1017/CBO9780511976667</a></p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">R2</div>
+              <div class="vlab-step-content">
+                <h4>Quantum Mechanics and Path Integrals</h4>
+                <p>Feynman, R. P. & Hibbs, A. R. — McGraw-Hill, 1965. Provides foundational context on spin-1/2 systems and SU(2) symmetry.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: FEEDBACK -->
+      <section class="vlab-tab-panel" id="panel-feedback">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>💬</span> Section 11</div>
+            <h2 class="vlab-edu-title">Experiment Feedback</h2>
+          </div>
+          <form id="exp-feedback-form">
+            <div class="vlab-variable-row">
+              <label style="font-size:0.85rem;color:var(--vlab-text-secondary)">Overall Rating</label>
+              <div style="display:flex;gap:0.5rem;margin-top:0.5rem" id="fb-stars">
+                <span data-val="1" style="cursor:pointer;font-size:1.5rem;color:#fbbf24">★</span>
+                <span data-val="2" style="cursor:pointer;font-size:1.5rem;color:#fbbf24">★</span>
+                <span data-val="3" style="cursor:pointer;font-size:1.5rem;color:#fbbf24">★</span>
+                <span data-val="4" style="cursor:pointer;font-size:1.5rem;color:#fbbf24">★</span>
+                <span data-val="5" style="cursor:pointer;font-size:1.5rem;color:#fbbf24">★</span>
+              </div>
+            </div>
+            <div class="vlab-variable-row" style="flex-direction:column;gap:0.5rem">
+              <label style="font-size:0.85rem;color:var(--vlab-text-secondary)">Your Comments</label>
+              <textarea rows="4" style="width:100%;background:rgba(10,13,38,0.8);border:1px solid var(--vlab-border);border-radius:8px;color:#fff;padding:0.75rem;font-size:0.9rem;outline:none;resize:vertical" placeholder="Share your experience with this lab..."></textarea>
+            </div>
+            <button type="submit" class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem;margin-top:0.5rem">Submit Feedback</button>
+          </form>
+          <div id="feedback-sent-msg" style="display:none;padding:1rem;background:rgba(5,150,105,0.2);border:1px solid rgba(52,211,153,0.3);border-radius:8px;color:#34d399;margin-top:1rem">
+            ✅ Thank you for your feedback! Your insights help improve this lab.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/virtual-lab-data.js"></script>
+  <script src="../js/virtual-lab-environment.js"></script>
+  <script>
+    // ============================================================
+    // BLOCH SPHERE LAB ENGINE
+    // ============================================================
+    (function() {
+      const canvas = document.getElementById('bloch-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const cx = W / 2, cy = H / 2, R = 140;
+
+      // Qubit state
+      let theta = 0;    // polar angle [0, pi]
+      let phi = 0;      // azimuthal angle [0, 2pi]
+
+      // Camera
+      let camRot = { x: 0.35, y: -0.6 };
+      let autoRotate = false;
+      let autoAngle = 0;
+      let showAxes = true;
+      let animFrame = null;
+      let measuring = false;
+
+      // History trail
+      let trail = [];
+
+      function blochToXYZ(t, p) {
+        return {
+          x: Math.sin(t) * Math.cos(p),
+          y: Math.sin(t) * Math.sin(p),
+          z: Math.cos(t)
+        };
+      }
+
+      function project(bx, by, bz) {
+        const cr = autoRotate ? autoAngle : camRot.y;
+        const cp = camRot.x;
+        // Rotate around y (azimuth) then x (elevation)
+        const ry = bx * Math.cos(cr) + bz * Math.sin(cr);
+        const rz = -bx * Math.sin(cr) + bz * Math.cos(cr);
+        const rx = by;
+        const px = ry * Math.cos(cp) - rx * Math.sin(cp);
+        const py = ry * Math.sin(cp) + rx * Math.cos(cp);
+        return { sx: cx + px * R, sy: cy - rz * R, depth: rz };
+      }
+
+      function drawSphere() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Background gradient
+        const bg = ctx.createRadialGradient(cx, cy, 10, cx, cy, R * 1.2);
+        bg.addColorStop(0, 'rgba(15,20,70,0.9)');
+        bg.addColorStop(1, 'rgba(5,7,22,0.95)');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw sphere circles
+        function drawCircle(axisVec, color, dashed) {
+          ctx.beginPath();
+          if (dashed) ctx.setLineDash([4, 4]);
+          else ctx.setLineDash([]);
+          for (let i = 0; i <= 64; i++) {
+            const a = (i / 64) * Math.PI * 2;
+            const [bx, by, bz] = axisVec === 'xy'
+              ? [Math.cos(a), Math.sin(a), 0]
+              : axisVec === 'xz'
+              ? [Math.cos(a), 0, Math.sin(a)]
+              : [0, Math.cos(a), Math.sin(a)];
+            const p = project(bx, by, bz);
+            if (i === 0) ctx.moveTo(p.sx, p.sy);
+            else ctx.lineTo(p.sx, p.sy);
+          }
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Equatorial and meridian circles
+        drawCircle('xy', 'rgba(139,92,246,0.35)', false);
+        drawCircle('xz', 'rgba(6,182,212,0.2)', true);
+        drawCircle('yz', 'rgba(6,182,212,0.2)', true);
+
+        // Axes
+        if (showAxes) {
+          const axes = [
+            { dir: [1,0,0], neg: [-1,0,0], label: '+x', nlabel: '-x', color: '#a78bfa' },
+            { dir: [0,1,0], neg: [0,-1,0], label: '+y', nlabel: '-y', color: '#06b6d4' },
+            { dir: [0,0,1], neg: [0,0,-1], label: '|0⟩', nlabel: '|1⟩', color: '#34d399' }
+          ];
+          axes.forEach(ax => {
+            const p1 = project(...ax.dir);
+            const p2 = project(...ax.neg);
+            ctx.strokeStyle = ax.color + '80';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(p1.sx, p1.sy);
+            ctx.stroke();
+            ctx.setLineDash([3,3]);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(p2.sx, p2.sy);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = ax.color;
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.fillText(ax.label, p1.sx + 4, p1.sy - 4);
+            ctx.fillStyle = ax.color + 'aa';
+            ctx.fillText(ax.nlabel, p2.sx + 4, p2.sy - 4);
+          });
+        }
+
+        // Trail
+        if (trail.length > 1) {
+          ctx.beginPath();
+          ctx.setLineDash([]);
+          trail.forEach((pt, i) => {
+            const p = project(pt.x, pt.y, pt.z);
+            if (i === 0) ctx.moveTo(p.sx, p.sy);
+            else ctx.lineTo(p.sx, p.sy);
+          });
+          ctx.strokeStyle = 'rgba(167,139,250,0.4)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Bloch vector
+        const { x, y, z } = blochToXYZ(theta, phi);
+        const tip = project(x, y, z);
+        const base = project(0, 0, 0);
+
+        // Projection lines (dashed) to axes
+        const px = project(x, 0, 0);
+        const pz = project(0, 0, z);
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(tip.sx, tip.sy); ctx.lineTo(px.sx, px.sy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(tip.sx, tip.sy); ctx.lineTo(pz.sx, pz.sy); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Main Bloch vector arrow
+        const gradient = ctx.createLinearGradient(base.sx, base.sy, tip.sx, tip.sy);
+        gradient.addColorStop(0, '#7c3aed');
+        gradient.addColorStop(1, '#06b6d4');
+        ctx.beginPath();
+        ctx.moveTo(base.sx, base.sy);
+        ctx.lineTo(tip.sx, tip.sy);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Arrowhead
+        const angle = Math.atan2(tip.sy - base.sy, tip.sx - base.sx);
+        ctx.beginPath();
+        ctx.moveTo(tip.sx, tip.sy);
+        ctx.lineTo(tip.sx - 12*Math.cos(angle-0.4), tip.sy - 12*Math.sin(angle-0.4));
+        ctx.lineTo(tip.sx - 12*Math.cos(angle+0.4), tip.sy - 12*Math.sin(angle+0.4));
+        ctx.closePath();
+        ctx.fillStyle = '#06b6d4';
+        ctx.fill();
+
+        // State label at tip
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px JetBrains Mono, monospace';
+        ctx.fillText('|ψ⟩', tip.sx + 6, tip.sy - 6);
+
+        // Origin dot
+        ctx.beginPath();
+        ctx.arc(base.sx, base.sy, 4, 0, Math.PI*2);
+        ctx.fillStyle = '#64748b';
+        ctx.fill();
+
+        // Tip dot (pulsing)
+        ctx.beginPath();
+        ctx.arc(tip.sx, tip.sy, 6, 0, Math.PI*2);
+        ctx.fillStyle = '#06b6d4';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(tip.sx, tip.sy, 9, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(6,182,212,0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      function updateStateDisplay() {
+        const { x, y, z } = blochToXYZ(theta, phi);
+        document.getElementById('bx-val').textContent = x.toFixed(3);
+        document.getElementById('by-val').textContent = y.toFixed(3);
+        document.getElementById('bz-val').textContent = z.toFixed(3);
+        const p0 = Math.round(Math.cos(theta/2)**2 * 100);
+        const p1 = 100 - p0;
+        document.getElementById('p0-val').textContent = p0 + '%';
+        document.getElementById('p1-val').textContent = p1 + '%';
+
+        // Update badge
+        const badge = document.getElementById('bloch-state-badge');
+        const obs = document.getElementById('bloch-observation-text');
+        if (Math.abs(z - 1) < 0.01) {
+          badge.textContent = '|0⟩ Ground State';
+          obs.textContent = 'Qubit is in the ground state |0⟩. Bloch vector at north pole. 100% probability of measuring 0.';
+        } else if (Math.abs(z + 1) < 0.01) {
+          badge.textContent = '|1⟩ Excited State';
+          obs.textContent = 'Qubit is in the excited state |1⟩. Bloch vector at south pole. 100% probability of measuring 1.';
+        } else if (Math.abs(z) < 0.05) {
+          badge.textContent = 'Equatorial Superposition';
+          obs.textContent = `Qubit in equal superposition with relative phase φ=${(phi*180/Math.PI).toFixed(0)}°. P(|0⟩)=P(|1⟩)=50%.`;
+        } else {
+          badge.textContent = 'Superposition State';
+          obs.textContent = `Qubit in superposition with P(|0⟩)=${p0}%, P(|1⟩)=${p1}%. Polar angle θ=${(theta*180/Math.PI).toFixed(1)}°, phase φ=${(phi*180/Math.PI).toFixed(1)}°.`;
+        }
+      }
+
+      function addTrailPoint() {
+        const { x, y, z } = blochToXYZ(theta, phi);
+        trail.push({ x, y, z });
+        if (trail.length > 80) trail.shift();
+      }
+
+      function render() {
+        if (autoRotate) autoAngle += 0.005;
+        drawSphere();
+        animFrame = requestAnimationFrame(render);
+      }
+
+      // Gate operations
+      const gates = {
+        H: () => {
+          // H maps: |0⟩→|+⟩, |1⟩→|-⟩, |+⟩→|0⟩, |-⟩→|1⟩
+          // Rotation 180° about (x+z)/√2 axis
+          const { x, y, z } = blochToXYZ(theta, phi);
+          // After H: (x,y,z) → (z,−y,x)
+          const nx = z, ny = -y, nz = x;
+          setFromXYZ(nx, ny, nz);
+        },
+        X: () => {
+          const { x, y, z } = blochToXYZ(theta, phi);
+          setFromXYZ(x, -y, -z);
+        },
+        Y: () => {
+          const { x, y, z } = blochToXYZ(theta, phi);
+          setFromXYZ(-x, y, -z);
+        },
+        Z: () => {
+          const { x, y, z } = blochToXYZ(theta, phi);
+          setFromXYZ(-x, -y, z);
+        },
+        S: () => {
+          // 90° rotation about z: (x,y,z) → (-y,x,z)
+          const { x, y, z } = blochToXYZ(theta, phi);
+          setFromXYZ(-y, x, z);
+        },
+        T: () => {
+          // 45° rotation about z: (x,y,z) → (x cos45 - y sin45, x sin45 + y cos45, z)
+          const { x, y, z } = blochToXYZ(theta, phi);
+          const c = Math.cos(Math.PI/4), s = Math.sin(Math.PI/4);
+          setFromXYZ(x*c - y*s, x*s + y*c, z);
+        }
+      };
+
+      function setFromXYZ(x, y, z) {
+        // Clamp to unit sphere
+        const len = Math.sqrt(x*x + y*y + z*z);
+        if (len > 0) { x /= len; y /= len; z /= len; }
+        theta = Math.acos(Math.max(-1, Math.min(1, z)));
+        phi = Math.atan2(y, x);
+        if (phi < 0) phi += Math.PI * 2;
+        addTrailPoint();
+        updateStateDisplay();
+        syncSliders();
+      }
+
+      function syncSliders() {
+        document.getElementById('rx-slider').value = 0;
+        document.getElementById('ry-slider').value = (theta * 180 / Math.PI).toFixed(0);
+        document.getElementById('rz-slider').value = (phi * 180 / Math.PI).toFixed(0);
+        document.getElementById('rx-val').textContent = '0°';
+        document.getElementById('ry-val').textContent = (theta * 180 / Math.PI).toFixed(0) + '°';
+        document.getElementById('rz-val').textContent = (phi * 180 / Math.PI).toFixed(0) + '°';
+      }
+
+      // Gate button clicks
+      document.querySelectorAll('.vlab-palette-gate').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const g = btn.dataset.gate;
+          if (gates[g]) {
+            document.querySelectorAll('.vlab-palette-gate').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            gates[g]();
+
+            // Flash status
+            const status = document.getElementById('bloch-sim-status');
+            if (status) { status.textContent = `Applied ${g} gate`; setTimeout(() => status.textContent = 'Simulation Ready', 1500); }
+          }
+        });
+      });
+
+      // Preset buttons
+      const presets = {
+        '|0⟩': [0, 0],
+        '|1⟩': [Math.PI, 0],
+        '|+⟩': [Math.PI/2, 0],
+        '|-⟩': [Math.PI/2, Math.PI],
+        '|i⟩': [Math.PI/2, Math.PI/2]
+      };
+      document.querySelectorAll('[data-preset]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = btn.dataset.preset;
+          if (presets[p]) {
+            trail = [];
+            [theta, phi] = presets[p];
+            document.querySelectorAll('[data-preset]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            addTrailPoint();
+            updateStateDisplay();
+            syncSliders();
+          }
+        });
+      });
+
+      // Rotation sliders
+      let rxBase = { theta: 0, phi: 0 };
+      document.getElementById('rx-slider').addEventListener('mousedown', () => { rxBase = { theta, phi }; });
+      document.getElementById('rx-slider').addEventListener('input', e => {
+        const angle = parseFloat(e.target.value) * Math.PI / 180;
+        document.getElementById('rx-val').textContent = e.target.value + '°';
+        // Rx rotation: (x,y,z) → (x, y cos - z sin, y sin + z cos)
+        const { x, y, z } = blochToXYZ(rxBase.theta, rxBase.phi);
+        const nx = x, ny = y*Math.cos(angle) - z*Math.sin(angle), nz = y*Math.sin(angle) + z*Math.cos(angle);
+        theta = Math.acos(Math.max(-1,Math.min(1,nz)));
+        phi = Math.atan2(ny, nx);
+        if (phi < 0) phi += Math.PI*2;
+        addTrailPoint();
+        updateStateDisplay();
+      });
+
+      document.getElementById('ry-slider').addEventListener('input', e => {
+        theta = parseFloat(e.target.value) * Math.PI / 180;
+        document.getElementById('ry-val').textContent = e.target.value + '°';
+        addTrailPoint();
+        updateStateDisplay();
+      });
+
+      document.getElementById('rz-slider').addEventListener('input', e => {
+        phi = parseFloat(e.target.value) * Math.PI / 180;
+        document.getElementById('rz-val').textContent = e.target.value + '°';
+        addTrailPoint();
+        updateStateDisplay();
+      });
+
+      // Measure button
+      document.getElementById('measure-bloch-btn').addEventListener('click', () => {
+        const p0 = Math.cos(theta/2)**2;
+        const result = Math.random() < p0 ? 0 : 1;
+        const histEl = document.getElementById('bloch-histogram');
+        histEl.style.display = 'flex';
+        histEl.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:0.4rem;width:100%">
+            <div style="font-size:0.7rem;color:var(--vlab-text-muted);margin-bottom:0.25rem">Measurement Result: <strong style="color:#34d399">|${result}⟩</strong> (single shot)</div>
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <span style="font-family:var(--vlab-mono);font-size:0.75rem;width:2rem">|0⟩</span>
+              <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:20px;overflow:hidden">
+                <div style="height:100%;width:${Math.round(p0*100)}%;background:linear-gradient(90deg,#7c3aed,#a78bfa);transition:width 0.6s"></div>
+              </div>
+              <span style="font-size:0.75rem;color:#a78bfa;width:3rem">${Math.round(p0*100)}%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <span style="font-family:var(--vlab-mono);font-size:0.75rem;width:2rem">|1⟩</span>
+              <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:20px;overflow:hidden">
+                <div style="height:100%;width:${Math.round((1-p0)*100)}%;background:linear-gradient(90deg,#e11d48,#fb7185);transition:width 0.6s"></div>
+              </div>
+              <span style="font-size:0.75rem;color:#fb7185;width:3rem">${Math.round((1-p0)*100)}%</span>
+            </div>
+          </div>`;
+        // Collapse state after measurement
+        if (result === 0) { theta = 0; phi = 0; }
+        else { theta = Math.PI; phi = 0; }
+        trail = [];
+        addTrailPoint();
+        updateStateDisplay();
+        syncSliders();
+
+        const status = document.getElementById('bloch-sim-status');
+        if (status) { status.textContent = `Measured → |${result}⟩ (collapsed)`; setTimeout(() => status.textContent = 'Simulation Ready', 2500); }
+      });
+
+      // Reset
+      document.getElementById('reset-bloch-btn').addEventListener('click', () => {
+        theta = 0; phi = 0; trail = [];
+        document.getElementById('bloch-histogram').style.display = 'none';
+        addTrailPoint();
+        updateStateDisplay();
+        syncSliders();
+        document.querySelectorAll('[data-preset]').forEach((b, i) => b.classList.toggle('active', i === 0));
+      });
+
+      // Auto-rotate toggle
+      document.getElementById('btn-auto-rotate').addEventListener('click', function() {
+        autoRotate = !autoRotate;
+        this.classList.toggle('active', autoRotate);
+        this.textContent = autoRotate ? '⏹ Stop Rotate' : '⟳ Auto-Rotate';
+      });
+
+      // Axes toggle
+      document.getElementById('btn-show-axes').addEventListener('click', function() {
+        showAxes = !showAxes;
+        this.classList.toggle('active', showAxes);
+      });
+
+      // Quiz data
+      const quizData = [
+        {
+          q: 'Which point on the Bloch sphere represents the state |+⟩ = (|0⟩+|1⟩)/√2?',
+          opts: ['North pole (z=+1)', 'South pole (z=−1)', 'Equator, positive x-axis (x=+1)', 'Equator, positive y-axis (y=+1)'],
+          ans: 2, exp: 'The |+⟩ state has equal amplitudes with zero relative phase, placing it at the equatorial +x intercept (θ=π/2, φ=0).'
+        },
+        {
+          q: 'Applying the Hadamard gate twice (H²) to any state |ψ⟩ gives:',
+          opts: ['X|ψ⟩ (bit-flip)', 'Z|ψ⟩ (phase flip)', '|ψ⟩ (identity — H is its own inverse)', '|1⟩ (always excited state)'],
+          ans: 2, exp: 'H is self-inverse: H² = I because H is both Hermitian and unitary. Geometrically, two 180° rotations about the same axis return to the starting point.'
+        },
+        {
+          q: 'For a qubit state at polar angle θ=60° on the Bloch sphere, what is P(|0⟩)?',
+          opts: ['50%', '75%', '25%', '60%'],
+          ans: 1, exp: 'P(|0⟩) = cos²(θ/2) = cos²(30°) = (√3/2)² = 3/4 = 75%.'
+        }
+      ];
+
+      const quizContainer = document.getElementById('bloch-quiz');
+      if (quizContainer) {
+        quizContainer.innerHTML = quizData.map((q, qi) => `
+          <div style="margin-bottom:2rem;padding:1.25rem;background:rgba(10,13,38,0.6);border:1px solid var(--vlab-border);border-radius:10px">
+            <p style="font-weight:600;margin-bottom:1rem;color:#fff">${qi+1}. ${q.q}</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem" id="qopts-bloch-${qi}">
+              ${q.opts.map((o, oi) => `
+                <button onclick="handleBlochQuiz(${qi},${oi})" style="text-align:left;padding:0.6rem 1rem;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--vlab-text-secondary);cursor:pointer;transition:all 0.2s" id="bq-${qi}-${oi}">${o}</button>
+              `).join('')}
+            </div>
+            <div id="bloch-exp-${qi}" style="display:none;margin-top:0.75rem;padding:0.75rem;background:rgba(5,150,105,0.1);border-radius:7px;color:#34d399;font-size:0.85rem">${q.exp}</div>
+          </div>
+        `).join('');
+      }
+
+      window.handleBlochQuiz = function(qi, oi) {
+        const q = quizData[qi];
+        const correct = oi === q.ans;
+        const btn = document.getElementById(`bq-${qi}-${oi}`);
+        btn.style.background = correct ? 'rgba(5,150,105,0.3)' : 'rgba(225,29,72,0.3)';
+        btn.style.borderColor = correct ? '#34d399' : '#fb7185';
+        btn.style.color = '#fff';
+        document.getElementById(`bloch-exp-${qi}`).style.display = 'block';
+      };
+
+      // Feedback form
+      const fbForm = document.getElementById('exp-feedback-form');
+      const fbMsg = document.getElementById('feedback-sent-msg');
+      if (fbForm && fbMsg) {
+        fbForm.addEventListener('submit', e => {
+          e.preventDefault();
+          fbForm.style.display = 'none';
+          fbMsg.style.display = 'block';
+        });
+      }
+
+      // Initial state
+      addTrailPoint();
+      updateStateDisplay();
+      render();
+
+    })();
+
+    // Tab switching (uses global fn from virtual-lab-environment.js if loaded, otherwise inline)
+    function switchVLabTab(tabId) {
+      document.querySelectorAll('.vlab-nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.vlab-tab-panel').forEach(p => p.classList.remove('active'));
+      const tab = document.querySelector(`.vlab-nav-tab[data-tab="${tabId}"]`);
+      const panel = document.getElementById(`panel-${tabId}`);
+      if (tab) tab.classList.add('active');
+      if (panel) panel.classList.add('active');
+    }
+
+    document.querySelectorAll('.vlab-nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchVLabTab(btn.dataset.tab));
+    });
+
+    // Action buttons
+    document.getElementById('btn-reset-lab').addEventListener('click', () => {
+      document.getElementById('reset-bloch-btn')?.click();
+    });
+    document.getElementById('btn-rate-lab').addEventListener('click', () => switchVLabTab('feedback'));
+    document.getElementById('btn-report-bug').addEventListener('click', () => {
+      alert('To report a simulation bug, use the Feedback tab.');
+      switchVLabTab('feedback');
+    });
+    document.getElementById('btn-fullscreen-lab').addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(console.log);
+        this.textContent = '✕ Exit Fullscreen';
+      } else {
+        document.exitFullscreen().catch(console.log);
+        this.textContent = '⛶ Fullscreen';
+      }
+    });
+  </script>
+</body>
+</html>

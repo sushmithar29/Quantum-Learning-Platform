@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Circuit Laboratory & Multi-Qubit Synthesis – QuantumLab Virtual Labs</title>
+  <meta name="description" content="Perform interactive quantum circuit synthesis. Build multi-qubit registers, apply unitary gates, create Bell states, and analyze quantum measurement collapse." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/virtual-lab-environment.css" />
+</head>
+<body class="vlab-body">
+
+  <!-- ============================================================
+       TOP LABORATORY STATUS & NAVIGATION BAR
+       ============================================================ -->
+  <header class="vlab-topbar">
+    <div class="vlab-topbar__main">
+      <div class="vlab-topbar__left">
+        <a href="index.html" class="vlab-back-portal" id="back-to-vlabs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Virtual Labs
+        </a>
+        <div class="vlab-title-group">
+          <div class="vlab-category-badge">
+            <span>⚛️</span> Quantum Computing & Information
+          </div>
+          <h1 class="vlab-exp-name">Quantum Circuit Laboratory</h1>
+        </div>
+      </div>
+
+      <div class="vlab-topbar__center">
+        <div class="vlab-rating-pill">
+          <span class="vlab-rating-stars">★★★★★</span>
+          <span>4.9</span>
+          <span style="opacity:0.6;font-size:0.7rem">(142 reviews)</span>
+        </div>
+      </div>
+
+      <div class="vlab-topbar__actions">
+        <button class="vlab-action-btn" id="btn-rate-lab" title="Rate Experiment">
+          ★ Rate Lab
+        </button>
+        <button class="vlab-action-btn" id="btn-report-bug" title="Report an Issue">
+          🐞 Report Bug
+        </button>
+        <button class="vlab-action-btn" id="btn-reset-lab" title="Reset All Variables">
+          ↺ Reset Lab
+        </button>
+        <button class="vlab-action-btn vlab-action-btn--primary" id="btn-fullscreen-lab" title="Fullscreen Simulation">
+          ⛶ Fullscreen
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-bar Breadcrumb Navigation -->
+    <div class="vlab-breadcrumb-bar">
+      <div class="vlab-breadcrumbs">
+        <a href="../index.html">QuantumLab</a>
+        <span class="sep">></span>
+        <a href="index.html">Virtual Labs</a>
+        <span class="sep">></span>
+        <a href="index.html#labs-list">Quantum Physics</a>
+        <span class="sep">></span>
+        <span class="current">Quantum Circuit Laboratory (Exp 01)</span>
+      </div>
+      <div class="vlab-status-indicator">
+        <span class="vlab-status-pulse"></span>
+        <span id="circuit-sim-status">Simulation Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       TWO-COLUMN WORKSPACE: LEFT SIDEBAR + MAIN STAGE
+       ============================================================ -->
+  <div class="vlab-workspace" id="vlab-workspace">
+
+    <!-- LEFT SIDEBAR: Laboratory Navigation -->
+    <aside class="vlab-sidebar">
+      <div class="vlab-sidebar__title">Laboratory Workflow</div>
+      <nav id="vlab-nav-tabs">
+        <button class="vlab-nav-tab" data-tab="aim">
+          <span class="vlab-nav-tab__icon">🎯</span>
+          <span>Aim</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="theory">
+          <span class="vlab-nav-tab__icon">📖</span>
+          <span>Theory</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="objectives">
+          <span class="vlab-nav-tab__icon">🎓</span>
+          <span>Learning Objectives</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="procedure">
+          <span class="vlab-nav-tab__icon">📋</span>
+          <span>Procedure</span>
+        </button>
+        <button class="vlab-nav-tab active" data-tab="simulation">
+          <span class="vlab-nav-tab__icon">🔬</span>
+          <span>Simulation</span>
+          <span class="vlab-nav-tab__badge">Live</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="observation">
+          <span class="vlab-nav-tab__icon">👁️</span>
+          <span>Observation</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="results">
+          <span class="vlab-nav-tab__icon">📊</span>
+          <span>Results</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="self-eval">
+          <span class="vlab-nav-tab__icon">📝</span>
+          <span>Self Evaluation</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="assignment">
+          <span class="vlab-nav-tab__icon">✍️</span>
+          <span>Assignment</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="references">
+          <span class="vlab-nav-tab__icon">📚</span>
+          <span>References</span>
+        </button>
+        <button class="vlab-nav-tab" data-tab="feedback">
+          <span class="vlab-nav-tab__icon">💬</span>
+          <span>Feedback</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="vlab-main-content">
+
+      <!-- ============================================================
+           TAB 1: AIM
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-aim">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>🎯</span> Section 01</div>
+            <h2 class="vlab-edu-title">Experiment Aim</h2>
+          </div>
+          <p style="font-size:1.05rem;color:var(--vlab-text);line-height:1.8">
+            To design, synthesize, and simulate quantum logic circuits on multi-qubit registers, verify the unitary action of single-qubit quantum gates (H, X, Y, Z, S, T) and entangling multi-qubit gates (CNOT, SWAP), create maximally entangled Einstein-Podolsky-Rosen (Bell) states, and analyze the resulting state vector amplitudes, density matrix components, and projective measurement distributions under statistical sampling.
+          </p>
+          <div style="margin-top:1rem">
+            <button class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.5rem" onclick="switchVLabTab('simulation')">
+              Launch Live Simulation →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 2: THEORY
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-theory">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📖</span> Section 02</div>
+            <h2 class="vlab-edu-title">Theoretical Foundations</h2>
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:0.5rem">1. The Qubit and Complex Hilbert Space</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            In quantum information, a quantum bit (qubit) is a two-level physical system described as a unit vector in a 2-dimensional complex Hilbert space $\mathcal{H}_2$. The orthonormal computational basis states are denoted in Dirac notation as:
+          </p>
+          <div class="vlab-math-block">
+            |0⟩ = [1, 0]ᵀ,   |1⟩ = [0, 1]ᵀ<br/>
+            |ψ⟩ = α|0⟩ + β|1⟩,   where α, β ∈ ℂ and |α|² + |β|² = 1
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">2. Single-Qubit Unitary Operators</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Any closed time-evolution of a quantum state is governed by a unitary transformation $U$ satisfying $U^\dagger U = I$. Key elementary quantum gates include:
+          </p>
+          <div class="vlab-math-block">
+            • Hadamard (H): H = (1/√2) [ [1,  1], [1, -1] ]  →  H|0⟩ = |+⟩,  H|1⟩ = |-⟩<br/>
+            • Pauli-X (NOT): X = [ [0, 1], [1, 0] ]          →  X|0⟩ = |1⟩,  X|1⟩ = |0⟩<br/>
+            • Pauli-Y:      Y = [ [0, -i], [i, 0] ]<br/>
+            • Pauli-Z:      Z = [ [1, 0], [0, -1] ]          →  Z|1⟩ = -|1⟩<br/>
+            • Phase Gate S: S = [ [1, 0], [0, i] ]           →  S = √Z<br/>
+            • T Gate (π/8): T = [ [1, 0], [0, e^(iπ/4)] ]    →  T² = S
+          </div>
+
+          <h3 style="color:#fff;font-size:1.15rem;margin-top:1.5rem">3. Multi-Qubit Entanglement & Controlled-NOT (CNOT)</h3>
+          <p style="color:var(--vlab-text-secondary)">
+            Composite quantum systems reside in the tensor product space $\mathcal{H}_A \otimes \mathcal{H}_B$. The Controlled-NOT gate acts on two qubits, flipping the target qubit conditioned on the control qubit:
+          </p>
+          <div class="vlab-math-block">
+            CNOT = |0⟩⟨0| ⊗ I + |1⟩⟨1| ⊗ X<br/>
+            <br/>
+            Applying H on q₀ and CNOT(q₀ → q₁) on initial state |00⟩:<br/>
+            |00⟩ ──[ H ⊗ I ]──> (|00⟩ + |10⟩)/√2 ──[ CNOT ]──> |Φ⁺⟩ = (|00⟩ + |11⟩)/√2
+          </div>
+          <p style="color:var(--vlab-text-secondary)">
+            The state $|\Phi^+\rangle$ is a maximally entangled Bell state that cannot be factored into independent single-qubit states $|\psi_A\rangle \otimes |\psi_B\rangle$, demonstrating non-local quantum correlations.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 3: LEARNING OBJECTIVES
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-objectives">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>🎓</span> Section 03</div>
+            <h2 class="vlab-edu-title">Learning Objectives</h2>
+          </div>
+          <ul style="color:var(--vlab-text-secondary);font-size:0.95rem;display:flex;flex-direction:column;gap:1rem;padding-left:1.5rem">
+            <li>Understand the matrix representation of unitary quantum gates and how they map basis states across Hilbert space.</li>
+            <li>Construct single-qubit superpositions using the Hadamard gate and verify probability amplitude equality.</li>
+            <li>Synthesize two-qubit entangled states (Bell states) using a cascade of Hadamard and CNOT gates.</li>
+            <li>Analyze the distinction between deterministic state vector rotation and stochastic projective measurement collapse.</li>
+            <li>Evaluate empirical measurement frequencies against theoretical probability distributions as a function of shot count.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 4: PROCEDURE
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-procedure">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📋</span> Section 04</div>
+            <h2 class="vlab-edu-title">Step-by-Step Procedure</h2>
+          </div>
+
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">01</div>
+              <div class="vlab-step-content">
+                <h4>Initialize Quantum Register</h4>
+                <p>Navigate to the Simulation tab. Choose the number of qubits (2 or 3) from the control panel. By default, all qubits are prepared in ground state |00⟩.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">02</div>
+              <div class="vlab-step-content">
+                <h4>Place Superposition Gates</h4>
+                <p>Click on the [H] (Hadamard) gate from the Gate Palette, then click the first slot on wire q0. This transforms qubit 0 into superposition (|0⟩+|1⟩)/√2.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">03</div>
+              <div class="vlab-step-content">
+                <h4>Create Entanglement with CNOT</h4>
+                <p>Select the [CNOT] gate and click on column 3 of the circuit. A control dot (●) appears on q0 and a target target (⊕) appears on q1, entangling both wires.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">04</div>
+              <div class="vlab-step-content">
+                <h4>Set Simulation Parameters</h4>
+                <p>Adjust the Shots slider to 512 or 1024 to establish high statistical confidence. Set the noise slider to 0% for ideal unitary evolution.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">05</div>
+              <div class="vlab-step-content">
+                <h4>Execute & Analyze Results</h4>
+                <p>Click "Run Simulation". Watch the animated quantum pulse travel across the wires, observe gate flashes, and verify the resulting 50:50 distribution of |00⟩ and |11⟩.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 5: SIMULATION (CORE LIVE APPARATUS)
+           ============================================================ -->
+      <section class="vlab-tab-panel active" id="panel-simulation">
+        
+        <!-- Two-column interactive apparatus & controls layout -->
+        <div class="vlab-sim-layout">
+
+          <!-- LEFT COLUMN (65-70%): Apparatus Box -->
+          <div class="vlab-apparatus-box">
+            <div class="vlab-apparatus-header">
+              <div class="vlab-apparatus-title">
+                <span>⚡</span> Quantum Circuit Synthesis Canvas
+              </div>
+              <div class="vlab-apparatus-controls-bar">
+                <button class="vlab-tool-btn" id="btn-clear-gates" title="Clear all gates">
+                  ✕ Clear
+                </button>
+                <button class="vlab-tool-btn" id="btn-export-qasm" title="View OpenQASM Representation">
+                  ⟨/⟩ OpenQASM
+                </button>
+              </div>
+            </div>
+
+            <!-- Wire Grid Stage -->
+            <div class="vlab-canvas-stage">
+              <div class="circuit-wire-grid" id="circuit-wire-grid">
+                <!-- Dynamically populated via QL.CircuitLabEngine.renderCircuitGrid() -->
+              </div>
+            </div>
+
+            <!-- Apparatus Footer / Preset Circuits -->
+            <div class="vlab-apparatus-footer">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--vlab-text-muted);text-transform:uppercase">
+                Circuit Presets:
+              </div>
+              <div class="vlab-presets-bar">
+                <button class="vlab-preset-chip active" data-preset="bell">Bell State |Φ⁺⟩</button>
+                <button class="vlab-preset-chip" data-preset="superposition">Superposition |+⟩</button>
+                <button class="vlab-preset-chip" data-preset="ghz">GHZ 3-Qubit</button>
+                <button class="vlab-preset-chip" data-preset="bitflip">Bit Flip |01⟩</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN (30-35%): Simulation Controls Panel -->
+          <div class="vlab-controls-panel">
+            <div>
+              <div class="vlab-control-group-title">
+                <span>Gate Palette</span>
+                <span style="color:var(--vlab-cyan-light);font-size:0.65rem">Click gate then click wire</span>
+              </div>
+              <div class="vlab-gate-palette">
+                <div class="vlab-palette-gate active" data-gate="H" title="Hadamard (Superposition)">H</div>
+                <div class="vlab-palette-gate" data-gate="X" title="Pauli-X (NOT)">X</div>
+                <div class="vlab-palette-gate" data-gate="Y" title="Pauli-Y">Y</div>
+                <div class="vlab-palette-gate" data-gate="Z" title="Pauli-Z (Phase Flip)">Z</div>
+                <div class="vlab-palette-gate" data-gate="S" title="S Gate (Phase π/2)">S</div>
+                <div class="vlab-palette-gate" data-gate="T" title="T Gate (Phase π/4)">T</div>
+                <div class="vlab-palette-gate vlab-palette-gate--cnot" data-gate="CNOT" title="Controlled-NOT (Entanglement)">CNOT</div>
+                <div class="vlab-palette-gate vlab-palette-gate--meas" data-gate="M" title="Projective Measurement">M</div>
+              </div>
+            </div>
+
+            <!-- Register Size -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Quantum Register Size</span>
+                <span class="vlab-variable-val" id="qubit-count-label">2 Qubits</span>
+              </div>
+              <select id="num-qubits-select" style="background:rgba(15,20,56,0.8);color:#fff;border:1px solid var(--vlab-border);padding:0.45rem;border-radius:6px;font-size:0.8rem;outline:none">
+                <option value="2" selected>2 Qubits (dim = 4)</option>
+                <option value="3">3 Qubits (dim = 8)</option>
+              </select>
+            </div>
+
+            <!-- Shots Slider -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Measurement Shots</span>
+                <span class="vlab-variable-val" id="shots-val">512</span>
+              </div>
+              <input type="range" class="vlab-slider" id="shots-slider" min="50" max="1024" step="50" value="512" />
+            </div>
+
+            <!-- Simulated Decoherence / Noise Slider -->
+            <div class="vlab-variable-row">
+              <div class="vlab-variable-head">
+                <span>Environmental Noise</span>
+                <span class="vlab-variable-val" id="noise-val">0%</span>
+              </div>
+              <input type="range" class="vlab-slider" id="noise-slider" min="0" max="20" step="1" value="0" />
+            </div>
+
+            <!-- Run Actions -->
+            <div class="vlab-run-buttons">
+              <button class="vlab-btn-run" id="run-sim-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                RUN SIMULATION
+              </button>
+              <button class="vlab-btn-secondary" id="reset-circuit-btn">
+                ↺ Reset Circuit
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================
+             LIVE OBSERVATION & RESULTS PANELS (BELOW SIMULATION)
+             ============================================================ -->
+        <div class="vlab-analytics-grid">
+          
+          <!-- Live Observation -->
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title">
+                <span>👁️</span> Live Physical Observation
+              </div>
+              <div class="vlab-card__badge" id="observation-badge">Real-Time Synthesis</div>
+            </div>
+            <div class="vlab-observation-box" id="circuit-observation-text">
+              The quantum register is initialized to computational ground state |00⟩. Select gates to synthesize a quantum circuit or choose a preset.
+            </div>
+          </div>
+
+          <!-- Live Results -->
+          <div class="vlab-card">
+            <div class="vlab-card__header">
+              <div class="vlab-card__title">
+                <span>📊</span> Measurement Results & State Vector
+              </div>
+              <div style="font-size:0.75rem;color:var(--vlab-text-muted)">
+                Purity: <strong id="circuit-purity-val" style="color:var(--vlab-emerald-light)">1.000</strong>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.4rem">
+                State Vector Amplitudes |ψ⟩
+              </div>
+              <div class="vlab-state-vector" id="circuit-state-vector">
+                <!-- State vector chips -->
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--vlab-text-muted);margin-bottom:0.4rem">
+                Projective Measurement Distribution
+              </div>
+              <div class="vlab-histogram-container" id="circuit-histogram">
+                <!-- Probability bars -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 6: OBSERVATION
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-observation">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>👁️</span> Section 06</div>
+            <h2 class="vlab-edu-title">Observation Analysis</h2>
+          </div>
+          <p style="color:var(--vlab-text-secondary);font-size:0.95rem">
+            During execution of the quantum circuit, multiple qualitative and quantitative phenomena can be systematically recorded:
+          </p>
+          <div class="vlab-steps-list" style="margin-top:1rem">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">A</div>
+              <div class="vlab-step-content">
+                <h4>Superposition Induction</h4>
+                <p>When the Hadamard gate acts on |0⟩, probability distributes uniformly between |0⟩ and |1⟩ with equal amplitudes 1/√2 ≈ 0.707. No preferred computational basis exists.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">B</div>
+              <div class="vlab-step-content">
+                <h4>Entanglement Correlation</h4>
+                <p>For the Bell state (|00⟩+|11⟩)/√2, the individual qubits possess no definite state on their own, yet measurement results are strictly correlated: |01⟩ and |10⟩ exhibit 0% occurrence in an ideal system.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">C</div>
+              <div class="vlab-step-content">
+                <h4>Decoherence Degradation</h4>
+                <p>As simulated environmental noise increases above 0%, spurious counts appear in forbidden states (|01⟩, |10⟩), causing state purity Tr(ρ²) to drop below unity.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 7: RESULTS
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-results">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📊</span> Section 07</div>
+            <h2 class="vlab-edu-title">Experimental Results</h2>
+          </div>
+          <p style="color:var(--vlab-text-secondary);font-size:0.95rem">
+            Summary of computational outcome statistics and quantum state metrics:
+          </p>
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:1rem;color:var(--vlab-text)">
+            <thead>
+              <tr style="border-bottom:1px solid var(--vlab-border);color:var(--vlab-primary-light);text-align:left">
+                <th style="padding:0.75rem">Circuit Preset</th>
+                <th style="padding:0.75rem">Theoretical State</th>
+                <th style="padding:0.75rem">Expected Probability</th>
+                <th style="padding:0.75rem">Entanglement (Entropy)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">Bell State |Φ⁺⟩</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">(|00⟩ + |11⟩)/√2</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">P(00)=50%, P(11)=50%</td>
+                <td style="padding:0.75rem;color:var(--vlab-cyan-light)">1.000 bit (Maximal)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">Superposition |+0⟩</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">(|00⟩ + |10⟩)/√2</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">P(00)=50%, P(10)=50%</td>
+                <td style="padding:0.75rem;color:var(--vlab-text-muted)">0.000 bit (Separable)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:0.75rem;font-weight:600">GHZ State (3-Qubit)</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">(|000⟩ + |111⟩)/√2</td>
+                <td style="padding:0.75rem;font-family:var(--vlab-mono)">P(000)=50%, P(111)=50%</td>
+                <td style="padding:0.75rem;color:var(--vlab-cyan-light)">1.000 bit (Tripartite)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 8: SELF EVALUATION
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-self-eval">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📝</span> Section 08</div>
+            <h2 class="vlab-edu-title">Self Evaluation Quiz</h2>
+          </div>
+          <p style="color:var(--vlab-text-secondary);font-size:0.9rem;margin-bottom:1.5rem">
+            Test your understanding of quantum logic circuits, gate operations, and projective measurements. Select an answer to receive instant feedback.
+          </p>
+
+          <!-- Quiz Question 1 -->
+          <div class="vlab-quiz-card">
+            <div class="vlab-quiz-q">1. What is the resultant state when a Hadamard gate (H) is applied to basis state |0⟩?</div>
+            <div class="vlab-quiz-options">
+              <div class="vlab-quiz-opt" data-correct="false">A. |1⟩</div>
+              <div class="vlab-quiz-opt" data-correct="true">B. (|0⟩ + |1⟩) / √2</div>
+              <div class="vlab-quiz-opt" data-correct="false">C. (|0⟩ - |1⟩) / √2</div>
+              <div class="vlab-quiz-opt" data-correct="false">D. (|0⟩ + i|1⟩) / √2</div>
+            </div>
+            <div class="vlab-quiz-feedback" data-exp="The Hadamard operator creates an equal superposition state |+⟩ = (|0⟩ + |1⟩)/√2 with equal probability amplitudes."></div>
+          </div>
+
+          <!-- Quiz Question 2 -->
+          <div class="vlab-quiz-card">
+            <div class="vlab-quiz-q">2. Which sequence of gates creates the maximally entangled Bell state |Φ⁺⟩ from ground state |00⟩?</div>
+            <div class="vlab-quiz-options">
+              <div class="vlab-quiz-opt" data-correct="false">A. X on q0, followed by CNOT(q0 → q1)</div>
+              <div class="vlab-quiz-opt" data-correct="true">B. H on q0, followed by CNOT(q0 → q1)</div>
+              <div class="vlab-quiz-opt" data-correct="false">C. H on both q0 and q1</div>
+              <div class="vlab-quiz-opt" data-correct="false">D. CNOT(q0 → q1), followed by H on q1</div>
+            </div>
+            <div class="vlab-quiz-feedback" data-exp="Hadamard creates superposition on q0, and CNOT entangles q0 with target q1, yielding (|00⟩ + |11⟩)/√2."></div>
+          </div>
+
+          <!-- Quiz Question 3 -->
+          <div class="vlab-quiz-card">
+            <div class="vlab-quiz-q">3. If a state is |ψ⟩ = 0.6|0⟩ + 0.8|1⟩, what is the probability of measuring outcome 1?</div>
+            <div class="vlab-quiz-options">
+              <div class="vlab-quiz-opt" data-correct="false">A. 0.80 (80%)</div>
+              <div class="vlab-quiz-opt" data-correct="true">B. 0.64 (64%)</div>
+              <div class="vlab-quiz-opt" data-correct="false">C. 0.36 (36%)</div>
+              <div class="vlab-quiz-opt" data-correct="false">D. 0.48 (48%)</div>
+            </div>
+            <div class="vlab-quiz-feedback" data-exp="According to Born's rule, P(1) = |β|² = |0.8|² = 0.64 (64%)."></div>
+          </div>
+
+          <!-- Quiz Question 4 -->
+          <div class="vlab-quiz-card">
+            <div class="vlab-quiz-q">4. What is the matrix product H · H for the Hadamard gate?</div>
+            <div class="vlab-quiz-options">
+              <div class="vlab-quiz-opt" data-correct="false">A. Pauli-X</div>
+              <div class="vlab-quiz-opt" data-correct="false">B. -I (Negative identity)</div>
+              <div class="vlab-quiz-opt" data-correct="true">C. I (The Identity operator, H² = I)</div>
+              <div class="vlab-quiz-opt" data-correct="false">D. Zero matrix</div>
+            </div>
+            <div class="vlab-quiz-feedback" data-exp="H is its own inverse (Hermitian and unitary), therefore H² = I."></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 9: ASSIGNMENT
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-assignment">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>✍️</span> Section 09</div>
+            <h2 class="vlab-edu-title">Experimental Assignments</h2>
+          </div>
+
+          <div class="vlab-steps-list">
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">01</div>
+              <div class="vlab-step-content">
+                <h4>Synthesize the 3-Qubit GHZ State</h4>
+                <p>Construct a 3-qubit circuit that produces |GHZ⟩ = (|000⟩ + |111⟩)/√2. Verify using the simulator that no other basis states appear in the outcome histogram.</p>
+              </div>
+            </div>
+            <div class="vlab-step-item">
+              <div class="vlab-step-number">02</div>
+              <div class="vlab-step-content">
+                <h4>Analyze Quantum State Swap Without SWAP Gate</h4>
+                <p>Implement a SWAP operation using exactly three consecutive CNOT gates alternating control and target wires: CNOT(q0→q1), CNOT(q1→q0), CNOT(q0→q1). Prove that the states of q0 and q1 are completely interchanged.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 10: REFERENCES
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-references">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>📚</span> Section 10</div>
+            <h2 class="vlab-edu-title">References & Recommended Reading</h2>
+          </div>
+          <ul style="color:var(--vlab-text-secondary);line-height:1.9;padding-left:1.5rem">
+            <li><strong>M. A. Nielsen & I. L. Chuang</strong>, <em>Quantum Computation and Quantum Information</em>, 10th Anniversary Ed., Cambridge University Press (2010).</li>
+            <li><strong>J. Preskill</strong>, <em>Lecture Notes for Physics 229: Quantum Information and Computation</em>, California Institute of Technology (Caltech).</li>
+            <li><strong>IBM Quantum Documentation</strong>, <em>Qiskit Circuit Model & Pulse Specification</em>, IBM Research (2024).</li>
+            <li><strong>A. Barenco et al.</strong>, <em>Elementary gates for quantum computation</em>, Phys. Rev. A 52, 3457 (1995).</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 11: FEEDBACK
+           ============================================================ -->
+      <section class="vlab-tab-panel" id="panel-feedback">
+        <div class="vlab-edu-panel">
+          <div class="vlab-edu-header">
+            <div class="vlab-edu-tag"><span>💬</span> Section 11</div>
+            <h2 class="vlab-edu-title">Laboratory Feedback</h2>
+          </div>
+          <form id="exp-feedback-form" style="display:flex;flex-direction:column;gap:1.25rem;max-width:600px">
+            <div>
+              <label style="display:block;font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;color:var(--vlab-text-secondary)">Rate this experiment</label>
+              <div style="font-size:1.5rem;color:#fbbf24;cursor:pointer">★★★★★</div>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;color:var(--vlab-text-secondary)">Comments or Suggestions</label>
+              <textarea rows="4" style="width:100%;background:rgba(15,20,56,0.6);border:1px solid var(--vlab-border);border-radius:8px;padding:0.75rem;color:#fff;font-family:var(--vlab-sans);outline:none" placeholder="Provide feedback on the circuit builder, simulation speed, or theoretical clarity..."></textarea>
+            </div>
+            <button type="submit" class="vlab-btn-run" style="width:auto;display:inline-flex;padding:0.75rem 1.75rem">
+              Submit Feedback
+            </button>
+          </form>
+          <div id="feedback-sent-msg" style="display:none;padding:1rem;background:rgba(5,150,105,0.2);border:1px solid var(--vlab-emerald);border-radius:8px;color:var(--vlab-emerald-light)">
+            ✓ Thank you! Your experimental feedback has been recorded.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/virtual-lab-data.js"></script>
+  <script src="../js/circuit-lab-engine.js"></script>
+  <script>
+    // Tab switching controller
+    function switchVLabTab(tabId) {
+      document.querySelectorAll('.vlab-nav-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tabId);
+      });
+      document.querySelectorAll('.vlab-tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${tabId}`);
+      });
+      // Scroll to top of content
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize circuit engine
+      if (window.QL && QL.CircuitLabEngine) {
+        QL.CircuitLabEngine.init();
+      }
+
+      // Sidebar tab navigation
+      document.querySelectorAll('.vlab-nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          switchVLabTab(tab.dataset.tab);
+        });
+      });
+
+      // Clear gates button
+      const clearBtn = document.getElementById('btn-clear-gates');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          const resetCircuit = document.getElementById('reset-circuit-btn');
+          if (resetCircuit) resetCircuit.click();
+        });
+      }
+
+      // Reset lab button
+      const resetLabBtn = document.getElementById('btn-reset-lab');
+      if (resetLabBtn) {
+        resetLabBtn.addEventListener('click', () => {
+          const bellPreset = document.querySelector('.vlab-preset-chip[data-preset="bell"]');
+          if (bellPreset) bellPreset.click();
+          const shotsSlider = document.getElementById('shots-slider');
+          if (shotsSlider) {
+            shotsSlider.value = 512;
+            shotsSlider.dispatchEvent(new Event('input'));
+          }
+          const noiseSlider = document.getElementById('noise-slider');
+          if (noiseSlider) {
+            noiseSlider.value = 0;
+            noiseSlider.dispatchEvent(new Event('input'));
+          }
+          switchVLabTab('simulation');
+        });
+      }
+
+      // Fullscreen simulation button
+      const fsBtn = document.getElementById('btn-fullscreen-lab');
+      if (fsBtn) {
+        fsBtn.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => console.log(err));
+            fsBtn.textContent = '✕ Exit Fullscreen';
+          } else {
+            document.exitFullscreen().catch(err => console.log(err));
+            fsBtn.textContent = '⛶ Fullscreen';
+          }
+        });
+      }
+
+      // Feedback form
+      const fbForm = document.getElementById('exp-feedback-form');
+      const fbMsg = document.getElementById('feedback-sent-msg');
+      if (fbForm && fbMsg) {
+        fbForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          fbForm.style.display = 'none';
+          fbMsg.style.display = 'block';
+        });
+      }
+
+      // Handle Rate Lab and Report Bug actions
+      const rateBtn = document.getElementById('btn-rate-lab');
+      if (rateBtn) {
+        rateBtn.addEventListener('click', () => {
+          switchVLabTab('feedback');
+        });
+      }
+
+      const bugBtn = document.getElementById('btn-report-bug');
+      if (bugBtn) {
+        bugBtn.addEventListener('click', () => {
+          alert('To report a simulation bug or anomaly, please use the Feedback section.');
+          switchVLabTab('feedback');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

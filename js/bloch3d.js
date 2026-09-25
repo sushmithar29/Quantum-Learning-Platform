@@ -1,644 +1,650 @@
 /* ============================================================
    QUANTUMLAB – 3D INTERACTIVE BLOCH SPHERE (Three.js WebGL)
-   True 3D spherical quantum visualization matching reference design
+   Full educational quantum visualization with:
+   • True 3D WebGL sphere via Three.js + OrbitControls
+   • θ/φ arc indicators clearly visible
+   • H/X/Y/Z gate operations with smooth SLERP animation
+   • Dynamically computed measurement probabilities
+   • Responsive ResizeObserver
    ============================================================ */
 
 window.QL = window.QL || {};
 
 QL.initBloch3D = function () {
   const container = document.getElementById('bloch-webgl-container');
-  const wrap = document.getElementById('bloch-canvas-wrap');
+  const wrap      = document.getElementById('bloch-canvas-wrap');
   if (!container || !wrap) return;
 
-  // Verify THREE and OrbitControls
+  /* ----------------------------------------------------------
+     GUARD: Three.js + OrbitControls required
+  ---------------------------------------------------------- */
   if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
-    console.warn('Three.js or OrbitControls not loaded, falling back to 2D canvas');
-    if (typeof QL.initQubitCanvasFallback === 'function') {
-      QL.initQubitCanvasFallback();
-    }
+    console.warn('[QuantumLab] Three.js or OrbitControls not loaded.');
     return;
   }
 
-  // Clear previous content
+  // Teardown any prior instance
   container.innerHTML = '';
 
-  /* -------------------------------------------------------------
-     1. SCENE, CAMERA, RENDERER
-     ------------------------------------------------------------- */
-  const width = wrap.clientWidth || 520;
-  const height = wrap.clientHeight || 500;
-
-  const scene = new THREE.Scene();
-
-  const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-  const DEFAULT_CAM_POS = new THREE.Vector3(3.4, 2.3, 4.2);
-  camera.position.copy(DEFAULT_CAM_POS);
-  camera.lookAt(0, 0, 0);
+  /* ==========================================================
+     1. RENDERER / SCENE / CAMERA
+  ========================================================== */
+  const W0 = wrap.clientWidth  || 520;
+  const H0 = wrap.clientHeight || 460;
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
-    alpha: true,
+    alpha:     true,
     powerPreference: 'high-performance'
   });
-  renderer.setSize(width, height);
+  renderer.setSize(W0, H0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.setClearColor(0x000000, 0);
   container.appendChild(renderer.domElement);
 
-  /* -------------------------------------------------------------
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(38, W0 / H0, 0.1, 100);
+  const DEFAULT_CAM = new THREE.Vector3(3.6, 2.5, 4.4);
+  camera.position.copy(DEFAULT_CAM);
+  camera.lookAt(0, 0, 0);
+
+  /* ==========================================================
      2. ORBIT CONTROLS
-     ------------------------------------------------------------- */
+  ========================================================== */
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.06;
-  controls.enablePan = false;       // Sphere stays centered
-  controls.minDistance = 2.8;
-  controls.maxDistance = 8.5;
-  controls.rotateSpeed = 0.8;
-  controls.zoomSpeed = 0.85;
+  controls.enableDamping  = true;
+  controls.dampingFactor  = 0.07;
+  controls.enablePan      = false;
+  controls.minDistance    = 2.6;
+  controls.maxDistance    = 9.0;
+  controls.rotateSpeed    = 0.75;
+  controls.zoomSpeed      = 0.8;
 
   let isUserInteracting = false;
   controls.addEventListener('start', () => { isUserInteracting = true; });
-  controls.addEventListener('end', () => {
-    // Resume idle precession shortly after release
-    setTimeout(() => { isUserInteracting = false; }, 2500);
+  controls.addEventListener('end',   () => {
+    setTimeout(() => { isUserInteracting = false; }, 2800);
   });
 
-  /* -------------------------------------------------------------
+  /* ==========================================================
      3. LIGHTING
-     ------------------------------------------------------------- */
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-  scene.add(ambientLight);
+  ========================================================== */
+  scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
-  const dirLight1 = new THREE.DirectionalLight(0xa78bfa, 0.8);
-  dirLight1.position.set(4, 7, 5);
-  scene.add(dirLight1);
+  const dLight1 = new THREE.DirectionalLight(0xa78bfa, 0.9);
+  dLight1.position.set(4, 7, 5);
+  scene.add(dLight1);
 
-  const dirLight2 = new THREE.DirectionalLight(0x06b6d4, 0.5);
-  dirLight2.position.set(-4, -3, -5);
-  scene.add(dirLight2);
+  const dLight2 = new THREE.DirectionalLight(0x06b6d4, 0.55);
+  dLight2.position.set(-5, -3, -4);
+  scene.add(dLight2);
 
-  /* -------------------------------------------------------------
-     4. BLOCH SPHERE GEOMETRY & REFERENCE DESIGN
-     ------------------------------------------------------------- */
+  /* ==========================================================
+     4. SPHERE RADIUS
+  ========================================================== */
+  const R = 2.0;
+
+  /* ==========================================================
+     5. BLOCH SPHERE GEOMETRY
+  ========================================================== */
   const blochGroup = new THREE.Group();
   scene.add(blochGroup);
 
-  const R = 2.0; // Sphere radius
+  // 5a. Semi-transparent inner body (creates depth)
+  const bodyGeo = new THREE.SphereGeometry(R * 0.994, 32, 24);
+  const bodyMat = new THREE.MeshBasicMaterial({
+    color:       0x080c1c,
+    transparent: true,
+    opacity:     0.52,
+    side:        THREE.BackSide,
+    depthWrite:  false
+  });
+  blochGroup.add(new THREE.Mesh(bodyGeo, bodyMat));
 
-  // A. Dense Wireframe Mesh (matching the reference image's violet/lavender mesh)
-  const sphereGeo = new THREE.SphereGeometry(R, 44, 32);
+  // 5b. Glowing outer shell (subtle cyan glow at surface)
+  const shellGeo = new THREE.SphereGeometry(R * 1.002, 32, 24);
+  const shellMat = new THREE.MeshBasicMaterial({
+    color:       0x0e3a4a,
+    transparent: true,
+    opacity:     0.09,
+    side:        THREE.FrontSide,
+    depthWrite:  false,
+    blending:    THREE.AdditiveBlending
+  });
+  blochGroup.add(new THREE.Mesh(shellGeo, shellMat));
+
+  // 5c. Wireframe mesh (violet latitude/longitude grid)
+  const wireGeo = new THREE.SphereGeometry(R, 36, 24);
   const wireMat = new THREE.MeshBasicMaterial({
-    color: 0x8b5cf6, // Violet
-    wireframe: true,
+    color:       0x7c3aed,
+    wireframe:   true,
     transparent: true,
-    opacity: 0.24,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending
+    opacity:     0.20,
+    depthWrite:  false,
+    blending:    THREE.AdditiveBlending
   });
-  const wireMesh = new THREE.Mesh(sphereGeo, wireMat);
-  blochGroup.add(wireMesh);
+  blochGroup.add(new THREE.Mesh(wireGeo, wireMat));
 
-  // B. Translucent Dark Inner Sphere (creates volumetric depth so front lines stand out)
-  const innerGeo = new THREE.SphereGeometry(R * 0.992, 32, 24);
-  const innerMat = new THREE.MeshBasicMaterial({
-    color: 0x09071c,
-    transparent: true,
-    opacity: 0.55,
-    side: THREE.BackSide,
-    depthWrite: false
-  });
-  const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-  blochGroup.add(innerMesh);
-
-  // Helper to create circular ring line
-  function createRing(radius, yPos, color, opacity = 0.5, lineWidth = 1) {
-    const segments = 96;
-    const points = [];
-    for (let i = 0; i <= segments; i++) {
-      const theta = (i / segments) * Math.PI * 2;
-      points.push(new THREE.Vector3(Math.cos(theta) * radius, yPos, Math.sin(theta) * radius));
+  // Helper: ring at latitude
+  function makeRing(radius, yPos, color, opacity) {
+    const pts = [];
+    for (let i = 0; i <= 128; i++) {
+      const a = (i / 128) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(a) * radius, yPos, Math.sin(a) * radius));
     }
-    const geom = new THREE.BufferGeometry().setFromPoints(points);
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
     const mat = new THREE.LineBasicMaterial({
-      color: color,
-      transparent: true,
-      opacity: opacity,
-      blending: THREE.AdditiveBlending
+      color, transparent: true, opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false
     });
-    return new THREE.LineLoop(geom, mat);
+    return new THREE.LineLoop(geo, mat);
   }
 
-  // C. Equator Ring (Cyan-tinted glowing ring at Y = 0)
-  const equatorRing = createRing(R, 0, 0x67e8f9, 0.7);
-  blochGroup.add(equatorRing);
-
-  // D. Prime Meridian (in X-Y plane, Z = 0)
-  const meridian1Points = [];
-  for (let i = 0; i <= 96; i++) {
-    const a = (i / 96) * Math.PI * 2;
-    meridian1Points.push(new THREE.Vector3(Math.sin(a) * R, Math.cos(a) * R, 0));
+  // Helper: great circle in a plane
+  function makeGreatCircle(normal, color, opacity) {
+    const pts = [];
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal.clone().normalize());
+    for (let i = 0; i <= 128; i++) {
+      const a = (i / 128) * Math.PI * 2;
+      const v = new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R);
+      v.applyQuaternion(q);
+      pts.push(v);
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({
+      color, transparent: true, opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    return new THREE.LineLoop(geo, mat);
   }
-  const meridian1Geom = new THREE.BufferGeometry().setFromPoints(meridian1Points);
-  const meridian1Mat = new THREE.LineLoop(meridian1Geom, new THREE.LineBasicMaterial({
-    color: 0xa78bfa,
-    transparent: true,
-    opacity: 0.52,
-    blending: THREE.AdditiveBlending
-  }));
-  blochGroup.add(meridian1Mat);
 
-  // E. Transverse Meridian (in Y-Z plane, X = 0)
-  const meridian2Points = [];
-  for (let i = 0; i <= 96; i++) {
-    const a = (i / 96) * Math.PI * 2;
-    meridian2Points.push(new THREE.Vector3(0, Math.cos(a) * R, Math.sin(a) * R));
-  }
-  const meridian2Geom = new THREE.BufferGeometry().setFromPoints(meridian2Points);
-  const meridian2Mat = new THREE.LineLoop(meridian2Geom, new THREE.LineBasicMaterial({
-    color: 0x818cf8,
-    transparent: true,
-    opacity: 0.45,
-    blending: THREE.AdditiveBlending
-  }));
-  blochGroup.add(meridian2Mat);
+  // Equator (strong cyan highlight)
+  blochGroup.add(makeRing(R, 0, 0x22d3ee, 0.75));
 
-  // F. Additional Latitude Rings (30° and 60°)
-  [30, -30, 60, -60].forEach(deg => {
-    const rad = (deg * Math.PI) / 180;
-    const y = Math.sin(rad) * R;
-    const rAtLat = Math.cos(rad) * R;
-    const latRing = createRing(rAtLat, y, 0x7c3aed, 0.22);
-    blochGroup.add(latRing);
+  // Prime meridian (XZ-plane, Y-axis normal)
+  blochGroup.add(makeGreatCircle(new THREE.Vector3(0, 1, 0), 0x818cf8, 0.50));
+  // Secondary meridian (YZ-plane, X-axis normal)
+  blochGroup.add(makeGreatCircle(new THREE.Vector3(1, 0, 0), 0x6d28d9, 0.38));
+
+  // Latitude rings at ±30°, ±60°
+  [30, 60, -30, -60].forEach(deg => {
+    const rad     = (deg * Math.PI) / 180;
+    const y       = Math.sin(rad) * R;
+    const rLat    = Math.cos(rad) * R;
+    const opacity = Math.abs(deg) === 30 ? 0.32 : 0.20;
+    blochGroup.add(makeRing(rLat, y, 0x7c3aed, opacity));
   });
 
-  // G. Equatorial Coordinate Grid Plane (authentic reference feature)
-  const gridHelper = new THREE.GridHelper(4.8, 12, 0x6d28d9, 0x1e1b4b);
-  gridHelper.position.y = 0;
-  if (gridHelper.material) {
-    gridHelper.material.transparent = true;
-    gridHelper.material.opacity = 0.28;
-    gridHelper.material.depthWrite = false;
+  // Equatorial grid plane
+  const grid = new THREE.GridHelper(5.0, 14, 0x6d28d9, 0x1a1840);
+  grid.position.y = 0;
+  if (Array.isArray(grid.material)) {
+    grid.material.forEach(m => { m.transparent = true; m.opacity = 0.22; m.depthWrite = false; });
+  } else if (grid.material) {
+    grid.material.transparent = true; grid.material.opacity = 0.22; grid.material.depthWrite = false;
   }
-  blochGroup.add(gridHelper);
+  blochGroup.add(grid);
 
-  /* -------------------------------------------------------------
-     5. 3D AXES (X, Y, Z with Arrowheads)
-     Convention:
-       Vertical: Z axis (+Z is |0> up, -Z is |1> down)
-       Right:    X axis (+X is |+>,  -X is |->)
-       Depth:    Y axis (+Y is |+i>, -Y is |-i>)
-     ------------------------------------------------------------- */
-  const axisLen = R * 1.28; // 2.56
+  /* ==========================================================
+     6. AXES  (Z vertical = |0⟩ up / |1⟩ down)
+  ========================================================== */
+  const AXIS_LEN = R * 1.35;
 
-  // Helper to create an axis with arrow and line
-  function createAxisLine(p1, p2, colorHex) {
-    const geom = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+  function makeAxisLine(from, to, color) {
+    const geo = new THREE.BufferGeometry().setFromPoints([from, to]);
     const mat = new THREE.LineBasicMaterial({
-      color: colorHex,
-      transparent: true,
-      opacity: 0.75,
+      color, transparent: true, opacity: 0.82,
       blending: THREE.AdditiveBlending
     });
-    return new THREE.Line(geom, mat);
+    return new THREE.Line(geo, mat);
   }
 
-  function createArrowhead(pos, dir, colorHex) {
-    const headLen = 0.18;
-    const coneGeo = new THREE.ConeGeometry(0.048, headLen, 16);
-    const coneMat = new THREE.MeshBasicMaterial({
-      color: colorHex,
-      transparent: true,
-      opacity: 0.95
-    });
-    const cone = new THREE.Mesh(coneGeo, coneMat);
-    const d = dir.clone().normalize();
-    cone.position.copy(pos.clone().sub(d.clone().multiplyScalar(headLen / 2)));
+  function makeArrowCone(pos, dir, color) {
+    const len  = 0.20;
+    const geo  = new THREE.ConeGeometry(0.052, len, 14);
+    const mat  = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 });
+    const cone = new THREE.Mesh(geo, mat);
+    const d    = dir.clone().normalize();
+    cone.position.copy(pos.clone().sub(d.clone().multiplyScalar(len * 0.5)));
     cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
     return cone;
   }
 
-  // X Axis (soft red / coral)
-  const xLine = createAxisLine(new THREE.Vector3(-axisLen, 0, 0), new THREE.Vector3(axisLen, 0, 0), 0xf87171);
-  const xArrow = createArrowhead(new THREE.Vector3(axisLen, 0, 0), new THREE.Vector3(1, 0, 0), 0xf87171);
-  const nxArrow = createArrowhead(new THREE.Vector3(-axisLen, 0, 0), new THREE.Vector3(-1, 0, 0), 0xf87171);
-  blochGroup.add(xLine);
-  blochGroup.add(xArrow);
-  blochGroup.add(nxArrow);
+  // Z axis (cyan / vertical)
+  blochGroup.add(makeAxisLine(new THREE.Vector3(0, -AXIS_LEN, 0), new THREE.Vector3(0, AXIS_LEN, 0), 0x38bdf8));
+  blochGroup.add(makeArrowCone(new THREE.Vector3(0,  AXIS_LEN, 0), new THREE.Vector3(0, 1, 0), 0x38bdf8));
+  blochGroup.add(makeArrowCone(new THREE.Vector3(0, -AXIS_LEN, 0), new THREE.Vector3(0,-1, 0), 0x38bdf8));
 
-  // Y Axis (depth / transverse, soft cyan-green)
-  const yLine = createAxisLine(new THREE.Vector3(0, 0, -axisLen), new THREE.Vector3(0, 0, axisLen), 0x34d399);
-  const yArrow = createArrowhead(new THREE.Vector3(0, 0, axisLen), new THREE.Vector3(0, 0, 1), 0x34d399);
-  const nyArrow = createArrowhead(new THREE.Vector3(0, 0, -axisLen), new THREE.Vector3(0, 0, -1), 0x34d399);
-  blochGroup.add(yLine);
-  blochGroup.add(yArrow);
-  blochGroup.add(nyArrow);
+  // X axis (coral/red)
+  blochGroup.add(makeAxisLine(new THREE.Vector3(-AXIS_LEN, 0, 0), new THREE.Vector3(AXIS_LEN, 0, 0), 0xf87171));
+  blochGroup.add(makeArrowCone(new THREE.Vector3( AXIS_LEN, 0, 0), new THREE.Vector3( 1, 0, 0), 0xf87171));
+  blochGroup.add(makeArrowCone(new THREE.Vector3(-AXIS_LEN, 0, 0), new THREE.Vector3(-1, 0, 0), 0xf87171));
 
-  // Z Axis (vertical, cyan / blue)
-  const zLine = createAxisLine(new THREE.Vector3(0, -axisLen, 0), new THREE.Vector3(0, axisLen, 0), 0x38bdf8);
-  const zArrow = createArrowhead(new THREE.Vector3(0, axisLen, 0), new THREE.Vector3(0, 1, 0), 0x38bdf8);
-  const nzArrow = createArrowhead(new THREE.Vector3(0, -axisLen, 0), new THREE.Vector3(0, -1, 0), 0x38bdf8);
-  blochGroup.add(zLine);
-  blochGroup.add(zArrow);
-  blochGroup.add(nzArrow);
+  // Y axis (green / depth)
+  blochGroup.add(makeAxisLine(new THREE.Vector3(0, 0, -AXIS_LEN), new THREE.Vector3(0, 0, AXIS_LEN), 0x34d399));
+  blochGroup.add(makeArrowCone(new THREE.Vector3(0, 0,  AXIS_LEN), new THREE.Vector3(0, 0, 1), 0x34d399));
+  blochGroup.add(makeArrowCone(new THREE.Vector3(0, 0, -AXIS_LEN), new THREE.Vector3(0, 0,-1), 0x34d399));
 
-  /* -------------------------------------------------------------
-     6. TEXT SPRITES (3D Labels that face camera)
-     ------------------------------------------------------------- */
-  function createTextSprite(text, colorStr, fontSize = 42, isState = false) {
-    const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 128;
-    const ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, 256, 128);
+  /* ==========================================================
+     7. TEXT SPRITES (always face camera)
+  ========================================================== */
+  function makeSprite(text, hexColor, fontSize, bgAlpha) {
+    const cw = 256, ch = 128;
+    const cvs = document.createElement('canvas');
+    cvs.width  = cw;
+    cvs.height = ch;
+    const ctx  = cvs.getContext('2d');
 
-    if (isState) {
-      ctx.shadowColor = colorStr;
-      ctx.shadowBlur = 14;
+    if (bgAlpha > 0) {
+      ctx.fillStyle = `rgba(6,8,28,${bgAlpha})`;
+      const pad = 8;
+      const textW = fontSize * text.length * 0.62 + pad * 2;
+      const rx = (cw - textW) / 2, ry = ch / 2 - fontSize / 2 - pad;
+      ctx.beginPath();
+      ctx.roundRect(rx, ry, textW, fontSize + pad * 2, 6);
+      ctx.fill();
     }
-    ctx.font = `bold ${fontSize}px "JetBrains Mono", "Courier New", monospace`;
-    ctx.fillStyle = colorStr;
-    ctx.textAlign = 'center';
+
+    const col = '#' + hexColor.toString(16).padStart(6, '0');
+    ctx.shadowColor = col;
+    ctx.shadowBlur  = 18;
+    ctx.font        = `bold ${fontSize}px "JetBrains Mono","Courier New",monospace`;
+    ctx.fillStyle   = col;
+    ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, 128, 64);
+    ctx.fillText(text, cw / 2, ch / 2);
 
-    const texture = new THREE.CanvasTexture(c);
-    texture.minFilter = THREE.LinearFilter;
-    const mat = new THREE.SpriteMaterial({
-      map: texture,
-      transparent: true,
-      depthTest: false
-    });
-    const sprite = new THREE.Sprite(mat);
-    sprite.scale.set(0.68, 0.34, 1);
-    return sprite;
+    const tex = new THREE.CanvasTexture(cvs);
+    tex.minFilter = THREE.LinearFilter;
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const spr = new THREE.Sprite(mat);
+    spr.scale.set(0.72, 0.36, 1);
+    return spr;
   }
 
-  // Axis Labels (+X, -X, +Y, -Y, +Z, -Z)
-  const labelOffset = 0.26;
-  const labelPX = createTextSprite('+X', '#f87171', 38);
-  labelPX.position.set(axisLen + labelOffset, 0, 0);
-  blochGroup.add(labelPX);
+  const OFF = 0.30;
 
-  const labelNX = createTextSprite('-X', '#f87171', 38);
-  labelNX.position.set(-axisLen - labelOffset, 0, 0);
-  blochGroup.add(labelNX);
+  // State labels on poles & equator
+  const lbl0    = makeSprite('|0⟩', 0xe0f2fe, 46, 0.0); lbl0.position.set(0,  R + OFF, 0);  blochGroup.add(lbl0);
+  const lbl1    = makeSprite('|1⟩', 0xe0f2fe, 46, 0.0); lbl1.position.set(0, -R - OFF, 0);  blochGroup.add(lbl1);
+  const lblPlus = makeSprite('|+⟩', 0xc4b5fd, 40, 0.0); lblPlus.position.set( R + OFF, 0, 0);  blochGroup.add(lblPlus);
+  const lblMinus= makeSprite('|-⟩', 0xc4b5fd, 40, 0.0); lblMinus.position.set(-R - OFF, 0, 0); blochGroup.add(lblMinus);
+  const lblPlusI= makeSprite('|+i⟩',0xbae6fd, 36, 0.0); lblPlusI.position.set(0, 0,  R + OFF);  blochGroup.add(lblPlusI);
+  const lblMinI = makeSprite('|-i⟩',0xbae6fd, 36, 0.0); lblMinI.position.set(0, 0, -R - OFF);   blochGroup.add(lblMinI);
 
-  const labelPY = createTextSprite('+Y', '#34d399', 38);
-  labelPY.position.set(0, 0, axisLen + labelOffset);
-  blochGroup.add(labelPY);
+  // Axis labels (+Z, -Z, +X, -X, +Y, -Y)
+  const ALOFF = AXIS_LEN + 0.28;
+  function addAxisLabel(text, color, x, y, z) {
+    const s = makeSprite(text, color, 36, 0.0);
+    s.position.set(x, y, z);
+    s.scale.set(0.60, 0.30, 1);
+    blochGroup.add(s);
+  }
+  addAxisLabel('+Z', 0x38bdf8, 0,      ALOFF,  0);
+  addAxisLabel('-Z', 0x38bdf8, 0,     -ALOFF,  0);
+  addAxisLabel('+X', 0xf87171, ALOFF,  0,       0);
+  addAxisLabel('-X', 0xf87171,-ALOFF,  0,       0);
+  addAxisLabel('+Y', 0x34d399, 0,      0,       ALOFF);
+  addAxisLabel('-Y', 0x34d399, 0,      0,      -ALOFF);
 
-  const labelNY = createTextSprite('-Y', '#34d399', 38);
-  labelNY.position.set(0, 0, -axisLen - labelOffset);
-  blochGroup.add(labelNY);
+  /* ==========================================================
+     8. QUANTUM STATE  (θ, φ in spherical)
+  ========================================================== */
+  let theta = Math.PI / 3;   // 60° polar
+  let phi   = Math.PI / 4;   // 45° azimuthal
 
-  const labelPZ = createTextSprite('+Z', '#38bdf8', 38);
-  labelPZ.position.set(0, axisLen + labelOffset, 0);
-  blochGroup.add(labelPZ);
+  // Convert spherical → Cartesian  (Three.js Y = vertical/Z in physics)
+  function stateToVec(th, ph) {
+    return new THREE.Vector3(
+      R * Math.sin(th) * Math.cos(ph),   // x
+      R * Math.cos(th),                   // y (vertical = physics Z)
+      R * Math.sin(th) * Math.sin(ph)    // z (depth   = physics Y)
+    );
+  }
 
-  const labelNZ = createTextSprite('-Z', '#38bdf8', 38);
-  labelNZ.position.set(0, -axisLen - labelOffset, 0);
-  blochGroup.add(labelNZ);
+  /* ==========================================================
+     9. STATE VECTOR  (|ψ⟩)
+  ========================================================== */
+  const vecGroup = new THREE.Group();
+  blochGroup.add(vecGroup);
 
-  // Quantum State Labels: |0>, |1>, |+>, |->, |+i>, |-i>
-  const stateOffset = 0.24;
-  const label0 = createTextSprite('|0⟩', '#e0f2fe', 46, true);
-  label0.position.set(0, R + stateOffset, 0);
-  blochGroup.add(label0);
+  // Center bead
+  const cbGeo = new THREE.SphereGeometry(0.07, 14, 14);
+  const cbMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
+  vecGroup.add(new THREE.Mesh(cbGeo, cbMat));
 
-  const label1 = createTextSprite('|1⟩', '#e0f2fe', 46, true);
-  label1.position.set(0, -R - stateOffset, 0);
-  blochGroup.add(label1);
-
-  const labelPlus = createTextSprite('|+⟩', '#ede9fe', 42, true);
-  labelPlus.position.set(R + stateOffset, 0, 0);
-  blochGroup.add(labelPlus);
-
-  const labelMinus = createTextSprite('|-⟩', '#ede9fe', 42, true);
-  labelMinus.position.set(-R - stateOffset, 0, 0);
-  blochGroup.add(labelMinus);
-
-  const labelPlusI = createTextSprite('|+i⟩', '#cffafe', 40, true);
-  labelPlusI.position.set(0, 0, R + stateOffset);
-  blochGroup.add(labelPlusI);
-
-  const labelMinusI = createTextSprite('|-i⟩', '#cffafe', 40, true);
-  labelMinusI.position.set(0, 0, -R - stateOffset);
-  blochGroup.add(labelMinusI);
-
-  /* -------------------------------------------------------------
-     7. QUANTUM STATE VECTOR (|ψ⟩)
-     ------------------------------------------------------------- */
-  let theta = Math.PI / 3;    // Polar angle from +Z (60°)
-  let phi = Math.PI / 4;      // Azimuthal angle from +X (45°)
-
-  const vectorGroup = new THREE.Group();
-  blochGroup.add(vectorGroup);
-
-  // Center pivot bead
-  const centerBeadGeo = new THREE.SphereGeometry(0.065, 16, 16);
-  const centerBeadMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-  const centerBead = new THREE.Mesh(centerBeadGeo, centerBeadMat);
-  vectorGroup.add(centerBead);
-
-  // Shaft (Cylinder scaled dynamically)
-  const shaftGeo = new THREE.CylinderGeometry(0.026, 0.026, 1, 16);
-  shaftGeo.translate(0, 0.5, 0); // Origin at base
-  const shaftMat = new THREE.MeshBasicMaterial({
-    color: 0x38bdf8,
-    transparent: true,
-    opacity: 0.95
-  });
+  // Shaft cylinder (origin at base, length = 1 → scaled dynamically)
+  const shaftGeo = new THREE.CylinderGeometry(0.028, 0.028, 1, 12);
+  shaftGeo.translate(0, 0.5, 0); // pivot at base
+  const shaftMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.96 });
   const shaftMesh = new THREE.Mesh(shaftGeo, shaftMat);
-  vectorGroup.add(shaftMesh);
+  vecGroup.add(shaftMesh);
 
-  // Arrowhead (Cone)
-  const headLen = 0.22;
-  const headGeo = new THREE.ConeGeometry(0.065, headLen, 16);
-  const headMat = new THREE.MeshBasicMaterial({
-    color: 0x22d3ee,
-    transparent: true,
-    opacity: 1.0
-  });
+  // Arrowhead cone
+  const HEAD_LEN = 0.24;
+  const headGeo  = new THREE.ConeGeometry(0.07, HEAD_LEN, 14);
+  const headMat  = new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 1.0 });
   const headMesh = new THREE.Mesh(headGeo, headMat);
-  vectorGroup.add(headMesh);
+  vecGroup.add(headMesh);
 
-  // Tip bead glow
-  const tipGlowGeo = new THREE.SphereGeometry(0.065, 16, 16);
-  const tipGlowMat = new THREE.MeshBasicMaterial({
-    color: 0x67e8f9,
-    transparent: true,
-    opacity: 0.95
-  });
-  const tipGlow = new THREE.Mesh(tipGlowGeo, tipGlowMat);
-  vectorGroup.add(tipGlow);
+  // Tip glow bead
+  const tipGeo = new THREE.SphereGeometry(0.07, 14, 14);
+  const tipMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.92 });
+  const tipBead = new THREE.Mesh(tipGeo, tipMat);
+  vecGroup.add(tipBead);
 
-  // |ψ⟩ Label Sprite attached to tip
-  const psiSprite = createTextSprite('|ψ⟩', '#38bdf8', 46, true);
-  vectorGroup.add(psiSprite);
+  // |ψ⟩ sprite near tip
+  const psiSprite = makeSprite('|ψ⟩', 0x38bdf8, 46, 0.55);
+  vecGroup.add(psiSprite);
 
-  // Projection dashed line & footprint on equator
-  const projGeom = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0, 0)
+  // Projection dashed line (tip → XZ footprint → center)
+  const projGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()
   ]);
-  const projMat = new THREE.LineBasicMaterial({
-    color: 0x67e8f9,
-    transparent: true,
-    opacity: 0.45,
-    blending: THREE.AdditiveBlending
+  const projMat  = new THREE.LineBasicMaterial({
+    color: 0x67e8f9, transparent: true, opacity: 0.38,
+    blending: THREE.AdditiveBlending, depthWrite: false
   });
-  const projLine = new THREE.Line(projGeom, projMat);
-  vectorGroup.add(projLine);
+  const projLine = new THREE.Line(projGeo, projMat);
+  vecGroup.add(projLine);
 
-  const footprintGeo = new THREE.SphereGeometry(0.045, 12, 12);
-  const footprintMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.7 });
-  const footprint = new THREE.Mesh(footprintGeo, footprintMat);
-  vectorGroup.add(footprint);
+  const footGeo = new THREE.SphereGeometry(0.042, 10, 10);
+  const footMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.65 });
+  const footBead = new THREE.Mesh(footGeo, footMat);
+  vecGroup.add(footBead);
 
-  // Compute 3D tip coordinate from (theta, phi)
-  function getTip(th, ph) {
-    const x = R * Math.sin(th) * Math.cos(ph);
-    const y = R * Math.cos(th); // Vertical (+Z in physics)
-    const z = R * Math.sin(th) * Math.sin(ph); // Depth
-    return new THREE.Vector3(x, y, z);
+  /* ==========================================================
+     10. θ ARC (polar angle from +Z axis to state vector)
+  ========================================================== */
+  const THETA_ARC_SEGS = 48;
+  const thetaArcGeo = new THREE.BufferGeometry();
+  const thetaArcMat = new THREE.LineBasicMaterial({
+    color: 0xfbbf24, transparent: true, opacity: 0.80,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const thetaArcLine = new THREE.Line(thetaArcGeo, thetaArcMat);
+  blochGroup.add(thetaArcLine);
+
+  const thetaLabel = makeSprite('θ', 0xfbbf24, 40, 0.45);
+  thetaLabel.scale.set(0.50, 0.25, 1);
+  blochGroup.add(thetaLabel);
+
+  /* ==========================================================
+     11. φ ARC (azimuthal angle around equator from +X)
+  ========================================================== */
+  const PHI_ARC_SEGS = 48;
+  const phiArcGeo = new THREE.BufferGeometry();
+  const phiArcMat = new THREE.LineBasicMaterial({
+    color: 0xa78bfa, transparent: true, opacity: 0.80,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const phiArcLine = new THREE.Line(phiArcGeo, phiArcMat);
+  blochGroup.add(phiArcLine);
+
+  const phiLabel = makeSprite('φ', 0xa78bfa, 40, 0.45);
+  phiLabel.scale.set(0.50, 0.25, 1);
+  blochGroup.add(phiLabel);
+
+  // Helper: update arc geometries each frame
+  function updateArcs(th, ph) {
+    // ---- θ arc ----
+    // Draw arc from (0,R,0) = |0⟩ direction down to current tip, in the meridian plane of phi
+    const tPts = [];
+    for (let i = 0; i <= THETA_ARC_SEGS; i++) {
+      const t = (i / THETA_ARC_SEGS) * th;
+      const arcR = R * 0.56;  // 56% of sphere radius
+      tPts.push(new THREE.Vector3(
+        arcR * Math.sin(t) * Math.cos(ph),
+        arcR * Math.cos(t),
+        arcR * Math.sin(t) * Math.sin(ph)
+      ));
+    }
+    thetaArcGeo.setFromPoints(tPts);
+
+    // θ label at arc midpoint
+    const tMid = th / 2;
+    const tLR  = R * 0.68;
+    thetaLabel.position.set(
+      tLR * Math.sin(tMid) * Math.cos(ph),
+      tLR * Math.cos(tMid),
+      tLR * Math.sin(tMid) * Math.sin(ph)
+    );
+
+    // ---- φ arc ----
+    // Draw arc on equatorial plane from +X axis to projection of tip
+    const pPts = [];
+    const phiR = R * 0.44;
+    for (let i = 0; i <= PHI_ARC_SEGS; i++) {
+      const p = (i / PHI_ARC_SEGS) * ph;
+      pPts.push(new THREE.Vector3(phiR * Math.cos(p), 0, phiR * Math.sin(p)));
+    }
+    phiArcGeo.setFromPoints(pPts);
+
+    // φ label
+    const pMid = ph / 2;
+    const pLR  = R * 0.58;
+    phiLabel.position.set(pLR * Math.cos(pMid), 0.14, pLR * Math.sin(pMid));
   }
 
-  // Update State Vector orientation and UI displays
+  /* ==========================================================
+     12. UPDATE STATE VECTOR GEOMETRY
+  ========================================================== */
   function updateStateVector() {
-    const tip = getTip(theta, phi);
+    const tip = stateToVec(theta, phi);
     const len = tip.length();
     const dir = tip.clone().normalize();
 
-    // Shaft
+    // Shaft: scale and orient
     shaftMesh.position.set(0, 0, 0);
-    shaftMesh.scale.set(1, len - headLen, 1);
+    shaftMesh.scale.set(1, Math.max(0.01, len - HEAD_LEN), 1);
     shaftMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
 
-    // Arrowhead at tip: apex at tip, base at tip - dir * headLen
-    headMesh.position.copy(tip.clone().sub(dir.clone().multiplyScalar(headLen / 2)));
+    // Head: at tip minus half-head offset
+    headMesh.position.copy(tip.clone().sub(dir.clone().multiplyScalar(HEAD_LEN * 0.5)));
     headMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
 
-    // Tip glow
-    tipGlow.position.copy(tip);
+    // Tip bead + sprite
+    tipBead.position.copy(tip);
+    psiSprite.position.copy(tip.clone().add(dir.clone().multiplyScalar(0.30)));
 
-    // Sprite slightly past tip
-    psiSprite.position.copy(tip.clone().add(dir.clone().multiplyScalar(0.26)));
+    // Projection
+    const foot = new THREE.Vector3(tip.x, 0, tip.z);
+    projGeo.setFromPoints([new THREE.Vector3(), foot, tip]);
+    footBead.position.copy(foot);
 
-    // Projection line: (0,0,0) -> (x, 0, z) -> (x, y, z)
-    const projPoints = [
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(tip.x, 0, tip.z),
-      tip
-    ];
-    projLine.geometry.setFromPoints(projPoints);
-    footprint.position.set(tip.x, 0, tip.z);
+    // Arcs
+    updateArcs(theta, phi);
 
-    // Update UI elements
-    updateUI(theta, phi);
+    // UI sync
+    syncUI(theta, phi);
   }
 
-  /* -------------------------------------------------------------
-     8. UI SYNCHRONIZATION
-     ------------------------------------------------------------- */
-  const ketEl = document.getElementById('bloch-state-ket');
-  const anglesEl = document.getElementById('bloch-state-angles');
-  const p0El = document.getElementById('bloch-p0');
-  const p1El = document.getElementById('bloch-p1');
+  /* ==========================================================
+     13. UI SYNC
+  ========================================================== */
+  const elKet    = document.getElementById('bloch-state-ket');
+  const elAngles = document.getElementById('bloch-state-angles');
+  const elP0     = document.getElementById('bloch-p0');
+  const elP1     = document.getElementById('bloch-p1');
 
-  function updateUI(th, ph) {
-    // Degrees
+  function syncUI(th, ph) {
     const thDeg = Math.round((th * 180) / Math.PI);
-    let phDeg = Math.round((ph * 180) / Math.PI) % 360;
+    let   phDeg = Math.round((ph * 180) / Math.PI) % 360;
     if (phDeg < 0) phDeg += 360;
 
-    // Probabilities
-    const p0 = Math.cos(th / 2) ** 2;
-    const p1 = Math.sin(th / 2) ** 2;
+    const p0 = Math.pow(Math.cos(th / 2), 2);
+    const p1 = Math.pow(Math.sin(th / 2), 2);
 
-    if (anglesEl) {
-      anglesEl.textContent = `θ: ${thDeg}° · φ: ${phDeg}°`;
-    }
-    if (p0El) {
-      p0El.textContent = `${Math.round(p0 * 100)}%`;
-    }
-    if (p1El) {
-      p1El.textContent = `${Math.round(p1 * 100)}%`;
-    }
+    if (elAngles) elAngles.textContent = `θ: ${thDeg}° · φ: ${phDeg}°`;
+    if (elP0)     elP0.textContent     = `${Math.round(p0 * 100)}%`;
+    if (elP1)     elP1.textContent     = `${Math.round(p1 * 100)}%`;
 
-    // Determine state ket
-    if (ketEl) {
-      let stateName = '|ψ⟩';
+    // Named state
+    if (elKet) {
       const eps = 0.08;
-      if (th < eps) stateName = '|0⟩';
-      else if (Math.abs(th - Math.PI) < eps) stateName = '|1⟩';
+      let name = '|ψ⟩';
+      if (th < eps)                        name = '|0⟩';
+      else if (Math.abs(th - Math.PI) < eps) name = '|1⟩';
       else if (Math.abs(th - Math.PI / 2) < eps) {
-        if (Math.abs(ph) < eps || Math.abs(ph - Math.PI * 2) < eps) stateName = '|+⟩';
-        else if (Math.abs(ph - Math.PI) < eps) stateName = '|-⟩';
-        else if (Math.abs(ph - Math.PI / 2) < eps) stateName = '|+i⟩';
-        else if (Math.abs(ph - (3 * Math.PI) / 2) < eps) stateName = '|-i⟩';
+        const p = ((ph % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+        if (p < eps || Math.abs(p - Math.PI * 2) < eps) name = '|+⟩';
+        else if (Math.abs(p - Math.PI)     < eps)        name = '|-⟩';
+        else if (Math.abs(p - Math.PI / 2) < eps)        name = '|+i⟩';
+        else if (Math.abs(p - 3 * Math.PI / 2) < eps)   name = '|-i⟩';
       }
-      ketEl.textContent = stateName;
+      elKet.textContent = name;
     }
   }
 
   updateStateVector();
 
-  /* -------------------------------------------------------------
-     9. QUANTUM GATE ROTATIONS & ANIMATION
-     ------------------------------------------------------------- */
-  let activeAnimation = null;
+  /* ==========================================================
+     14. ANIMATION  (smooth lerp to target state)
+  ========================================================== */
+  let animationRaf = null;
 
-  function animateStateTo(targetTh, targetPh, durationMs = 500) {
-    const startTh = theta;
-    const startPh = phi;
+  function animateState(toTh, toPh, ms = 540) {
+    if (animationRaf) cancelAnimationFrame(animationRaf);
 
-    // Normalize target angle differences
-    let dPh = targetPh - startPh;
-    while (dPh > Math.PI) dPh -= Math.PI * 2;
+    const fromTh = theta;
+    const fromPh = phi;
+
+    // Shortest angular path for phi
+    let dPh = toPh - fromPh;
+    while (dPh >  Math.PI) dPh -= Math.PI * 2;
     while (dPh < -Math.PI) dPh += Math.PI * 2;
 
-    const startTime = performance.now();
+    const t0 = performance.now();
 
     function step(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / durationMs);
-      // Smooth cubic ease out
-      const ease = 1 - Math.pow(1 - progress, 3);
+      const progress = Math.min(1, (now - t0) / ms);
+      const ease     = 1 - Math.pow(1 - progress, 3); // cubic ease-out
 
-      theta = startTh + (targetTh - startTh) * ease;
-      phi = startPh + dPh * ease;
-
+      theta = fromTh + (toTh - fromTh) * ease;
+      phi   = fromPh + dPh * ease;
       updateStateVector();
 
       if (progress < 1) {
-        activeAnimation = requestAnimationFrame(step);
+        animationRaf = requestAnimationFrame(step);
       } else {
-        theta = targetTh;
-        phi = targetPh;
+        theta = toTh;
+        phi   = toPh;
         updateStateVector();
-        activeAnimation = null;
+        animationRaf = null;
       }
     }
-
-    if (activeAnimation) cancelAnimationFrame(activeAnimation);
-    activeAnimation = requestAnimationFrame(step);
+    animationRaf = requestAnimationFrame(step);
   }
 
-  // Gates logic
-  function applyGate(gateName) {
-    // Current vector in unit sphere
-    const curX = Math.sin(theta) * Math.cos(phi);
-    const curY = Math.cos(theta); // Vertical (Z)
-    const curZ = Math.sin(theta) * Math.sin(phi); // Depth (Y)
-    const v = new THREE.Vector3(curX, curY, curZ);
+  /* ==========================================================
+     15. QUANTUM GATES  (real Bloch-sphere rotations)
+  ========================================================== */
+  function applyGate(name) {
+    // Current Bloch vector in physics convention
+    //   x = sin(θ)cos(φ),  y = sin(θ)sin(φ),  z = cos(θ)
+    // Mapped to Three.js:  three_x = x,  three_y = z(physics),  three_z = y(physics)
+    const bx = Math.sin(theta) * Math.cos(phi);
+    const by = Math.sin(theta) * Math.sin(phi);
+    const bz = Math.cos(theta);
 
-    let targetV = v.clone();
+    let v = new THREE.Vector3(bx, bz, by); // three_x = phys_x, three_y = phys_z, three_z = phys_y
 
-    switch (gateName) {
-      case 'H':
-        // Hadamard: 180° rotation around (X + Z)/sqrt(2) diagonal axis
-        // In our coords: X is (1,0,0) and vertical Z is (0,1,0)
-        const hadAxis = new THREE.Vector3(1, 1, 0).normalize();
-        targetV.applyAxisAngle(hadAxis, Math.PI);
-        break;
-
+    switch (name) {
       case 'X':
-        // Pauli-X: 180° rotation around X axis (1, 0, 0)
-        targetV.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+        // Pauli-X: π rotation around physics X  → three_x axis (1,0,0)
+        v.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
         break;
-
       case 'Y':
-        // Pauli-Y: 180° rotation around Y axis (in our coords depth axis: 0, 0, 1)
-        targetV.applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI);
+        // Pauli-Y: π rotation around physics Y  → three_z axis (0,0,1)
+        v.applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI);
         break;
-
       case 'Z':
-        // Pauli-Z: 180° rotation around Z axis (in our coords vertical axis: 0, 1, 0)
-        targetV.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+        // Pauli-Z: π rotation around physics Z  → three_y axis (0,1,0)
+        v.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+        break;
+      case 'H':
+        // Hadamard = π rotation around (physics X + physics Z)/√2
+        // → Three.js (1,0,0)+(0,1,0) = (1,1,0) normalized
+        v.applyAxisAngle(new THREE.Vector3(1, 1, 0).normalize(), Math.PI);
         break;
     }
 
-    // Convert target 3D vector back to spherical (theta, phi)
-    targetV.normalize();
-    // y = cos(theta)
-    let newTh = Math.acos(Math.max(-1, Math.min(1, targetV.y)));
-    // x = sin(th)*cos(ph), z = sin(th)*sin(ph)
-    let newPh = Math.atan2(targetV.z, targetV.x);
+    v.normalize();
+
+    // Convert back: phys_x = three_x, phys_y = three_z, phys_z = three_y
+    const nx = v.x, ny = v.z, nz = v.y;
+    let newTh = Math.acos(Math.max(-1, Math.min(1, nz)));
+    let newPh = Math.atan2(ny, nx);
     if (newPh < 0) newPh += Math.PI * 2;
 
-    animateStateTo(newTh, newPh, 550);
+    animateState(newTh, newPh, 560);
   }
 
-  // Hook gate buttons
-  const gateButtons = document.querySelectorAll('.bloch-gate-btn');
-  gateButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  /* ==========================================================
+     16. GATE BUTTON WIRING
+  ========================================================== */
+  document.querySelectorAll('.bloch-gate-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
       e.stopPropagation();
-      const g = btn.dataset.gate;
-      gateButtons.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.bloch-gate-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      setTimeout(() => btn.classList.remove('active'), 500);
-      applyGate(g);
+      setTimeout(() => btn.classList.remove('active'), 550);
+      applyGate(btn.dataset.gate);
+    });
+    // Keyboard accessibility
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+      }
     });
   });
 
-  /* -------------------------------------------------------------
-     10. RESET CAMERA & STATE (Double click or Reset button)
-     ------------------------------------------------------------- */
+  /* ==========================================================
+     17. RESET VIEW
+  ========================================================== */
   function resetView() {
-    // Animate camera back to DEFAULT_CAM_POS
+    // Animate camera back
     const startPos = camera.position.clone();
-    const startTime = performance.now();
-    const dur = 600;
+    const t0  = performance.now();
+    const dur = 650;
 
-    function stepCam(now) {
-      const progress = Math.min(1, (now - startTime) / dur);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      camera.position.lerpVectors(startPos, DEFAULT_CAM_POS, ease);
+    function moveCam(now) {
+      const p    = Math.min(1, (now - t0) / dur);
+      const ease = 1 - Math.pow(1 - p, 3);
+      camera.position.lerpVectors(startPos, DEFAULT_CAM, ease);
       camera.lookAt(0, 0, 0);
       controls.target.set(0, 0, 0);
       controls.update();
-
-      if (progress < 1) {
-        requestAnimationFrame(stepCam);
-      }
+      if (p < 1) requestAnimationFrame(moveCam);
     }
-    requestAnimationFrame(stepCam);
+    requestAnimationFrame(moveCam);
 
     // Reset state to default
-    animateStateTo(Math.PI / 3, Math.PI / 4, 600);
+    animateState(Math.PI / 3, Math.PI / 4, 650);
   }
 
   const resetBtn = document.getElementById('bloch-reset-btn');
   if (resetBtn) {
-    resetBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      resetView();
-    });
+    resetBtn.addEventListener('click', e => { e.stopPropagation(); resetView(); });
   }
 
-  // Double click resets view
-  wrap.addEventListener('dblclick', () => {
-    resetView();
-  });
+  // Double-click on canvas resets view
+  wrap.addEventListener('dblclick', () => resetView());
 
-  /* -------------------------------------------------------------
-     11. ANIMATION LOOP & IDLE PRECESSION
-     ------------------------------------------------------------- */
-  let lastTime = performance.now();
+  /* ==========================================================
+     18. RENDER LOOP  (idle precession + controls update)
+  ========================================================== */
+  let idlePhi = phi;
 
-  function animate(now) {
-    requestAnimationFrame(animate);
+  function renderLoop() {
+    requestAnimationFrame(renderLoop);
 
-    const delta = (now - lastTime) * 0.001;
-    lastTime = now;
-
-    // Subtle quantum state precession when idle (not dragging, not in gate transition)
-    if (!isUserInteracting && !activeAnimation) {
-      phi = (phi + 0.003) % (Math.PI * 2);
+    // Subtle idle precession (slow phi rotation when not interacting)
+    if (!isUserInteracting && !animationRaf) {
+      idlePhi = phi;
+      phi = (phi + 0.0025) % (Math.PI * 2);
       updateStateVector();
     }
 
@@ -646,15 +652,15 @@ QL.initBloch3D = function () {
     renderer.render(scene, camera);
   }
 
-  requestAnimationFrame(animate);
+  renderLoop();
 
-  /* -------------------------------------------------------------
-     12. RESIZE LISTENER
-     ------------------------------------------------------------- */
+  /* ==========================================================
+     19. RESPONSIVE RESIZE
+  ========================================================== */
   function onResize() {
     const w = wrap.clientWidth;
     const h = wrap.clientHeight;
-    if (w === 0 || h === 0) return;
+    if (!w || !h) return;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);

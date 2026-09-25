@@ -507,7 +507,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Init hero canvas (guards itself if elements missing)
   if (typeof QL.initHeroCanvas === 'function') QL.initHeroCanvas();
-  if (typeof QL.initQubitCanvas === 'function') QL.initQubitCanvas();
+
+  // Init 3D Bloch Sphere (Three.js WebGL)
+  if (typeof QL.initBloch3D === 'function') QL.initBloch3D();
 
   // Init interactions
   initNav();

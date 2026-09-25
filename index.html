@@ -102,12 +102,12 @@
               <span class="bloch-state-indicator__ket" id="bloch-state-ket">|ψ⟩</span>
               <span class="bloch-state-indicator__angles" id="bloch-state-angles">θ: 60° · φ: 45°</span>
             </div>
-            <button class="bloch-reset-btn" id="bloch-reset-btn" title="Reset 3D camera and state (or double-click sphere)">
+            <button class="bloch-reset-btn" id="bloch-reset-btn" title="Reset camera &amp; state · double-click sphere to reset" aria-label="Reset Bloch sphere camera and quantum state">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                 <path d="M3 3v5h5"/>
               </svg>
-              Reset View
+              Reset
             </button>
           </div>
 
@@ -126,10 +126,10 @@
             <div class="bloch-gates" id="bloch-gates">
               <span class="bloch-gates__label">APPLY GATE:</span>
               <div class="bloch-gates__row">
-                <button class="bloch-gate-btn" id="gate-H" data-gate="H" title="Hadamard (Superposition)">H</button>
-                <button class="bloch-gate-btn" id="gate-X" data-gate="X" title="Pauli-X (Bit-flip)">X</button>
-                <button class="bloch-gate-btn" id="gate-Y" data-gate="Y" title="Pauli-Y (Bit & Phase-flip)">Y</button>
-                <button class="bloch-gate-btn" id="gate-Z" data-gate="Z" title="Pauli-Z (Phase-flip)">Z</button>
+                <button class="bloch-gate-btn tooltip" id="gate-H" data-gate="H" title="H — Hadamard Gate" data-tip="H — Hadamard Gate" aria-label="Apply Hadamard gate">H</button>
+                <button class="bloch-gate-btn tooltip" id="gate-X" data-gate="X" title="X — Pauli-X Gate" data-tip="X — Pauli-X Gate" aria-label="Apply Pauli-X gate">X</button>
+                <button class="bloch-gate-btn tooltip" id="gate-Y" data-gate="Y" title="Y — Pauli-Y Gate" data-tip="Y — Pauli-Y Gate" aria-label="Apply Pauli-Y gate">Y</button>
+                <button class="bloch-gate-btn tooltip" id="gate-Z" data-gate="Z" title="Z — Pauli-Z Gate" data-tip="Z — Pauli-Z Gate" aria-label="Apply Pauli-Z gate">Z</button>
               </div>
             </div>
             <div class="bloch-probs" id="bloch-probs">

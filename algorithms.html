@@ -50,82 +50,13 @@
     </div>
   </header>
 
-  <!-- 2-COLUMN VIRTUAL LABS LANDING LAYOUT -->
-  <div class="vlab-workspace" style="display:flex; flex:1;">
+  <!-- FULL-WIDTH VIRTUAL LABS LANDING LAYOUT -->
+  <div class="vlab-workspace" style="flex:1;">
     
-    <!-- LEFT SIDEBAR: EXPERIMENT LIST -->
-    <aside class="vlab-sidebar" style="width:340px; min-width:320px; flex-shrink:0; border-right:1px solid var(--vlab-border); background:rgba(10,13,38,0.7); overflow-y:auto; padding:1.25rem 1rem;">
-      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--vlab-cyan); margin-bottom:1rem; padding-left:0.5rem;">
-        Algorithms / Experiments (15)
-      </div>
-      <nav style="display:flex; flex-direction:column; gap:0.35rem;" id="algorithms-exp-nav-list">
-        <!-- Dynamically or statically populated -->
-        <a href="algorithms/qsvm.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">01</span>
-          <span>Quantum Support Vector Machines (QSVM)</span>
-        </a>
-        <a href="algorithms/shor-factorization.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">02</span>
-          <span>Shor's Factorization Algorithm</span>
-        </a>
-        <a href="algorithms/qft.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">03</span>
-          <span>Quantum Fourier Transform (QFT)</span>
-        </a>
-        <a href="algorithms/qpe.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">04</span>
-          <span>Quantum Phase Estimation (QPE)</span>
-        </a>
-        <a href="algorithms/vqe.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">05</span>
-          <span>Variational Quantum Eigensolver (VQE)</span>
-        </a>
-        <a href="algorithms/qaoa.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">06</span>
-          <span>Quantum Approximate Optimization (QAOA)</span>
-        </a>
-        <a href="algorithms/grover.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">07</span>
-          <span>Grover's Search Algorithm</span>
-        </a>
-        <a href="algorithms/qnn.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">08</span>
-          <span>Quantum Neural Networks (QNN)</span>
-        </a>
-        <a href="algorithms/qka.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">09</span>
-          <span>Quantum Kernel Alignment (QKA)</span>
-        </a>
-        <a href="algorithms/qpca.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">10</span>
-          <span>Quantum Principal Component Analysis (qPCA)</span>
-        </a>
-        <a href="algorithms/hhl.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">11</span>
-          <span>HHL Linear Systems Algorithm</span>
-        </a>
-        <a href="algorithms/deutsch-jozsa.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">12</span>
-          <span>Deutsch-Jozsa Algorithm</span>
-        </a>
-        <a href="algorithms/bernstein-vazirani.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">13</span>
-          <span>Bernstein-Vazirani Algorithm</span>
-        </a>
-        <a href="algorithms/quantum-teleportation.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">14</span>
-          <span>Quantum Teleportation Protocol</span>
-        </a>
-        <a href="algorithms/qae.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
-          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">15</span>
-          <span>Quantum Amplitude Estimation (QAE)</span>
-        </a>
-      </nav>
-    </aside>
 
     <!-- MAIN LAB OVERVIEW -->
-    <main class="vlab-main-content" style="flex:1; padding:2.5rem 3rem; overflow-y:auto;">
-      <div style="max-width:960px;">
+    <main class="vlab-main-content" style="padding:2.5rem 3rem; overflow-y:auto;">
+      <div style="width:100%; box-sizing:border-box;">
         
         <!-- HERO BANNER -->
         <div style="margin-bottom:2.5rem;">
@@ -164,7 +95,7 @@
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm);">
               <div style="font-weight:700; color:var(--vlab-cyan); margin-bottom:0.4rem;">1. Select an Experiment</div>
-              <p style="font-size:0.85rem; color:var(--vlab-text-secondary); margin:0; line-height:1.5;">Choose any algorithm from the left sidebar or the catalog below to enter its dedicated virtual laboratory.</p>
+              <p style="font-size:0.85rem; color:var(--vlab-text-secondary); margin:0; line-height:1.5;">Choose any algorithm from the experiment directory below to enter its dedicated virtual laboratory.</p>
             </div>
             <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm);">
               <div style="font-weight:700; color:var(--vlab-primary-light); margin-bottom:0.4rem;">2. Study Aim & Theory</div>

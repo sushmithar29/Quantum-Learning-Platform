@@ -3,118 +3,320 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quantum Algorithms Explorer – QuantumLab</title>
-  <meta name="description" content="Explore, understand, and interact with the 12 foundational quantum algorithms through visual mathematical simulations, circuit execution, and 3D quantum representations." />
+  <title>Quantum Computing Algorithms Lab – QuantumLab</title>
+  <meta name="description" content="Interactive Virtual Labs experiments for foundational and advanced quantum computing algorithms. Real mathematical simulations, step-by-step gate execution, and comprehensive theoretical analysis." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles/main.css" />
-  <link rel="stylesheet" href="../styles/animations.css" />
-  <link rel="stylesheet" href="../styles/components.css" />
+  <link rel="stylesheet" href="../styles/virtual-lab-environment.css" />
   <link rel="stylesheet" href="../styles/algorithms.css" />
 </head>
-<body class="algo-page">
-  <!-- NAVIGATION -->
-  <nav class="nav scrolled" id="main-nav">
-    <div class="nav__inner">
-      <a href="../index.html" class="nav__logo" id="logo-link">
-        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
-          <defs>
-            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#7c3aed"/>
-              <stop offset="100%" stop-color="#06b6d4"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <span class="nav__logo-text">QuantumLab</span>
-      </a>
-      <div class="nav__links">
-        <a href="/experiments" class="nav__link">Experiments</a>
-        <a href="/virtual-labs" class="nav__link">Virtual Labs</a>
-        <a href="/algorithms" class="nav__link active" id="nav-algos">Algorithms</a>
-        <a href="../index.html#learn" class="nav__link">Learn</a>
-        <a href="../index.html#challenges" class="nav__link">Challenges</a>
+<body class="vlab-body">
+
+  <!-- TOPBAR -->
+  <header class="vlab-topbar">
+    <div class="vlab-topbar__main">
+      <div class="vlab-topbar__left">
+        <a href="../index.html" class="vlab-back-portal">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          QuantumLab Home
+        </a>
+        <div class="vlab-title-group">
+          <div class="vlab-category-badge"><span>🔬</span> Virtual Experiment Laboratory</div>
+          <h1 class="vlab-exp-name">Quantum Computing Algorithms Lab</h1>
+        </div>
       </div>
-      <div class="nav__actions">
-        <button class="nav__ai-btn" id="ai-tutor-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-          AI Tutor
-        </button>
-        <button class="nav__profile-btn" id="profile-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Profile
-        </button>
+      <div class="vlab-topbar__center">
+        <div class="vlab-rating-pill">
+          <span class="vlab-rating-stars">★★★★★</span>
+          <span>4.9</span>
+          <span style="opacity:0.6;font-size:0.7rem">(15 Verified Experiments)</span>
+        </div>
       </div>
-      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="vlab-topbar__actions">
+        <a href="qsvm.html" class="vlab-action-btn vlab-action-btn--primary">Start First Lab (QSVM) →</a>
+      </div>
     </div>
-    <div class="nav__mobile" id="mobile-menu">
-      <a href="/experiments" class="nav__mobile-link">Experiments</a>
-      <a href="/virtual-labs" class="nav__mobile-link">Virtual Labs</a>
-      <a href="/algorithms" class="nav__mobile-link active">Algorithms</a>
-      <a href="../index.html#learn" class="nav__mobile-link">Learn</a>
-      <a href="../index.html#challenges" class="nav__mobile-link">Challenges</a>
-    </div>
-  </nav>
-
-  <!-- HERO SECTION -->
-  <header class="algo-hero">
-    <div class="algo-hero__badge">
-      <span class="algo-card__indicator-dot"></span>
-      Interactive Simulation Platform
-    </div>
-    <h1 class="algo-hero__title">
-      QUANTUM <span class="algo-hero__title-accent">ALGORITHMS</span>
-    </h1>
-    <p class="algo-hero__subtitle">
-      Explore, understand, and interact with quantum algorithms through visual simulations.
-    </p>
-
-    <!-- CATEGORY FILTER PILLS -->
-    <div class="algo-categories-nav" id="category-filters">
-      <button class="algo-cat-btn active" data-cat="all">
-        <span>All Algorithms</span>
-        <span class="algo-cat-btn__count">12</span>
-      </button>
-      <button class="algo-cat-btn" data-cat="fundamentals">
-        <span>⚛️ Quantum Fundamentals</span>
-        <span class="algo-cat-btn__count">4</span>
-      </button>
-      <button class="algo-cat-btn" data-cat="optimization">
-        <span>⚡ Quantum Optimization</span>
-        <span class="algo-cat-btn__count">2</span>
-      </button>
-      <button class="algo-cat-btn" data-cat="qml">
-        <span>🧠 Quantum Machine Learning</span>
-        <span class="algo-cat-btn__count">4</span>
-      </button>
-      <button class="algo-cat-btn" data-cat="simulation">
-        <span>🔬 Quantum Simulation</span>
-        <span class="algo-cat-btn__count">2</span>
-      </button>
-    </div>
-
-    <!-- SEARCH & FILTER INPUT -->
-    <div style="max-width: 480px; margin: 0 auto; position: relative;">
-      <input type="text" id="algo-search-input" placeholder="Search algorithms, concepts, or terms..." class="algo-input" style="width: 100%; border-radius: 9999px; padding: 0.75rem 1.25rem 0.75rem 2.8rem; background: rgba(15, 18, 35, 0.75); border: 1px solid var(--algo-border); font-size: 0.9rem;" />
-      <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--algo-text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
+    <div class="vlab-breadcrumb-bar">
+      <div class="vlab-breadcrumbs">
+        <a href="../index.html">QuantumLab</a><span class="sep">></span>
+        <span class="current">Quantum Computing Algorithms Lab</span>
+      </div>
+      <div class="vlab-status-indicator">
+        <span class="vlab-status-pulse"></span>
+        <span>15 Live Experiments Ready</span>
+      </div>
     </div>
   </header>
 
-  <!-- ALGORITHMS GRID BY CATEGORY -->
-  <main class="algo-grid-section" id="algo-container">
-    <!-- Populated by JavaScript from QL.algorithmsList -->
-  </main>
+  <!-- 2-COLUMN VIRTUAL LABS LANDING LAYOUT -->
+  <div class="vlab-workspace" style="display:flex; flex:1;">
+    
+    <!-- LEFT SIDEBAR: EXPERIMENT LIST -->
+    <aside class="vlab-sidebar" style="width:340px; min-width:320px; flex-shrink:0; border-right:1px solid var(--vlab-border); background:rgba(10,13,38,0.7); overflow-y:auto; padding:1.25rem 1rem;">
+      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--vlab-cyan); margin-bottom:1rem; padding-left:0.5rem;">
+        Algorithms / Experiments (15)
+      </div>
+      <nav style="display:flex; flex-direction:column; gap:0.35rem;" id="algorithms-exp-nav-list">
+        <a href="qsvm.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">01</span>
+          <span>Quantum Support Vector Machines (QSVM)</span>
+        </a>
+        <a href="shor-factorization.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">02</span>
+          <span>Shor's Factorization Algorithm</span>
+        </a>
+        <a href="qft.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">03</span>
+          <span>Quantum Fourier Transform (QFT)</span>
+        </a>
+        <a href="qpe.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">04</span>
+          <span>Quantum Phase Estimation (QPE)</span>
+        </a>
+        <a href="vqe.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">05</span>
+          <span>Variational Quantum Eigensolver (VQE)</span>
+        </a>
+        <a href="qaoa.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">06</span>
+          <span>Quantum Approximate Optimization (QAOA)</span>
+        </a>
+        <a href="grover.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">07</span>
+          <span>Grover's Search Algorithm</span>
+        </a>
+        <a href="qnn.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">08</span>
+          <span>Quantum Neural Networks (QNN)</span>
+        </a>
+        <a href="qka.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">09</span>
+          <span>Quantum Kernel Alignment (QKA)</span>
+        </a>
+        <a href="qpca.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">10</span>
+          <span>Quantum Principal Component Analysis (qPCA)</span>
+        </a>
+        <a href="hhl.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">11</span>
+          <span>HHL Linear Systems Algorithm</span>
+        </a>
+        <a href="deutsch-jozsa.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">12</span>
+          <span>Deutsch-Jozsa Algorithm</span>
+        </a>
+        <a href="bernstein-vazirani.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">13</span>
+          <span>Bernstein-Vazirani Algorithm</span>
+        </a>
+        <a href="quantum-teleportation.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">14</span>
+          <span>Quantum Teleportation Protocol</span>
+        </a>
+        <a href="qae.html" class="vlab-nav-tab" style="text-decoration:none; justify-content:flex-start; text-align:left;">
+          <span style="font-family:var(--vlab-mono); font-size:0.75rem; color:var(--vlab-cyan); min-width:22px;">15</span>
+          <span>Quantum Amplitude Estimation (QAE)</span>
+        </a>
+      </nav>
+    </aside>
 
-  <!-- FOOTER -->
-  <footer class="footer">
+    <!-- MAIN LAB OVERVIEW -->
+    <main class="vlab-main-content" style="flex:1; padding:2.5rem 3rem; overflow-y:auto;">
+      <div style="max-width:960px;">
+        
+        <!-- HERO BANNER -->
+        <div style="margin-bottom:2.5rem;">
+          <div style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.35rem 0.9rem; border-radius:9999px; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); color:var(--vlab-cyan); font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:1rem;">
+            Virtual Labs Architecture
+          </div>
+          <h1 style="font-size:2.4rem; font-weight:800; letter-spacing:-0.02em; line-height:1.2; margin-bottom:1rem; color:#fff;">
+            Quantum Computing <span style="background:linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Algorithms Lab</span>
+          </h1>
+          <p style="font-size:1.1rem; color:var(--vlab-text-secondary); line-height:1.7; max-width:800px; margin-bottom:1.5rem;">
+            Welcome to the QuantumLab Algorithms Virtual Experiment Platform. Modeled after premier educational laboratory systems, this portal provides 15 hands-on quantum algorithm experiments. Each experiment integrates <strong>Aim, Theoretical Formulation, Pretest, Step-by-Step Procedure, Live Interactive Simulation, Derived Observables, Posttest Evaluation, and Academic References</strong>.
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:2rem;">
+            <div style="padding:1rem 1.5rem; background:rgba(255,255,255,0.03); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm); min-width:160px;">
+              <div style="font-size:1.8rem; font-weight:800; color:var(--vlab-cyan); font-family:var(--vlab-mono);">15</div>
+              <div style="font-size:0.78rem; color:var(--vlab-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Interactive Labs</div>
+            </div>
+            <div style="padding:1rem 1.5rem; background:rgba(255,255,255,0.03); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm); min-width:160px;">
+              <div style="font-size:1.8rem; font-weight:800; color:var(--vlab-primary-light); font-family:var(--vlab-mono);">4</div>
+              <div style="font-size:0.78rem; color:var(--vlab-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Domain Categories</div>
+            </div>
+            <div style="padding:1rem 1.5rem; background:rgba(255,255,255,0.03); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm); min-width:160px;">
+              <div style="font-size:1.8rem; font-weight:800; color:#34d399; font-family:var(--vlab-mono);">100%</div>
+              <div style="font-size:0.78rem; color:var(--vlab-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Real Math Engine</div>
+            </div>
+            <div style="padding:1rem 1.5rem; background:rgba(255,255,255,0.03); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm); min-width:160px;">
+              <div style="font-size:1.8rem; font-weight:800; color:#f59e0b; font-family:var(--vlab-mono);">90+</div>
+              <div style="font-size:0.78rem; color:var(--vlab-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Quiz Assessments</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HOW TO USE THE LAB -->
+        <div style="background:var(--vlab-bg-card); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius); padding:2rem; margin-bottom:3rem;">
+          <h2 style="font-size:1.35rem; color:#fff; margin-top:0; margin-bottom:1rem;">How to Use This Virtual Laboratory</h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
+            <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm);">
+              <div style="font-weight:700; color:var(--vlab-cyan); margin-bottom:0.4rem;">1. Select an Experiment</div>
+              <p style="font-size:0.85rem; color:var(--vlab-text-secondary); margin:0; line-height:1.5;">Choose any algorithm from the left sidebar or the catalog below to enter its dedicated virtual laboratory.</p>
+            </div>
+            <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm);">
+              <div style="font-weight:700; color:var(--vlab-primary-light); margin-bottom:0.4rem;">2. Study Aim & Theory</div>
+              <p style="font-size:0.85rem; color:var(--vlab-text-secondary); margin:0; line-height:1.5;">Review the scientific problem formulation, mathematical principles, circuit models, and complexity bounds.</p>
+            </div>
+            <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm);">
+              <div style="font-weight:700; color:#34d399; margin-bottom:0.4rem;">3. Run Live Simulation</div>
+              <p style="font-size:0.85rem; color:var(--vlab-text-secondary); margin:0; line-height:1.5;">Follow the procedure, adjust circuit parameters, step through gate executions, and observe the live canvas.</p>
+            </div>
+            <div style="padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--vlab-border); border-radius:var(--vlab-radius-sm);">
+              <div style="font-weight:700; color:#f59e0b; margin-bottom:0.4rem;">4. Evaluate & Verify</div>
+              <p style="font-size:0.85rem; color:var(--vlab-text-secondary); margin:0; line-height:1.5;">Analyze derived metrics, complete the Posttest assessment, and inspect peer-reviewed literature citations.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPERIMENTS DIRECTORY TABLE -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1.25rem;">
+            <div>
+              <h2 style="font-size:1.4rem; color:#fff; margin:0 0 0.3rem 0;">Experiment Directory</h2>
+              <div style="font-size:0.85rem; color:var(--vlab-text-secondary);">Select an experiment below to launch its interactive virtual lab:</div>
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--vlab-border); border-radius:var(--vlab-radius); overflow:hidden; background:var(--vlab-bg-card);">
+            <table class="vlab-table" style="width:100%; margin:0;">
+              <thead>
+                <tr>
+                  <th style="width:60px;">No.</th>
+                  <th>Experiment Name</th>
+                  <th>Domain Category</th>
+                  <th>Difficulty</th>
+                  <th style="text-align:right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">01</td>
+                  <td><strong>Quantum Support Vector Machines (QSVM)</strong></td>
+                  <td>Quantum Machine Learning</td>
+                  <td><span class="vlab-card-badge">Advanced</span></td>
+                  <td style="text-align:right;"><a href="qsvm.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">02</td>
+                  <td><strong>Shor's Factorization Algorithm</strong></td>
+                  <td>Number Theory & Cryptography</td>
+                  <td><span class="vlab-card-badge">Expert</span></td>
+                  <td style="text-align:right;"><a href="shor-factorization.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">03</td>
+                  <td><strong>Quantum Fourier Transform (QFT)</strong></td>
+                  <td>Fundamentals & Primitives</td>
+                  <td><span class="vlab-card-badge">Intermediate</span></td>
+                  <td style="text-align:right;"><a href="qft.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">04</td>
+                  <td><strong>Quantum Phase Estimation (QPE)</strong></td>
+                  <td>Fundamentals & Primitives</td>
+                  <td><span class="vlab-card-badge">Advanced</span></td>
+                  <td style="text-align:right;"><a href="qpe.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">05</td>
+                  <td><strong>Variational Quantum Eigensolver (VQE)</strong></td>
+                  <td>Quantum Simulation</td>
+                  <td><span class="vlab-card-badge">Advanced</span></td>
+                  <td style="text-align:right;"><a href="vqe.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">06</td>
+                  <td><strong>Quantum Approximate Optimization (QAOA)</strong></td>
+                  <td>Quantum Optimization</td>
+                  <td><span class="vlab-card-badge">Advanced</span></td>
+                  <td style="text-align:right;"><a href="qaoa.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">07</td>
+                  <td><strong>Grover's Search Algorithm</strong></td>
+                  <td>Fundamentals & Primitives</td>
+                  <td><span class="vlab-card-badge">Intermediate</span></td>
+                  <td style="text-align:right;"><a href="grover.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">08</td>
+                  <td><strong>Quantum Neural Networks (QNN)</strong></td>
+                  <td>Quantum Machine Learning</td>
+                  <td><span class="vlab-card-badge">Advanced</span></td>
+                  <td style="text-align:right;"><a href="qnn.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">09</td>
+                  <td><strong>Quantum Kernel Alignment (QKA)</strong></td>
+                  <td>Quantum Machine Learning</td>
+                  <td><span class="vlab-card-badge">Expert</span></td>
+                  <td style="text-align:right;"><a href="qka.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">10</td>
+                  <td><strong>Quantum Principal Component Analysis (qPCA)</strong></td>
+                  <td>Quantum Machine Learning</td>
+                  <td><span class="vlab-card-badge">Expert</span></td>
+                  <td style="text-align:right;"><a href="qpca.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">11</td>
+                  <td><strong>HHL Algorithm (Linear Systems)</strong></td>
+                  <td>Quantum Simulation</td>
+                  <td><span class="vlab-card-badge">Expert</span></td>
+                  <td style="text-align:right;"><a href="hhl.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">12</td>
+                  <td><strong>Deutsch-Jozsa Algorithm</strong></td>
+                  <td>Fundamentals & Primitives</td>
+                  <td><span class="vlab-card-badge">Intermediate</span></td>
+                  <td style="text-align:right;"><a href="deutsch-jozsa.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">13</td>
+                  <td><strong>Bernstein-Vazirani Algorithm</strong></td>
+                  <td>Fundamentals & Primitives</td>
+                  <td><span class="vlab-card-badge">Intermediate</span></td>
+                  <td style="text-align:right;"><a href="bernstein-vazirani.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">14</td>
+                  <td><strong>Quantum Teleportation Protocol</strong></td>
+                  <td>Quantum Information</td>
+                  <td><span class="vlab-card-badge">Intermediate</span></td>
+                  <td style="text-align:right;"><a href="quantum-teleportation.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--vlab-mono); color:var(--vlab-cyan);">15</td>
+                  <td><strong>Quantum Amplitude Estimation (QAE)</strong></td>
+                  <td>Quantum Optimization</td>
+                  <td><span class="vlab-card-badge">Expert</span></td>
+                  <td style="text-align:right;"><a href="qae.html" class="vlab-action-btn vlab-action-btn--primary" style="text-decoration:none;">Launch Lab →</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <footer class="footer" style="margin-top:auto;">
     <div class="footer__inner">
       <div class="footer__brand">
         <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
@@ -126,128 +328,10 @@
         </svg>
         <span>QuantumLab</span>
       </div>
-      <p class="footer__tagline">Interactive Quantum Computing Algorithm Explorer.</p>
+      <p class="footer__tagline">Quantum Computing Virtual Experiment Laboratory.</p>
       <p class="footer__copy">© 2026 QuantumLab. Built for explorers and researchers.</p>
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="../js/algorithms-data.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('algo-container');
-      const searchInput = document.getElementById('algo-search-input');
-      const filterBtns = document.querySelectorAll('.algo-cat-btn');
-
-      let currentCategory = 'all';
-      let searchQuery = '';
-
-      const categories = [
-        { id: 'fundamentals', name: 'Quantum Fundamentals', icon: '⚛️', count: 4 },
-        { id: 'optimization', name: 'Quantum Optimization', icon: '⚡', count: 2 },
-        { id: 'qml', name: 'Quantum Machine Learning', icon: '🧠', count: 4 },
-        { id: 'simulation', name: 'Quantum Simulation', icon: '🔬', count: 2 }
-      ];
-
-      function renderAlgorithms() {
-        const algos = QL.algorithmsList || [];
-        container.innerHTML = '';
-
-        const filteredCats = categories.filter(cat => currentCategory === 'all' || currentCategory === cat.id);
-
-        let totalShown = 0;
-
-        filteredCats.forEach(cat => {
-          let catAlgos = algos.filter(a => a.categoryId === cat.id);
-          if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase();
-            catAlgos = catAlgos.filter(a => 
-              a.name.toLowerCase().includes(q) ||
-              a.desc.toLowerCase().includes(q) ||
-              a.concepts.some(c => c.toLowerCase().includes(q))
-            );
-          }
-
-          if (catAlgos.length === 0) return;
-          totalShown += catAlgos.length;
-
-          const section = document.createElement('div');
-          section.className = 'algo-category-block';
-          section.innerHTML = `
-            <div class="algo-category-header">
-              <div class="algo-category-title-wrap">
-                <span class="algo-category-icon">${cat.icon}</span>
-                <h2 class="algo-category-title">${cat.name}</h2>
-              </div>
-              <span class="algo-category-count">${catAlgos.length} Algorithm${catAlgos.length > 1 ? 's' : ''}</span>
-            </div>
-            <div class="algo-cards-grid">
-              ${catAlgos.map(algo => `
-                <a href="${algo.id}.html" class="algo-explorer-card" style="--card-accent: ${algo.color}; --card-glow: ${algo.accentColor}33;">
-                  <div>
-                    <div class="algo-card__top">
-                      <span class="algo-card__num">${algo.number}</span>
-                      <span class="algo-card__difficulty diff--${algo.difficulty.toLowerCase()}">${algo.difficulty}</span>
-                    </div>
-                    <h3 class="algo-card__title">${algo.name}</h3>
-                    <p class="algo-card__desc">${algo.desc}</p>
-                    <div class="algo-card__concepts">
-                      ${algo.concepts.map(c => `<span class="algo-concept-tag">${c}</span>`).join('')}
-                    </div>
-                  </div>
-                  <div class="algo-card__bottom">
-                    <div class="algo-card__indicator">
-                      <span class="algo-card__indicator-dot"></span>
-                      Interactive Simulation
-                    </div>
-                    <span class="algo-card__btn">
-                      EXPLORE ALGORITHM
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </span>
-                  </div>
-                </a>
-              `).join('')}
-            </div>
-          `;
-          container.appendChild(section);
-        });
-
-        if (totalShown === 0) {
-          container.innerHTML = `
-            <div style="text-align: center; padding: 4rem 1rem; color: var(--algo-text-muted);">
-              <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
-              <p style="font-size: 1.1rem; color: var(--algo-text-sub);">No algorithms match "${searchQuery}".</p>
-              <button class="algo-cat-btn" style="margin-top: 1rem;" onclick="document.getElementById('algo-search-input').value=''; document.getElementById('algo-search-input').dispatchEvent(new Event('input'));">Clear Search</button>
-            </div>
-          `;
-        }
-      }
-
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentCategory = btn.dataset.cat;
-          renderAlgorithms();
-        });
-      });
-
-      searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value;
-        renderAlgorithms();
-      });
-
-      // Mobile Menu
-      const mobileBtn = document.getElementById('mobile-menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (mobileBtn && mobileMenu) {
-        mobileBtn.addEventListener('click', () => {
-          mobileMenu.classList.toggle('active');
-        });
-      }
-
-      renderAlgorithms();
-    });
-  </script>
 </body>
 </html>

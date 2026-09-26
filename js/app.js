@@ -504,6 +504,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroLabsCount && QL.data && QL.data.labs) {
     heroLabsCount.textContent = QL.data.labs.length;
   }
+  const heroAlgoCount = document.getElementById('hero-algo-count');
+  if (heroAlgoCount && QL.data && QL.data.algorithms) {
+    heroAlgoCount.textContent = QL.data.algorithms.length;
+  }
 
   // Init hero canvas (guards itself if elements missing)
   if (typeof QL.initHeroCanvas === 'function') QL.initHeroCanvas();

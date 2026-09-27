@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Hardware – QuantumLab</title>
+  <meta name="description" content="Explore how quantum computers work through interactive visualization of IBM-style superconducting quantum hardware: dilution refrigerator, superconducting qubits, microwave control signals, and quantum measurement." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/hardware.css" />
+</head>
+<body class="hw-body">
+
+  <!-- TOP NAV (same style as main site) -->
+  <nav class="hw-nav" id="hw-nav">
+    <div class="hw-nav__inner">
+      <a href="../index.html" class="hw-back-btn" aria-label="Back to QuantumLab Home">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        QuantumLab Home
+      </a>
+      <div class="hw-nav__title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#nav-grad)" stroke-width="1.8">
+          <defs>
+            <linearGradient id="nav-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+        </svg>
+        <span>Quantum Hardware</span>
+      </div>
+      <div class="hw-nav__right">
+        <button class="hw-mode-btn" id="hw-mode-btn" title="Switch mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <span id="hw-mode-label">Guided Mode</span>
+        </button>
+        <button class="hw-fullscreen-btn" id="hw-fullscreen-btn" aria-label="Toggle fullscreen">
+          <svg id="hw-fs-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOADING SCREEN -->
+  <div class="hw-loader" id="hw-loader">
+    <div class="hw-loader__inner">
+      <div class="hw-loader__ring"></div>
+      <div class="hw-loader__text">Initializing Quantum Hardware Simulation...</div>
+      <div class="hw-loader__sub">Loading dilution refrigerator · qubit array · signal chain</div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="hw-layout" id="hw-layout">
+
+    <!-- HERO HEADER -->
+    <div class="hw-hero">
+      <div class="hw-hero__badge">⚛ INTERACTIVE QUANTUM HARDWARE LAB</div>
+      <h1 class="hw-hero__title">How Quantum Computers Work</h1>
+      <p class="hw-hero__sub">An interactive visualization of IBM-style superconducting quantum hardware — from room-temperature electronics down to millikelvin qubits.</p>
+    </div>
+
+    <!-- MAIN SIMULATION AREA -->
+    <div class="hw-sim-container" id="hw-sim-container">
+
+      <!-- LEFT: HARDWARE VISUALIZATION CANVAS -->
+      <div class="hw-canvas-wrap" id="hw-canvas-wrap">
+        <canvas id="hw-main-canvas" aria-label="Quantum hardware 3D chandelier simulation canvas"></canvas>
+
+        <!-- 3D VIEWPORT TOOLBAR -->
+        <div class="hw-3d-toolbar" id="hw-3d-toolbar">
+          <div class="hw-3d-toolbar__group">
+            <button class="hw-3d-btn active" id="btn-cam-overview" title="Full Chandelier Overview">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              <span>Full Chandelier</span>
+            </button>
+            <button class="hw-3d-btn" id="btn-cam-qubits" title="Zoom to 15 mK Qubit Processor Chip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>
+              <span>Qubit Chip (15 mK)</span>
+            </button>
+            <button class="hw-3d-btn" id="btn-cam-4k" title="Focus 4K Attenuation Stage">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              <span>4 K Stage</span>
+            </button>
+          </div>
+          <div class="hw-3d-toolbar__group">
+            <button class="hw-3d-btn active" id="btn-toggle-rotate" title="Toggle 360° Auto-Rotation">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span id="rotate-label">360° Spin: ON</span>
+            </button>
+            <button class="hw-3d-btn" id="btn-toggle-shield" title="Raise or Lower Cryostat Vacuum Canister">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span id="shield-label">Shield: Open</span>
+            </button>
+            <button class="hw-3d-btn hw-3d-btn--gold" id="btn-compare-photo" title="Compare 3D Model with Real IBM Hardware Photograph">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Real Photo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D FLOATING CALLOUT LABELS -->
+        <div class="hw-callouts" id="hw-callouts"></div>
+
+        <!-- CANVAS INTERACTION HINT -->
+        <div class="hw-canvas-hint">
+          <span class="kbd">Left-Drag:</span> Rotate 360° · <span class="kbd">Scroll:</span> Zoom · <span class="kbd">Click:</span> Inspect Component
+        </div>
+
+        <!-- HOVER TOOLTIP -->
+        <div class="hw-tooltip" id="hw-tooltip" role="tooltip">
+          <div class="hw-tooltip__name" id="hw-tip-name">Component</div>
+          <div class="hw-tooltip__purpose" id="hw-tip-purpose">Purpose</div>
+          <div class="hw-tooltip__tags" id="hw-tip-tags"></div>
+        </div>
+
+        <!-- COMPONENT INFO PANEL -->
+        <div class="hw-info-panel" id="hw-info-panel">
+          <button class="hw-info-panel__close" id="hw-info-close" aria-label="Close info panel">✕</button>
+          <div class="hw-info__icon" id="hw-info-icon">🔬</div>
+          <div class="hw-info__name" id="hw-info-name">Component Name</div>
+          <div class="hw-info__badge" id="hw-info-badge">Active</div>
+          <div class="hw-info__body">
+            <div class="hw-info__row"><span class="hw-info__label">Purpose</span><span id="hw-info-purpose">–</span></div>
+            <div class="hw-info__row"><span class="hw-info__label">Input</span><span id="hw-info-input">–</span></div>
+            <div class="hw-info__row"><span class="hw-info__label">Output</span><span id="hw-info-output">–</span></div>
+            <div class="hw-info__row"><span class="hw-info__label">Temp</span><span id="hw-info-temp">–</span></div>
+            <div class="hw-info__desc" id="hw-info-desc">Description</div>
+          </div>
+        </div>
+
+        <!-- REAL HARDWARE COMPARISON MODAL -->
+        <div class="hw-photo-modal" id="hw-photo-modal" style="display:none;">
+          <div class="hw-photo-modal__backdrop" id="hw-photo-backdrop"></div>
+          <div class="hw-photo-modal__content">
+            <div class="hw-photo-modal__header">
+              <div class="hw-photo-modal__title">
+                <span class="hw-badge-gold">IBM QUANTUM DILUTION REFRIGERATOR</span>
+                <h3>Real Superconducting Hardware Reference</h3>
+              </div>
+              <button class="hw-photo-modal__close" id="hw-photo-close" aria-label="Close photo preview">✕</button>
+            </div>
+            <div class="hw-photo-modal__body">
+              <img src="../images/ibm_chandelier_real.jpg" alt="IBM Quantum Dilution Refrigerator real hardware photograph" class="hw-photo-modal__img" />
+              <div class="hw-photo-modal__caption">
+                <p><strong>Physical Hardware Architecture (from Reference Video):</strong> Polished gold-plated OFHC copper stages cooling from 300 K (room temp) down to 15 mK (-459.67°F). Coaxial microwave lines (silver & copper helices) pass through power splitters, directional couplers, and cascaded attenuator banks to protect superconducting transmon qubits from thermal decoherence photons.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: EXPLANATION + CONTROLS PANEL -->
+      <div class="hw-panel">
+
+        <!-- STEP INDICATOR -->
+        <div class="hw-step-header">
+          <div class="hw-step-badge">
+            <span id="hw-step-num">STEP 01</span>
+          </div>
+          <div class="hw-step-title" id="hw-step-title">System Overview</div>
+        </div>
+
+        <!-- EXPLANATION TEXT -->
+        <div class="hw-explanation" id="hw-explanation">
+          <p id="hw-explain-text">Press Play to begin the quantum hardware simulation. Watch as microwave signals travel from room-temperature electronics down through the dilution refrigerator to manipulate superconducting qubits.</p>
+        </div>
+
+        <!-- QUANTUM STATE DISPLAY -->
+        <div class="hw-qstate-card" id="hw-qstate-card">
+          <div class="hw-qstate__title">Qubit Quantum State</div>
+          <div class="hw-qstate__grid" id="hw-qstate-grid">
+            <div class="hw-qbit" id="hw-qbit-0">
+              <div class="hw-qbit__label">Q₀</div>
+              <div class="hw-qbit__bloch-mini" id="hw-qbloch-0"></div>
+              <div class="hw-qbit__state" id="hw-qstate-0">|0⟩</div>
+              <div class="hw-qbit__prob" id="hw-qprob-0">P(|0⟩)=100%</div>
+            </div>
+            <div class="hw-qbit" id="hw-qbit-1">
+              <div class="hw-qbit__label">Q₁</div>
+              <div class="hw-qbit__bloch-mini" id="hw-qbloch-1"></div>
+              <div class="hw-qbit__state" id="hw-qstate-1">|0⟩</div>
+              <div class="hw-qbit__prob" id="hw-qprob-1">P(|0⟩)=100%</div>
+            </div>
+            <div class="hw-qbit" id="hw-qbit-2">
+              <div class="hw-qbit__label">Q₂</div>
+              <div class="hw-qbit__bloch-mini" id="hw-qbloch-2"></div>
+              <div class="hw-qbit__state" id="hw-qstate-2">|0⟩</div>
+              <div class="hw-qbit__prob" id="hw-qprob-2">P(|0⟩)=100%</div>
+            </div>
+          </div>
+          <div class="hw-temperature-bar">
+            <span class="hw-temp-label">System Temperature</span>
+            <span class="hw-temp-val" id="hw-temp-val">293 K (Room Temp)</span>
+          </div>
+        </div>
+
+        <!-- PARAMETERS -->
+        <div class="hw-params" id="hw-params">
+          <div class="hw-params__title">Simulation Parameters</div>
+          <div class="hw-param-row">
+            <label for="hw-signal-freq">Signal Frequency</label>
+            <div class="hw-param-ctrl">
+              <input type="range" id="hw-signal-freq" min="4" max="8" step="0.1" value="5.0" />
+              <span class="hw-param-val" id="hw-signal-freq-val">5.0 GHz</span>
+            </div>
+          </div>
+          <div class="hw-param-row">
+            <label for="hw-signal-amp">Pulse Amplitude</label>
+            <div class="hw-param-ctrl">
+              <input type="range" id="hw-signal-amp" min="0.1" max="1.0" step="0.05" value="0.7" />
+              <span class="hw-param-val" id="hw-signal-amp-val">0.70</span>
+            </div>
+          </div>
+          <div class="hw-param-row">
+            <label for="hw-gate-type">Gate Type</label>
+            <select id="hw-gate-type" class="hw-select">
+              <option value="X">Pauli-X (Bit Flip)</option>
+              <option value="H" selected>Hadamard (Superposition)</option>
+              <option value="S">S Gate (Phase)</option>
+              <option value="CNOT">CNOT (Entanglement)</option>
+            </select>
+          </div>
+          <div class="hw-param-row">
+            <label for="hw-atten">Attenuation Chain</label>
+            <div class="hw-param-ctrl">
+              <input type="range" id="hw-atten" min="20" max="80" step="5" value="60" />
+              <span class="hw-param-val" id="hw-atten-val">60 dB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULTS PANEL -->
+        <div class="hw-results" id="hw-results" style="display:none;">
+          <div class="hw-results__title">Measurement Results</div>
+          <div class="hw-results__body" id="hw-results-body">
+            <div class="hw-result-row">
+              <span>Q₀ measurement</span>
+              <span class="hw-result-val" id="hw-res-q0">|0⟩</span>
+            </div>
+            <div class="hw-result-row">
+              <span>Q₁ measurement</span>
+              <span class="hw-result-val" id="hw-res-q1">|0⟩</span>
+            </div>
+            <div class="hw-result-row">
+              <span>Q₂ measurement</span>
+              <span class="hw-result-val" id="hw-res-q2">|0⟩</span>
+            </div>
+            <div class="hw-result-row hw-result-row--total">
+              <span>Readout Fidelity</span>
+              <span class="hw-result-val hw-result-val--good" id="hw-res-fid">99.2%</span>
+            </div>
+          </div>
+          <button class="hw-restart-btn" id="hw-replay-btn">↻ Replay Simulation</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TIMELINE + PLAYBACK CONTROLS -->
+    <div class="hw-controls-bar" id="hw-controls-bar">
+      <!-- STAGE TIMELINE -->
+      <div class="hw-timeline" id="hw-timeline">
+        <div class="hw-timeline__track">
+          <div class="hw-timeline__progress" id="hw-timeline-progress"></div>
+          <input type="range" class="hw-timeline__scrubber" id="hw-scrubber" min="0" max="1000" value="0" step="1" aria-label="Simulation timeline" />
+          <div class="hw-timeline__stages" id="hw-timeline-stages">
+            <!-- Stages injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBACK BUTTONS -->
+      <div class="hw-playback">
+        <button class="hw-ctrl-btn" id="hw-prev-btn" title="Previous step" aria-label="Previous step">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 19 2 12 11 5 11 19"/><line x1="22" y1="5" x2="22" y2="19"/></svg>
+        </button>
+        <button class="hw-ctrl-btn hw-ctrl-btn--play" id="hw-play-btn" aria-label="Play simulation">
+          <svg id="hw-play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+        <button class="hw-ctrl-btn" id="hw-next-btn" title="Next step" aria-label="Next step">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 19 22 12 13 5 13 19"/><line x1="2" y1="5" x2="2" y2="19"/></svg>
+        </button>
+        <button class="hw-ctrl-btn" id="hw-restart-btn" title="Restart" aria-label="Restart simulation">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        </button>
+        <div class="hw-stage-name" id="hw-stage-name">System Overview</div>
+        <div class="hw-time-display" id="hw-time-display">0:00 / 0:00</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- THREE.JS & ORBITCONTROLS -->
+  <script src="../js/vendor/three.min.js"></script>
+  <script src="../js/vendor/OrbitControls.js"></script>
+  <!-- SCRIPT -->
+  <script src="../js/hardware-sim.js"></script>
+</body>
+</html>

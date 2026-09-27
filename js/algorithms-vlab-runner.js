@@ -65,9 +65,9 @@ QL.AlgorithmVLab = (function () {
           </div>
         </div>
         <div class="vlab-topbar__actions">
-          <button class="vlab-action-btn" id="btn-rate-lab" onclick="QL.AlgorithmVLab.switchTab('feedback')">★ Rate Lab</button>
-          <button class="vlab-action-btn" id="btn-reset-lab" onclick="QL.AlgorithmVLab.resetSimulation()">↺ Reset Sim</button>
-          <button class="vlab-action-btn vlab-action-btn--primary" id="btn-fullscreen-lab" onclick="QL.AlgorithmVLab.toggleFullscreen()">⛶ Fullscreen</button>
+          <a href="../virtual-labs/${currentExp.id}.html" class="vlab-action-btn" style="background:linear-gradient(135deg, var(--vlab-violet), var(--vlab-cyan));color:#fff;border-color:transparent;text-decoration:none;display:inline-flex;align-items:center;padding:0.4rem 1rem;font-weight:600;">
+            Perform in Virtual Lab →
+          </a>
         </div>
       </div>
       <div class="vlab-breadcrumb-bar">

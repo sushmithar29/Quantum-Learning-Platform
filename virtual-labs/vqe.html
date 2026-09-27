@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VQE Virtual Lab — QuantumLab</title>
+  <meta name="description" content="Perform Variational Quantum Eigensolver in the QuantumLab Virtual Laboratory. Configure parameters, run the experiment, observe quantum evolution, and analyze results." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/vlab-workspace.css" />
+</head>
+<body class="vlw-body">
+  <div class="vlw-loader" id="vlw-loader">
+    <div class="vlw-loader__ring"></div>
+    <div class="vlw-loader__text">Initializing Quantum Laboratory...</div>
+    <div class="vlw-loader__sub">Loading energy landscape · ansatz · optimizer</div>
+  </div>
+  <nav class="vlw-topnav" id="vlw-topnav"></nav>
+  <div class="vlw-layout">
+    <aside class="vlw-sidebar" id="vlw-sidebar-content"></aside>
+    <main class="vlw-main">
+      <div class="vlw-step-bar" id="vlw-step-bar"></div>
+      <div class="vlw-canvas-wrap" id="vlw-canvas-wrap">
+        <canvas id="vlw-canvas" class="vlw-sim-canvas" aria-label="Variational Quantum Eigensolver visualization canvas"></canvas>
+        <div class="vlw-viz-label vlw-viz-label--tl">⚛ VQE Visualization</div>
+        <div class="vlw-viz-label vlw-viz-label--tr">Live Quantum Simulation</div>
+        <div class="vlw-complete-overlay" id="vlw-complete-overlay">
+          <div class="vlw-complete-card">
+            <div class="vlw-complete-icon">✅</div>
+            <div class="vlw-complete-title">Experiment Complete!</div>
+            <div class="vlw-complete-sub">You have successfully completed the Variational Quantum Eigensolver experiment in the Quantum Virtual Laboratory.</div>
+            <div class="vlw-complete-actions">
+              <button class="vlw-complete-btn vlw-complete-btn--secondary" onclick="VLW.Workspace.reset()">↺ Reset Lab</button>
+              <a href="../virtual-labs.html" class="vlw-complete-btn vlw-complete-btn--primary">← All Labs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <aside class="vlw-controls" id="vlw-controls-content"></aside>
+    <div class="vlw-timeline-bar">
+      <div class="vlw-playback">
+        <button class="vlw-ctrl-btn" onclick="VLW.Workspace._prevStep()" aria-label="Previous step">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 19 2 12 11 5 11 19"/><line x1="22" y1="5" x2="22" y2="19"/></svg>
+        </button>
+        <button class="vlw-ctrl-btn vlw-ctrl-btn--play" id="vlw-play-btn" onclick="VLW.Workspace.run()" aria-label="Run">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+        <button class="vlw-ctrl-btn" onclick="VLW.Workspace.stepForward()" aria-label="Next step">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 19 22 12 13 5 13 19"/><line x1="2" y1="5" x2="2" y2="19"/></svg>
+        </button>
+        <button class="vlw-ctrl-btn" onclick="VLW.Workspace.reset()" aria-label="Reset">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        </button>
+      </div>
+      <div class="vlw-timeline-track-wrap">
+        <div class="vlw-timeline-steps" id="vlw-timeline-steps"></div>
+      </div>
+      <div class="vlw-time-info">
+        <div class="vlw-time-display" id="vlw-time-display">0:00</div>
+        <div class="vlw-step-counter" id="vlw-step-counter">Step 1</div>
+      </div>
+    </div>
+  </div>
+  <script src="../js/vlab-workspace.js"></script>
+  <script>
+    VLW.Workspace._prevStep = function() {
+      var s = document.querySelectorAll('.vlw-workflow-step');
+      var cur = Array.from(s).findIndex(function(el) { return el.classList.contains('active'); });
+      if (cur > 0) VLW.Workspace.goStep(cur - 1);
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+      VLW.Workspace.init('vqe');
+    });
+  </script>
+</body>
+</html>

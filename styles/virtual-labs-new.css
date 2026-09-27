@@ -1,0 +1,765 @@
+/* ============================================================
+   QUANTUMLAB — VIRTUAL LABS LANDING PAGE
+   Futuristic, Spacious, High-Tech Quantum Laboratory Interface
+   ============================================================ */
+
+:root {
+  --vl-bg-base: #030712;
+  --vl-bg-surface: rgba(10, 18, 38, 0.7);
+  --vl-bg-card: rgba(11, 20, 44, 0.75);
+  --vl-bg-card-hover: rgba(15, 27, 58, 0.9);
+  --vl-border-subtle: rgba(255, 255, 255, 0.08);
+  --vl-border-hover: rgba(99, 102, 241, 0.4);
+
+  --vl-cyan: #06b6d4;
+  --vl-cyan-glow: rgba(6, 182, 212, 0.35);
+  --vl-electric-blue: #3b82f6;
+  --vl-purple: #8b5cf6;
+  --vl-purple-glow: rgba(139, 92, 246, 0.35);
+  --vl-magenta: #ec4899;
+  --vl-neon-green: #10b981;
+  --vl-amber: #f59e0b;
+
+  --vl-text-primary: #f8fafc;
+  --vl-text-secondary: #94a3b8;
+  --vl-text-muted: #64748b;
+
+  --vl-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --vl-font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Base Body Styles for Virtual Labs */
+body.vl-page {
+  background-color: var(--vl-bg-base);
+  color: var(--vl-text-primary);
+  font-family: var(--vl-font-sans);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99, 102, 241, 0.15), transparent 70%),
+    radial-gradient(circle 600px at 90% 20%, rgba(6, 182, 212, 0.08), transparent 70%),
+    radial-gradient(circle 500px at 10% 40%, rgba(139, 92, 246, 0.08), transparent 70%);
+}
+
+/* Background Canvas */
+.vl-bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* Main Container */
+.vl-main-layout {
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 85px 36px 60px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+}
+
+/* ============================================================
+   1. HERO SECTION
+   ============================================================ */
+.vl-hero-container {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 48px;
+  padding: 24px 0 10px 0;
+  position: relative;
+}
+
+/* Left Hero Content */
+.vl-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.vl-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--vl-font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a78bfa;
+}
+
+.vl-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #06b6d4;
+  box-shadow: 0 0 10px #06b6d4;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.vl-hero-title {
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.vl-hero-title .gradient-text {
+  background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 60%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+
+.vl-hero-desc {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--vl-text-secondary);
+  max-width: 540px;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Feature Strip */
+.vl-feature-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.vl-feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(13, 22, 46, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.vl-feature-pill:hover {
+  background: rgba(26, 38, 72, 0.85);
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.vl-feature-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.vl-feature-icon.icon-purple {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(99, 102, 241, 0.25));
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #c4b5fd;
+}
+.vl-feature-icon.icon-cyan {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(59, 130, 246, 0.25));
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #67e8f9;
+}
+.vl-feature-icon.icon-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.25));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+.vl-feature-icon.icon-magenta {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.25));
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  color: #f472b6;
+}
+.vl-feature-icon.icon-teal {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(6, 182, 212, 0.25));
+  border: 1px solid rgba(20, 184, 166, 0.4);
+  color: #5eead4;
+}
+.vl-feature-icon.icon-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.25));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+}
+
+.vl-feature-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.76rem;
+  line-height: 1.25;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.vl-feature-text span:first-child {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+/* Right Hero Visual — Isometric Quantum Lab Circuit Bench (NO BLOCH SPHERE) */
+.vl-hero-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 380px;
+}
+
+.vl-bench-stage {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  height: 340px;
+  border-radius: 20px;
+  background: radial-gradient(circle at 60% 50%, rgba(30, 41, 75, 0.45) 0%, rgba(8, 14, 30, 0.8) 80%);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.6),
+    inset 0 0 60px rgba(6, 182, 212, 0.05),
+    0 0 40px rgba(99, 102, 241, 0.15);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Neon bottom reflector glow */
+.vl-bench-glow-bottom {
+  position: absolute;
+  bottom: -40px;
+  left: 15%;
+  width: 70%;
+  height: 100px;
+  background: radial-gradient(ellipse, rgba(6, 182, 212, 0.4) 0%, rgba(139, 92, 246, 0.3) 50%, transparent 80%);
+  filter: blur(35px);
+  pointer-events: none;
+}
+
+/* Embedded SVG Visual for Lab Circuit */
+.vl-bench-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ============================================================
+   2. DISCOVERY TOOLBAR (SEARCH & FILTERS)
+   ============================================================ */
+.vl-discovery-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  background: rgba(11, 20, 44, 0.6);
+  border: 1px solid var(--vl-border-subtle);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  flex-wrap: wrap;
+}
+
+/* Search Box */
+.vl-search-container {
+  position: relative;
+  min-width: 280px;
+  flex: 1;
+  max-width: 360px;
+}
+
+.vl-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--vl-text-muted);
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+}
+
+.vl-search-input {
+  width: 100%;
+  background: rgba(15, 25, 52, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 9px 14px 9px 38px;
+  color: var(--vl-text-primary);
+  font-family: var(--vl-font-sans);
+  font-size: 0.88rem;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.vl-search-input:focus {
+  border-color: #38bdf8;
+  background: rgba(18, 32, 68, 0.95);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+}
+
+.vl-search-input::placeholder {
+  color: var(--vl-text-muted);
+}
+
+/* Filter Pills */
+.vl-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vl-filter-pill {
+  background: rgba(17, 28, 58, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--vl-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.vl-filter-pill:hover {
+  color: #fff;
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(26, 41, 82, 0.85);
+}
+
+.vl-filter-pill.active {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  color: #ffffff;
+  border-color: #a78bfa;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.45);
+  font-weight: 600;
+}
+
+/* ============================================================
+   3. FOUR LAB CARDS GRID
+   ============================================================ */
+.vl-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* Single Lab Card */
+.vl-lab-card {
+  position: relative;
+  background: var(--vl-bg-card);
+  border: 1px solid var(--vl-border-subtle);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.vl-lab-card:hover {
+  transform: translateY(-6px);
+  background: var(--vl-bg-card-hover);
+  border-color: var(--card-accent-border, rgba(99, 102, 241, 0.5));
+  box-shadow: 
+    0 16px 40px rgba(0, 0, 0, 0.55),
+    0 0 30px var(--card-accent-glow, rgba(99, 102, 241, 0.25));
+}
+
+/* Accent variables per card */
+.vl-lab-card[data-card="noise"] {
+  --card-accent-border: rgba(168, 85, 247, 0.55);
+  --card-accent-glow: rgba(168, 85, 247, 0.3);
+}
+
+.vl-lab-card[data-card="gates"] {
+  --card-accent-border: rgba(6, 182, 212, 0.55);
+  --card-accent-glow: rgba(6, 182, 212, 0.3);
+}
+
+.vl-lab-card[data-card="teleport"] {
+  --card-accent-border: rgba(139, 92, 246, 0.55);
+  --card-accent-glow: rgba(139, 92, 246, 0.3);
+}
+
+.vl-lab-card[data-card="grover"] {
+  --card-accent-border: rgba(56, 189, 248, 0.55);
+  --card-accent-glow: rgba(56, 189, 248, 0.3);
+}
+
+/* Top Category Badge */
+.vl-card-badge-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.vl-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.badge-purple {
+  background: rgba(139, 92, 246, 0.18);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+.badge-cyan {
+  background: rgba(6, 182, 212, 0.18);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+
+.badge-magenta {
+  background: rgba(236, 72, 153, 0.18);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+}
+
+.badge-blue {
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+/* Card Visual Preview Container */
+.vl-card-preview {
+  position: relative;
+  width: 100%;
+  height: 145px;
+  border-radius: 12px;
+  background: rgba(5, 11, 26, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  transition: all 0.3s ease;
+}
+
+.vl-lab-card:hover .vl-card-preview {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(6, 13, 32, 0.9);
+}
+
+.vl-preview-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Card Content Details */
+.vl-card-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.vl-card-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.vl-card-desc {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--vl-text-secondary);
+  margin: 0 0 16px 0;
+  flex-grow: 1;
+}
+
+/* Metadata Row (Difficulty + Duration) */
+.vl-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  font-size: 0.78rem;
+  color: var(--vl-text-secondary);
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 16px;
+}
+
+.vl-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* Signal Meter Bars for Difficulty */
+.vl-meter-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.vl-meter-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.vl-meter-bar:nth-child(1) { height: 5px; }
+.vl-meter-bar:nth-child(2) { height: 8px; }
+.vl-meter-bar:nth-child(3) { height: 12px; }
+
+/* Beginner (Green 1 bar) */
+.meter-beginner .vl-meter-bar:nth-child(1) {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+.text-beginner { color: #34d399; }
+
+/* Intermediate (Amber 2 bars) */
+.meter-intermediate .vl-meter-bar:nth-child(1),
+.meter-intermediate .vl-meter-bar:nth-child(2) {
+  background: #f59e0b;
+  box-shadow: 0 0 6px #f59e0b;
+}
+.text-intermediate { color: #fbbf24; }
+
+/* Advanced (Rose/Coral 3 bars) */
+.meter-advanced .vl-meter-bar:nth-child(1),
+.meter-advanced .vl-meter-bar:nth-child(2),
+.meter-advanced .vl-meter-bar:nth-child(3) {
+  background: #f43f5e;
+  box-shadow: 0 0 6px #f43f5e;
+}
+.text-advanced { color: #fb7185; }
+
+/* Open Lab Button */
+.vl-open-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #ffffff;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.vl-open-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.vl-open-btn:hover svg {
+  transform: translateX(4px);
+}
+
+/* Button Colors matching reference image */
+.btn-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+.btn-purple:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #818cf8 100%);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
+}
+
+.btn-cyan {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+}
+.btn-cyan:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.55);
+}
+
+.btn-magenta {
+  background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
+}
+.btn-magenta:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.55);
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+.btn-blue:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+}
+
+/* ============================================================
+   4. NO RESULTS EMPTY STATE
+   ============================================================ */
+.vl-no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px 20px;
+  background: rgba(11, 20, 44, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  display: none;
+}
+
+.vl-no-results.visible {
+  display: block;
+}
+
+.vl-no-results p {
+  color: var(--vl-text-secondary);
+  font-size: 0.95rem;
+  margin: 8px 0 0 0;
+}
+
+/* ============================================================
+   5. FOOTER MOTIF
+   ============================================================ */
+.vl-footer-motif-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 24px;
+  margin-top: 10px;
+}
+
+.vl-footer-line {
+  flex: 1;
+  max-width: 280px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+}
+
+.vl-footer-motif {
+  font-family: var(--vl-font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #64748b;
+  user-select: none;
+}
+
+.vl-footer-motif span {
+  color: #38bdf8;
+  margin: 0 6px;
+}
+
+/* ============================================================
+   6. SVG ANIMATIONS (Noise, Pulses, Gates, Grid)
+   ============================================================ */
+@keyframes signal-dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes noise-shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 1.5px); }
+  50% { transform: translate(1px, -1px); }
+  75% { transform: translate(-1.5px, -0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+.vl-anim-pulse {
+  animation: pulse-glow 2.5s infinite ease-in-out;
+}
+
+.vl-anim-noise {
+  animation: noise-shake 0.8s infinite linear;
+}
+
+/* ============================================================
+   7. RESPONSIVE DESIGN
+   ============================================================ */
+@media (max-width: 1200px) {
+  .vl-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .vl-hero-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .vl-hero-right {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vl-main-layout {
+    padding: 75px 18px 40px 18px;
+    gap: 32px;
+  }
+  .vl-hero-title {
+    font-size: 2.3rem;
+  }
+  .vl-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .vl-discovery-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .vl-search-container {
+    max-width: 100%;
+  }
+  .vl-footer-line {
+    display: none;
+  }
+  .vl-footer-motif {
+    font-size: 0.65rem;
+    text-align: center;
+  }
+}

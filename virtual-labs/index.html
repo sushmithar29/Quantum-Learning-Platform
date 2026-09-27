@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Virtual Labs – QuantumLab</title>
-  <meta name="description" content="Explore interactive Quantum Virtual Laboratories. Experiment with quantum systems, build circuits, rotate Bloch spheres, simulate measurement collapse, and analyze quantum noise." />
+  <title>Virtual Labs — QuantumLab</title>
+  <meta name="description" content="QuantumLab Virtual Labs — Hands-on quantum experiments and interactive simulations." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles/main.css" />
-  <link rel="stylesheet" href="../styles/animations.css" />
-  <link rel="stylesheet" href="../styles/components.css" />
-  <link rel="stylesheet" href="../styles/virtual-labs.css" />
+  <link rel="stylesheet" href="../styles/virtual-labs-new.css" />
 </head>
-<body>
+<body class="vl-page">
+
+  <!-- PARTICLE BACKGROUND CANVAS -->
+  <canvas class="vl-bg-canvas" id="vl-particle-canvas"></canvas>
+
   <!-- NAVIGATION -->
   <nav class="nav scrolled" id="main-nav">
     <div class="nav__inner">
@@ -33,9 +35,11 @@
         <span class="nav__logo-text">QuantumLab</span>
       </a>
       <div class="nav__links">
-        <a href="/experiments" class="nav__link">Experiments</a>
-        <a href="/virtual-labs" class="nav__link active" id="nav-vlabs">Virtual Labs</a>
-        <a href="/algorithms" class="nav__link">Algorithms</a>
+        <a href="../basics.html" class="nav__link">Basics</a>
+        <a href="../experiments.html" class="nav__link">Experiments</a>
+        <a href="index.html" class="nav__link active" id="nav-vlabs">Virtual Labs</a>
+        <a href="../algorithms.html" class="nav__link">Algorithms</a>
+        <a href="../hardware.html" class="nav__link nav__link--highlight">⚛ Quantum Hardware</a>
         <a href="../index.html#learn" class="nav__link">Learn</a>
         <a href="../index.html#challenges" class="nav__link">Challenges</a>
       </div>
@@ -54,661 +58,806 @@
       </button>
     </div>
     <div class="nav__mobile" id="mobile-menu">
-      <a href="/experiments" class="nav__mobile-link">Experiments</a>
-      <a href="/virtual-labs" class="nav__mobile-link active">Virtual Labs</a>
-      <a href="/algorithms" class="nav__mobile-link">Algorithms</a>
+      <a href="../basics.html" class="nav__mobile-link">Basics</a>
+      <a href="../experiments.html" class="nav__mobile-link">Experiments</a>
+      <a href="index.html" class="nav__mobile-link active">Virtual Labs</a>
+      <a href="../algorithms.html" class="nav__mobile-link">Algorithms</a>
+      <a href="../hardware.html" class="nav__mobile-link">⚛ Quantum Hardware</a>
       <a href="../index.html#learn" class="nav__mobile-link">Learn</a>
       <a href="../index.html#challenges" class="nav__mobile-link">Challenges</a>
     </div>
   </nav>
 
-  <!-- VIRTUAL LABS HEADER -->
-  <header class="vlabs-header-wrap">
-    <div class="vlabs-header-container">
-      <a href="../index.html" class="vlabs-back-home">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back to Home
-      </a>
-      <div class="vlabs-hero-badge">
-        <span class="vlabs-hero-badge-dot"></span>
-        Interactive Simulation Environment
-      </div>
-      <h1 class="vlabs-hero-title">Quantum <span class="vlabs-hero-title-accent">Virtual Labs</span></h1>
-      <p class="vlabs-hero-subtitle">Experiment with quantum systems through interactive simulations.</p>
-      <p class="vlabs-hero-desc">Explore quantum computing concepts through interactive virtual laboratories. Configure quantum systems, run simulations, visualize quantum states, and analyze results in real time.</p>
+  <!-- MAIN WRAPPER -->
+  <main class="vl-main-layout">
+
+    <!-- 1. HERO SECTION -->
+    <section class="vl-hero-container">
       
-      <div class="vlabs-stats-row">
-        <div class="vlabs-stat-item">
-          <span class="vlabs-stat-num" id="vlabs-count">5</span>
-          <span class="vlabs-stat-label">Virtual Laboratories</span>
+      <!-- Left Content -->
+      <div class="vl-hero-left">
+        <div class="vl-eyebrow">
+          <span class="vl-eyebrow-dot"></span>
+          VIRTUAL LABS
         </div>
-        <div class="vlabs-stat-divider"></div>
-        <div class="vlabs-stat-item">
-          <span class="vlabs-stat-num">Full 3D</span>
-          <span class="vlabs-stat-label">Bloch Sphere Dynamics</span>
-        </div>
-        <div class="vlabs-stat-divider"></div>
-        <div class="vlabs-stat-item">
-          <span class="vlabs-stat-num">Real-Time</span>
-          <span class="vlabs-stat-label">Quantum State Evolution</span>
-        </div>
-        <div class="vlabs-stat-divider"></div>
-        <div class="vlabs-stat-item">
-          <span class="vlabs-stat-num">Noisy & Ideal</span>
-          <span class="vlabs-stat-label">Simulation Channels</span>
+
+        <h1 class="vl-hero-title">
+          Quantum Experiments
+          <span class="gradient-text">at Your Fingertips</span>
+        </h1>
+
+        <p class="vl-hero-desc">
+          Step into interactive quantum laboratories. Explore, experiment, and understand quantum computing through hands-on simulations.
+        </p>
+
+        <!-- Feature Strip -->
+        <div class="vl-feature-strip">
+          <div class="vl-feature-pill">
+            <div class="vl-feature-icon icon-purple">
+              <!-- Cube/Wireframe SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </div>
+            <div class="vl-feature-text">
+              <span>Interactive</span>
+              <span>Simulations</span>
+            </div>
+          </div>
+
+          <div class="vl-feature-pill">
+            <div class="vl-feature-icon icon-cyan">
+              <!-- Sliders SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </div>
+            <div class="vl-feature-text">
+              <span>Adjust</span>
+              <span>Parameters</span>
+            </div>
+          </div>
+
+          <div class="vl-feature-pill">
+            <div class="vl-feature-icon icon-blue">
+              <!-- Eye SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </div>
+            <div class="vl-feature-text">
+              <span>Real-time</span>
+              <span>Visualization</span>
+            </div>
+          </div>
+
+          <div class="vl-feature-pill">
+            <div class="vl-feature-icon icon-teal">
+              <!-- Nodes/Network SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </div>
+            <div class="vl-feature-text">
+              <span>Step-by-Step</span>
+              <span>Execution</span>
+            </div>
+          </div>
+
+          <div class="vl-feature-pill">
+            <div class="vl-feature-icon icon-magenta">
+              <!-- Chart SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+                <path d="M4 20h16"></path>
+              </svg>
+            </div>
+            <div class="vl-feature-text">
+              <span>Observe</span>
+              <span>Results</span>
+            </div>
+          </div>
+
+          <div class="vl-feature-pill">
+            <div class="vl-feature-icon icon-amber">
+              <!-- Lightbulb SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+              </svg>
+            </div>
+            <div class="vl-feature-text">
+              <span>Learn</span>
+              <span>by Doing</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
 
-  <!-- MOBILE HORIZONTAL SCROLL NAV -->
-  <nav class="vlabs-mobile-nav" id="vlabs-mobile-nav" aria-label="Virtual Labs Sections">
-    <a href="#introduction" class="vlabs-mobile-pill active"><span>📖</span> Introduction</a>
-    <a href="#objective" class="vlabs-mobile-pill"><span>🎯</span> Objective</a>
-    <a href="#labs-list" class="vlabs-mobile-pill"><span>🔬</span> List of Labs</a>
-    <a href="#target-audience" class="vlabs-mobile-pill"><span>👥</span> Target Audience</a>
-    <a href="#learning-outcomes" class="vlabs-mobile-pill"><span>🎓</span> Learning Outcomes</a>
-    <a href="#course-alignment" class="vlabs-mobile-pill"><span>📚</span> Course Alignment</a>
-    <a href="#feedback" class="vlabs-mobile-pill"><span>💬</span> Feedback</a>
-  </nav>
+      <!-- Right Visual: Futuristic Quantum Circuit Laboratory Platform (NO BLOCH SPHERE) -->
+      <div class="vl-hero-right">
+        <div class="vl-bench-stage">
+          <div class="vl-bench-glow-bottom"></div>
+          <svg class="vl-bench-svg" viewBox="0 0 600 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Gradients -->
+              <linearGradient id="grid-grad" x1="0" y1="0" x2="600" y2="360" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.04"/>
+              </linearGradient>
+              <linearGradient id="circuit-wire" x1="50" y1="180" x2="550" y2="180" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8b5cf6"/>
+                <stop offset="40%" stop-color="#06b6d4"/>
+                <stop offset="80%" stop-color="#3b82f6"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+              <linearGradient id="gate-h-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="gate-cx-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="gate-x-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="gate-m-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#059669" stop-opacity="0.95"/>
+              </linearGradient>
+              <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
 
-  <!-- MAIN TWO-COLUMN CONTAINER -->
-  <main class="vlabs-container">
-    <div class="vlabs-layout">
+            <!-- 3D Isometric Platform Base -->
+            <polygon points="120,290 540,290 480,335 60,335" fill="url(#grid-grad)" stroke="#38bdf8" stroke-opacity="0.3" stroke-width="1.5" />
+            <polygon points="140,265 520,265 460,305 80,305" fill="#0b1739" fill-opacity="0.5" stroke="#6366f1" stroke-opacity="0.25" stroke-width="1" />
+            
+            <!-- Perspective Grid Lines -->
+            <line x1="160" y1="265" x2="120" y2="335" stroke="#38bdf8" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4" />
+            <line x1="260" y1="265" x2="220" y2="335" stroke="#38bdf8" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4" />
+            <line x1="360" y1="265" x2="320" y2="335" stroke="#38bdf8" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4" />
+            <line x1="460" y1="265" x2="420" y2="335" stroke="#38bdf8" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4" />
 
-      <!-- LEFT SIDEBAR -->
-      <aside class="vlabs-sidebar-wrap">
-        <div class="vlabs-sidebar">
-          <div class="vlabs-sidebar-title">
-            <span>Lab Navigation</span>
-            <span class="vlabs-nav-badge">7 Sections</span>
-          </div>
-          <nav class="vlabs-sidebar-nav" id="vlabs-sidebar-nav">
-            <a href="#introduction" class="vlabs-nav-item active">
-              <span class="vlabs-nav-icon">📖</span>
-              <span>Introduction</span>
-            </a>
-            <a href="#objective" class="vlabs-nav-item">
-              <span class="vlabs-nav-icon">🎯</span>
-              <span>Objective</span>
-            </a>
-            <a href="#labs-list" class="vlabs-nav-item">
-              <span class="vlabs-nav-icon">🔬</span>
-              <span>List of Virtual Labs</span>
-              <span class="vlabs-nav-badge" id="vlabs-sidebar-count">5</span>
-            </a>
-            <a href="#target-audience" class="vlabs-nav-item">
-              <span class="vlabs-nav-icon">👥</span>
-              <span>Target Audience</span>
-            </a>
-            <a href="#learning-outcomes" class="vlabs-nav-item">
-              <span class="vlabs-nav-icon">🎓</span>
-              <span>Learning Outcomes</span>
-            </a>
-            <a href="#course-alignment" class="vlabs-nav-item">
-              <span class="vlabs-nav-icon">📚</span>
-              <span>Course Alignment</span>
-            </a>
-            <a href="#feedback" class="vlabs-nav-item">
-              <span class="vlabs-nav-icon">💬</span>
-              <span>Feedback</span>
-            </a>
-          </nav>
+            <!-- Floating Quantum Hologram Circuit Bus -->
+            <path d="M 60 180 L 520 180" stroke="url(#circuit-wire)" stroke-width="2.5" fill="none" opacity="0.85" />
+            <path d="M 60 180 L 520 180" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="6 6" fill="none" opacity="0.6">
+              <animate attributeName="stroke-dashoffset" from="0" to="-24" dur="2s" repeatCount="indefinite" />
+            </path>
+
+            <!-- Entangled Optical Qubit Node on Left -->
+            <g transform="translate(85, 180)">
+              <circle cx="0" cy="0" r="24" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7">
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite" />
+              </circle>
+              <ellipse cx="0" cy="0" rx="30" ry="10" fill="none" stroke="#8b5cf6" stroke-width="1.2" opacity="0.6" transform="rotate(-30)">
+                <animateTransform attributeName="transform" type="rotate" from="-30" to="330" dur="8s" repeatCount="indefinite" />
+              </ellipse>
+              <circle cx="0" cy="0" r="9" fill="#a78bfa" filter="url(#neon-glow)" />
+              <circle cx="0" cy="0" r="3.5" fill="#ffffff" />
+            </g>
+
+            <!-- Holographic Gate 1: [ H ] Hadamard (Purple) -->
+            <g transform="translate(160, 155)">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="3.2s" repeatCount="indefinite" additive="sum" />
+              <polygon points="6,46 42,46 50,38 14,38" fill="#4c1d95" opacity="0.6" />
+              <rect x="0" y="0" width="46" height="48" rx="8" fill="url(#gate-h-grad)" stroke="#c4b5fd" stroke-width="1.5" filter="url(#neon-glow)" />
+              <text x="23" y="31" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">H</text>
+            </g>
+
+            <!-- Holographic Gate 2: [ CX / Entangle ] (Cyan) -->
+            <g transform="translate(240, 155)">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 0,5; 0,0" dur="3.8s" repeatCount="indefinite" additive="sum" />
+              <polygon points="6,46 42,46 50,38 14,38" fill="#0c4a6e" opacity="0.6" />
+              <rect x="0" y="0" width="46" height="48" rx="8" fill="url(#gate-cx-grad)" stroke="#67e8f9" stroke-width="1.5" filter="url(#neon-glow)" />
+              <circle cx="23" cy="17" r="5" fill="#ffffff" />
+              <line x1="23" y1="22" x2="23" y2="37" stroke="#ffffff" stroke-width="2" />
+              <circle cx="23" cy="34" r="4" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            </g>
+
+            <!-- Holographic Gate 3: [ X ] Pauli-X (Blue) -->
+            <g transform="translate(320, 155)">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="3.5s" repeatCount="indefinite" additive="sum" />
+              <polygon points="6,46 42,46 50,38 14,38" fill="#1e3a8a" opacity="0.6" />
+              <rect x="0" y="0" width="46" height="48" rx="8" fill="url(#gate-x-grad)" stroke="#93c5fd" stroke-width="1.5" filter="url(#neon-glow)" />
+              <text x="23" y="31" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">X</text>
+            </g>
+
+            <!-- Holographic Gate 4: [ 📈 Measurement ] (Teal) -->
+            <g transform="translate(400, 155)">
+              <animateTransform attributeName="transform" type="translate" values="0,0; 0,4; 0,0" dur="4.2s" repeatCount="indefinite" additive="sum" />
+              <polygon points="6,46 44,46 52,38 14,38" fill="#064e3b" opacity="0.6" />
+              <rect x="0" y="0" width="48" height="48" rx="8" fill="url(#gate-m-grad)" stroke="#5eead4" stroke-width="1.5" filter="url(#neon-glow)" />
+              <path d="M 12 34 A 14 14 0 0 1 36 34" stroke="#ffffff" stroke-width="2" fill="none" />
+              <line x1="24" y1="34" x2="33" y2="18" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+            </g>
+
+            <!-- Traveling Quantum Signal Pulses -->
+            <circle cx="85" cy="180" r="4" fill="#67e8f9" filter="url(#neon-glow)">
+              <animate attributeName="cx" values="85; 160; 240; 320; 400; 480" dur="2.8s" repeatCount="indefinite" />
+            </circle>
+
+            <!-- Floating Top-Right Mini Holographic Distribution Display -->
+            <g transform="translate(440, 45)" opacity="0.9">
+              <rect x="0" y="0" width="130" height="75" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4" />
+              <!-- Header dots -->
+              <circle cx="16" cy="14" r="3" fill="#f43f5e" />
+              <circle cx="26" cy="14" r="3" fill="#fbbf24" />
+              <circle cx="36" cy="14" r="3" fill="#10b981" />
+              <text x="118" y="17" font-family="'JetBrains Mono', monospace" font-size="9" fill="#94a3b8" text-anchor="end">|ψ⟩ STATE</text>
+              <!-- Bar Chart -->
+              <rect x="20" y="55" width="14" height="0" fill="#38bdf8" rx="2">
+                <animate attributeName="height" values="15; 30; 22; 30" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="y" values="47; 32; 40; 32" dur="2.5s" repeatCount="indefinite" />
+              </rect>
+              <rect x="42" y="55" width="14" height="0" fill="#818cf8" rx="2">
+                <animate attributeName="height" values="28; 10; 25; 10" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="y" values="34; 52; 37; 52" dur="2.5s" repeatCount="indefinite" />
+              </rect>
+              <rect x="64" y="55" width="14" height="0" fill="#c084fc" rx="2">
+                <animate attributeName="height" values="32; 38; 12; 38" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="y" values="30; 24; 50; 24" dur="2.5s" repeatCount="indefinite" />
+              </rect>
+              <rect x="86" y="55" width="14" height="0" fill="#34d399" rx="2">
+                <animate attributeName="height" values="18; 26; 34; 26" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="y" values="44; 36; 28; 36" dur="2.5s" repeatCount="indefinite" />
+              </rect>
+            </g>
+          </svg>
         </div>
-      </aside>
-
-      <!-- MAIN CONTENT -->
-      <div class="vlabs-content">
-
-        <!-- 1. INTRODUCTION SECTION -->
-        <section class="vlabs-section" id="introduction">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>⚛</span> Platform Overview
-            </div>
-            <h2 class="vlabs-section-title">Introduction</h2>
-            <p class="vlabs-section-subtitle">About QuantumLab Virtual Labs</p>
-          </div>
-          <div class="vlabs-intro-text">
-            QuantumLab Virtual Labs provide interactive environments for learning quantum computing through experimentation and visualization. Unlike conventional lecture-based learning, the Virtual Labs empower students, educators, and researchers to directly interact with quantum states, test circuit topologies, and observe probabilistic collapse in real time.
-          </div>
-          <div class="vlabs-features-grid">
-            <div class="vlabs-feature-card">
-              <span class="vlabs-feature-icon">⚡</span>
-              <h3 class="vlabs-feature-title">Construct Quantum Circuits</h3>
-              <p class="vlabs-feature-desc">Build multi-qubit circuits by connecting standard quantum gates including Hadamard, Pauli-X, Y, Z, S, T, CNOT, and SWAP.</p>
-            </div>
-            <div class="vlabs-feature-card">
-              <span class="vlabs-feature-icon">🌐</span>
-              <h3 class="vlabs-feature-title">Manipulate Quantum States</h3>
-              <p class="vlabs-feature-desc">Adjust complex amplitudes and relative phases while tracking dynamic unitary state transformations.</p>
-            </div>
-            <div class="vlabs-feature-card">
-              <span class="vlabs-feature-icon">📊</span>
-              <h3 class="vlabs-feature-title">Perform Measurements</h3>
-              <p class="vlabs-feature-desc">Simulate projective measurements across Z, X, and Y bases and analyze empirical outcome distributions from multi-shot runs.</p>
-            </div>
-            <div class="vlabs-feature-card">
-              <span class="vlabs-feature-icon">🔮</span>
-              <h3 class="vlabs-feature-title">Visualize Bloch Spheres</h3>
-              <p class="vlabs-feature-desc">Observe state vectors rotate on the 3D unit sphere under continuous Euler rotations (θ, φ) and discrete gate actions.</p>
-            </div>
-            <div class="vlabs-feature-card">
-              <span class="vlabs-feature-icon">🌪️</span>
-              <h3 class="vlabs-feature-title">Experiment with Quantum Noise</h3>
-              <p class="vlabs-feature-desc">Investigate bit-flip, phase-damping, and depolarizing noise channels to observe decoherence and fidelity degradation.</p>
-            </div>
-            <div class="vlabs-feature-card">
-              <span class="vlabs-feature-icon">📈</span>
-              <h3 class="vlabs-feature-title">Analyze Results</h3>
-              <p class="vlabs-feature-desc">Evaluate probability histograms, calculate fidelity metrics, and compare experimental simulations against theoretical predictions.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- 2. OBJECTIVE SECTION -->
-        <section class="vlabs-section" id="objective">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>🎯</span> Pedagogical Philosophy
-            </div>
-            <h2 class="vlabs-section-title">Objective</h2>
-            <p class="vlabs-section-subtitle">Why these virtual laboratories exist</p>
-          </div>
-          <div class="vlabs-objective-card">
-            <p class="vlabs-objective-text">
-              The objective of QuantumLab Virtual Labs is to help students understand quantum computing concepts through interactive, simulation-based experimentation. By grounding complex linear algebra and quantum mechanics in responsive, visual tools, students develop an intuitive grasp of quantum phenomena.
-            </p>
-          </div>
-
-          <div class="vlabs-flow-title">
-            <span>🔄</span> Experimental Learning Methodology
-          </div>
-          <div class="vlabs-flow-container">
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">01</div>
-              <div class="vlabs-flow-name">LEARN</div>
-              <div class="vlabs-flow-desc">Explore theoretical concepts & postulates</div>
-            </div>
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">02</div>
-              <div class="vlabs-flow-name">CONFIGURE</div>
-              <div class="vlabs-flow-desc">Set state vectors, gates, or noise parameters</div>
-            </div>
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">03</div>
-              <div class="vlabs-flow-name">RUN</div>
-              <div class="vlabs-flow-desc">Execute quantum simulation routines</div>
-            </div>
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">04</div>
-              <div class="vlabs-flow-name">OBSERVE</div>
-              <div class="vlabs-flow-desc">Track Bloch vectors & wavefunction evolution</div>
-            </div>
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">05</div>
-              <div class="vlabs-flow-name">MEASURE</div>
-              <div class="vlabs-flow-desc">Collapse states and record shot distributions</div>
-            </div>
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">06</div>
-              <div class="vlabs-flow-name">ANALYZE</div>
-              <div class="vlabs-flow-desc">Inspect outcome probabilities & state fidelity</div>
-            </div>
-            <div class="vlabs-flow-step">
-              <div class="vlabs-flow-num">07</div>
-              <div class="vlabs-flow-name">UNDERSTAND</div>
-              <div class="vlabs-flow-desc">Connect physical intuition to mathematical models</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 3. LIST OF VIRTUAL LABS SECTION -->
-        <section class="vlabs-section" id="labs-list">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>🔬</span> Interactive Simulation Suite
-            </div>
-            <h2 class="vlabs-section-title">List of Virtual Labs</h2>
-            <p class="vlabs-section-subtitle">All currently available interactive quantum laboratories</p>
-          </div>
-
-          <div class="vlabs-grid-toolbar">
-            <div class="vlabs-grid-counter">
-              <span>Available Laboratories</span>
-              <span class="vlabs-grid-badge" id="vlabs-badge-count">5 Labs</span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-muted)">
-              Click <strong>Open Lab</strong> on any card to launch the interactive simulation
-            </div>
-          </div>
-
-          <!-- DYNAMIC GRID CONTAINER POPULATED VIA QL.renderLabs() -->
-          <div class="labs-grid" id="labs-grid"></div>
-        </section>
-
-        <!-- 4. TARGET AUDIENCE SECTION -->
-        <section class="vlabs-section" id="target-audience">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>👥</span> Who It Is For
-            </div>
-            <h2 class="vlabs-section-title">Target Audience</h2>
-            <p class="vlabs-section-subtitle">Designed to support diverse learning and research backgrounds</p>
-          </div>
-          <div class="vlabs-audience-grid">
-            <div class="vlabs-audience-card">
-              <div class="vlabs-audience-header">
-                <div class="vlabs-audience-icon">🎓</div>
-                <h3 class="vlabs-audience-title">Undergraduate Students</h3>
-              </div>
-              <p class="vlabs-audience-desc">Students enrolled in physics, computer science, mathematics, or electrical engineering seeking practical intuition alongside theoretical coursework.</p>
-            </div>
-            <div class="vlabs-audience-card">
-              <div class="vlabs-audience-header">
-                <div class="vlabs-audience-icon">🚀</div>
-                <h3 class="vlabs-audience-title">Quantum Beginners</h3>
-              </div>
-              <p class="vlabs-audience-desc">Self-directed learners and software developers seeking an approachable, visual gateway into qubits, superposition, and quantum algorithms.</p>
-            </div>
-            <div class="vlabs-audience-card">
-              <div class="vlabs-audience-header">
-                <div class="vlabs-audience-icon">💻</div>
-                <h3 class="vlabs-audience-title">Computer Science Students</h3>
-              </div>
-              <p class="vlabs-audience-desc">Programmers transitioning from Boolean logic and classical circuits to unitary gates, quantum circuits, and computational complexity.</p>
-            </div>
-            <div class="vlabs-audience-card">
-              <div class="vlabs-audience-header">
-                <div class="vlabs-audience-icon">⚛️</div>
-                <h3 class="vlabs-audience-title">Physics Students</h3>
-              </div>
-              <p class="vlabs-audience-desc">Students studying quantum mechanics, wave mechanics, Hilbert spaces, density matrices, and measurement postulates through visual simulation.</p>
-            </div>
-            <div class="vlabs-audience-card">
-              <div class="vlabs-audience-header">
-                <div class="vlabs-audience-icon">🔬</div>
-                <h3 class="vlabs-audience-title">Researchers & Educators</h3>
-              </div>
-              <p class="vlabs-audience-desc">Instructors and academic researchers seeking interactive visual demonstrations for lectures, assignments, and quantum laboratory coursework.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- 5. LEARNING OUTCOMES SECTION -->
-        <section class="vlabs-section" id="learning-outcomes">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>🎓</span> Educational Milestones
-            </div>
-            <h2 class="vlabs-section-title">Learning Outcomes</h2>
-            <p class="vlabs-section-subtitle">Key competencies acquired upon completing virtual lab experiments</p>
-          </div>
-          <div class="vlabs-outcomes-grid">
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Understand Basic Quantum States</h3>
-                <p class="vlabs-outcome-desc">Represent quantum states using Dirac bra-ket notation, complex amplitudes, and state vectors across orthogonal computational bases.</p>
-              </div>
-            </div>
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Build Simple Quantum Circuits</h3>
-                <p class="vlabs-outcome-desc">Construct, wire, and execute quantum circuits using fundamental single-qubit and multi-qubit entangling gates.</p>
-              </div>
-            </div>
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Interpret Measurement Probabilities</h3>
-                <p class="vlabs-outcome-desc">Apply the Born rule to calculate theoretical probabilities and analyze empirical measurement histograms from simulated shots.</p>
-              </div>
-            </div>
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Visualize Single-Qubit States</h3>
-                <p class="vlabs-outcome-desc">Map arbitrary single-qubit pure states onto the 3D Bloch sphere using polar angle θ and azimuthal angle φ.</p>
-              </div>
-            </div>
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Understand Quantum Gates</h3>
-                <p class="vlabs-outcome-desc">Master the unitary matrix transformations and geometric rotations produced by Pauli X, Y, Z, Hadamard, S, T, and CNOT.</p>
-              </div>
-            </div>
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Explore Quantum Noise</h3>
-                <p class="vlabs-outcome-desc">Model the effects of environmental decoherence, bit-flip, and phase-damping noise channels on quantum state purity and fidelity.</p>
-              </div>
-            </div>
-            <div class="vlabs-outcome-card">
-              <div class="vlabs-outcome-check">✓</div>
-              <div>
-                <h3 class="vlabs-outcome-title">Analyze Simulation Results</h3>
-                <p class="vlabs-outcome-desc">Critically evaluate quantum simulation outputs, comparing theoretical mathematical predictions against experimental outcomes.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 6. COURSE ALIGNMENT SECTION -->
-        <section class="vlabs-section" id="course-alignment">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>📚</span> Curriculum Mapping
-            </div>
-            <h2 class="vlabs-section-title">Course Alignment</h2>
-            <p class="vlabs-section-subtitle">Academic subject areas and curriculum topics covered</p>
-          </div>
-          <div class="vlabs-courses-grid">
-            <div class="vlabs-course-card">
-              <div class="vlabs-course-header">
-                <h3 class="vlabs-course-name">Quantum Computing</h3>
-                <span class="vlabs-course-tag">Core</span>
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Foundations of quantum information, qubits, quantum registers, unitary evolution, and circuit-based quantum computation.</p>
-              <div class="vlabs-course-topics">
-                <span class="vlabs-topic-chip">Qubits</span>
-                <span class="vlabs-topic-chip">Superposition</span>
-                <span class="vlabs-topic-chip">Unitary Gates</span>
-                <span class="vlabs-topic-chip">Circuit Models</span>
-              </div>
-            </div>
-            <div class="vlabs-course-card">
-              <div class="vlabs-course-header">
-                <h3 class="vlabs-course-name">Quantum Information</h3>
-                <span class="vlabs-course-tag">Information</span>
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Entanglement measures, Bell inequalities, state fidelity, quantum entropy, and quantum communication protocols.</p>
-              <div class="vlabs-course-topics">
-                <span class="vlabs-topic-chip">Entanglement</span>
-                <span class="vlabs-topic-chip">Bell States</span>
-                <span class="vlabs-topic-chip">Fidelity</span>
-                <span class="vlabs-topic-chip">Channels</span>
-              </div>
-            </div>
-            <div class="vlabs-course-card">
-              <div class="vlabs-course-header">
-                <h3 class="vlabs-course-name">Quantum Physics</h3>
-                <span class="vlabs-course-tag">Physics</span>
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Postulates of quantum mechanics, Hilbert spaces, observable operators, state vectors, and wave function collapse.</p>
-              <div class="vlabs-course-topics">
-                <span class="vlabs-topic-chip">Postulates</span>
-                <span class="vlabs-topic-chip">Spin-1/2</span>
-                <span class="vlabs-topic-chip">Wavefunction</span>
-                <span class="vlabs-topic-chip">Collapse</span>
-              </div>
-            </div>
-            <div class="vlabs-course-card">
-              <div class="vlabs-course-header">
-                <h3 class="vlabs-course-name">Quantum Algorithms</h3>
-                <span class="vlabs-course-tag">Algorithms</span>
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Algorithmic primitives, quantum phase kickback, quantum interference amplification, and complexity advantages.</p>
-              <div class="vlabs-course-topics">
-                <span class="vlabs-topic-chip">Deutsch-Jozsa</span>
-                <span class="vlabs-topic-chip">Grover Search</span>
-                <span class="vlabs-topic-chip">QFT</span>
-                <span class="vlabs-topic-chip">Speedup</span>
-              </div>
-            </div>
-            <div class="vlabs-course-card">
-              <div class="vlabs-course-header">
-                <h3 class="vlabs-course-name">Quantum Circuits</h3>
-                <span class="vlabs-course-tag">Engineering</span>
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Circuit synthesis, multi-qubit gate decompositions, circuit depth optimization, and reversible logic operations.</p>
-              <div class="vlabs-course-topics">
-                <span class="vlabs-topic-chip">Gate Synthesis</span>
-                <span class="vlabs-topic-chip">Circuit Depth</span>
-                <span class="vlabs-topic-chip">CNOT / SWAP</span>
-                <span class="vlabs-topic-chip">Compilation</span>
-              </div>
-            </div>
-            <div class="vlabs-course-card">
-              <div class="vlabs-course-header">
-                <h3 class="vlabs-course-name">Quantum Measurement</h3>
-                <span class="vlabs-course-tag">Measurement</span>
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">Projective measurements, POVMs, basis rotations, measurement statistics, quantum noise models, and decoherence.</p>
-              <div class="vlabs-course-topics">
-                <span class="vlabs-topic-chip">Born Rule</span>
-                <span class="vlabs-topic-chip">Basis Choice</span>
-                <span class="vlabs-topic-chip">Decoherence</span>
-                <span class="vlabs-topic-chip">Statistics</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 7. FEEDBACK SECTION -->
-        <section class="vlabs-section" id="feedback">
-          <div class="vlabs-section-header">
-            <div class="vlabs-section-tag">
-              <span>💬</span> Student & Researcher Input
-            </div>
-            <h2 class="vlabs-section-title">Feedback</h2>
-            <p class="vlabs-section-subtitle">How was your Virtual Lab experience?</p>
-          </div>
-
-          <div class="vlabs-feedback-box">
-            <p class="vlabs-feedback-intro">
-              Your feedback directly shapes our interactive simulation modules, scientific visualizations, and educational tools. Please share your experience or suggest improvements.
-            </p>
-
-            <form id="vlabs-feedback-form">
-              <div class="vlabs-rating-group">
-                <label class="vlabs-rating-label">Rate Your Experience</label>
-                <div class="vlabs-stars" id="star-rating">
-                  <button type="button" class="vlabs-star-btn" data-value="1" title="1 Star - Poor">★</button>
-                  <button type="button" class="vlabs-star-btn" data-value="2" title="2 Stars - Fair">★</button>
-                  <button type="button" class="vlabs-star-btn" data-value="3" title="3 Stars - Good">★</button>
-                  <button type="button" class="vlabs-star-btn" data-value="4" title="4 Stars - Very Good">★</button>
-                  <button type="button" class="vlabs-star-btn" data-value="5" title="5 Stars - Excellent">★</button>
-                </div>
-                <input type="hidden" id="selected-rating" value="5" />
-              </div>
-
-              <div class="vlabs-form-grid">
-                <div class="vlabs-form-group">
-                  <label class="vlabs-form-label" for="feedback-lab-select">Selected Laboratory</label>
-                  <select class="vlabs-select" id="feedback-lab-select">
-                    <option value="all">General Virtual Lab Platform</option>
-                    <option value="circuit-lab">Quantum Circuit Lab</option>
-                    <option value="bloch-sphere">Bloch Sphere Lab</option>
-                    <option value="measurement-lab">Quantum Measurement Lab</option>
-                    <option value="noise-lab">Quantum Noise Lab</option>
-                    <option value="state-lab">Quantum State Lab</option>
-                  </select>
-                </div>
-                <div class="vlabs-form-group">
-                  <label class="vlabs-form-label" for="feedback-category">Feedback Category</label>
-                  <select class="vlabs-select" id="feedback-category">
-                    <option value="overall">Overall Educational Experience</option>
-                    <option value="usability">Interface & Usability</option>
-                    <option value="physics">Scientific Accuracy & Simulation</option>
-                    <option value="visualization">3D & Visualizations</option>
-                    <option value="feature">Feature Request</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="vlabs-form-group" style="margin-bottom:1.25rem;">
-                <label class="vlabs-form-label" for="feedback-text">Your Comments & Suggestions</label>
-                <textarea class="vlabs-textarea" id="feedback-text" placeholder="Write feedback regarding simulations, clarity of concepts, or feature ideas..." required></textarea>
-              </div>
-
-              <div class="vlabs-feedback-actions">
-                <button type="submit" class="btn btn--primary btn--md" id="submit-feedback-btn">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                  Submit Feedback
-                </button>
-              </div>
-            </form>
-
-            <div class="vlabs-feedback-status" id="feedback-status">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              <div>
-                <strong>Thank you for your feedback!</strong> Your insights help us continually enhance the QuantumLab Virtual Laboratory platform.
-              </div>
-            </div>
-          </div>
-        </section>
-
       </div>
+    </section>
+
+    <!-- 2. DISCOVERY TOOLBAR (Search & Category Filters) -->
+    <section class="vl-discovery-toolbar" id="vl-discovery">
+      <!-- Search Box -->
+      <div class="vl-search-container">
+        <svg class="vl-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="vl-search-input" class="vl-search-input" placeholder="Search virtual labs..." autocomplete="off" />
+      </div>
+
+      <!-- Filter Pills matching reference image -->
+      <div class="vl-filter-group" id="vl-filters">
+        <button type="button" class="vl-filter-pill active" data-filter="all">All</button>
+        <button type="button" class="vl-filter-pill" data-filter="simulation">Simulation</button>
+        <button type="button" class="vl-filter-pill" data-filter="quantum-computing">Quantum Computing</button>
+        <button type="button" class="vl-filter-pill" data-filter="communication">Communication</button>
+        <button type="button" class="vl-filter-pill" data-filter="search">Search</button>
+        <button type="button" class="vl-filter-pill" data-filter="fundamentals">Fundamentals</button>
+        <button type="button" class="vl-filter-pill" data-filter="cryptography">Cryptography</button>
+        <button type="button" class="vl-filter-pill" data-filter="quantum-ml">Quantum ML</button>
+      </div>
+    </section>
+
+    <!-- 3. THE FOUR LAB CARDS -->
+    <section class="vl-cards-grid" id="vl-cards-container">
+
+      <!-- CARD 1: QUANTUM NOISE LAB -->
+      <article class="vl-lab-card" data-card="noise" data-categories="simulation fundamentals" data-title="quantum noise lab error mitigation decoherence">
+        <!-- Top Category Badge -->
+        <div class="vl-card-badge-wrap">
+          <span class="vl-card-badge badge-purple">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            Simulation
+          </span>
+        </div>
+
+        <!-- Visual Preview: Quantum Wave into Gate with Noise Disturbance & Particle Decoherence -->
+        <div class="vl-card-preview">
+          <svg class="vl-preview-svg" viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="noise-wave-grad" x1="0" y1="80" x2="130" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#06b6d4" stop-opacity="1"/>
+              </linearGradient>
+              <linearGradient id="disturbed-wave-grad" x1="180" y1="80" x2="300" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#ec4899"/>
+                <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Smooth coherent incoming wave -->
+            <path d="M 20 80 Q 40 50, 60 80 T 100 80 T 130 80" stroke="url(#noise-wave-grad)" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <animate attributeName="d" values="M 20 80 Q 40 50, 60 80 T 100 80 T 130 80; M 20 80 Q 40 110, 60 80 T 100 80 T 130 80; M 20 80 Q 40 50, 60 80 T 100 80 T 130 80" dur="2s" repeatCount="indefinite" />
+            </path>
+
+            <!-- Gate Box [ H ] -->
+            <rect x="135" y="52" width="50" height="56" rx="8" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.8" />
+            <text x="160" y="88" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700" fill="#c4b5fd" text-anchor="middle">H</text>
+
+            <!-- Disturbed noisy waveform exiting -->
+            <path d="M 185 80 Q 195 60, 205 95 T 225 65 T 245 105 T 265 70 T 290 85" stroke="url(#disturbed-wave-grad)" stroke-width="2" fill="none" class="vl-anim-noise" />
+
+            <!-- Decoherence noise particles / sparks -->
+            <circle cx="215" cy="58" r="2.5" fill="#f472b6">
+              <animate attributeName="opacity" values="0.2; 1; 0.2" dur="1.2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="240" cy="98" r="3" fill="#c084fc">
+              <animate attributeName="opacity" values="0.8; 0.2; 0.8" dur="1.5s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="260" cy="52" r="2" fill="#ec4899">
+              <animate attributeName="opacity" values="0.4; 1; 0.4" dur="0.9s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="275" cy="100" r="2.5" fill="#38bdf8">
+              <animate attributeName="opacity" values="1; 0.3; 1" dur="1.4s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="230" cy="74" r="1.5" fill="#ffffff" />
+            <circle cx="250" cy="78" r="1.5" fill="#f472b6" />
+          </svg>
+        </div>
+
+        <!-- Info Details -->
+        <div class="vl-card-info">
+          <h2 class="vl-card-title">Quantum Noise Lab</h2>
+          <p class="vl-card-desc">
+            Explore how noise affects quantum systems and learn about error mitigation techniques.
+          </p>
+
+          <!-- Metadata -->
+          <div class="vl-card-meta">
+            <span class="vl-meta-item text-intermediate">
+              <span class="vl-meter-bars meter-intermediate">
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+              </span>
+              Intermediate
+            </span>
+            <span class="vl-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ~ 25 mins
+            </span>
+          </div>
+
+          <!-- Open Lab Button -->
+          <a href="noise-lab.html" class="vl-open-btn btn-purple">
+            Open Lab
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- CARD 2: QUANTUM GATES LAB -->
+      <article class="vl-lab-card" data-card="gates" data-categories="quantum-computing fundamentals" data-title="quantum gates lab pauli hadamard phase superposition circuits">
+        <!-- Top Category Badge -->
+        <div class="vl-card-badge-wrap">
+          <span class="vl-card-badge badge-cyan">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            Quantum Computing
+          </span>
+        </div>
+
+        <!-- Visual Preview: Qubit rail with H - X - Z and Output Curve -->
+        <div class="vl-card-preview">
+          <svg class="vl-preview-svg" viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gate-line" x1="20" y1="80" x2="300" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#06b6d4"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Qubit Wire Line -->
+            <line x1="25" y1="80" x2="230" y2="80" stroke="url(#gate-line)" stroke-width="2" />
+            
+            <!-- Left Input Qubit Circle -->
+            <circle cx="35" cy="80" r="10" fill="#082f49" stroke="#38bdf8" stroke-width="1.8" />
+            <text x="35" y="84" font-family="'JetBrains Mono', monospace" font-size="10" fill="#38bdf8" text-anchor="middle">|0⟩</text>
+
+            <!-- Gate [ H ] -->
+            <rect x="75" y="58" width="40" height="44" rx="6" fill="#0284c7" fill-opacity="0.8" stroke="#38bdf8" stroke-width="1.5" />
+            <text x="95" y="86" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">H</text>
+
+            <!-- Gate [ X ] -->
+            <rect x="130" y="58" width="40" height="44" rx="6" fill="#1d4ed8" fill-opacity="0.8" stroke="#60a5fa" stroke-width="1.5" />
+            <text x="150" y="86" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">X</text>
+
+            <!-- Gate [ Z ] -->
+            <rect x="185" y="58" width="40" height="44" rx="6" fill="#4338ca" fill-opacity="0.8" stroke="#818cf8" stroke-width="1.5" />
+            <text x="205" y="86" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">Z</text>
+
+            <!-- Output Holographic Curve Box -->
+            <rect x="242" y="48" width="60" height="64" rx="6" fill="#0b1739" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="3 2" />
+            <path d="M 248 100 Q 260 55, 272 80 T 296 95" stroke="#38bdf8" stroke-width="2" fill="none" />
+            <polygon points="248,100 260,55 272,80 296,95 296,105 248,105" fill="#38bdf8" fill-opacity="0.15" />
+
+            <!-- Traveling Quantum Pulse -->
+            <circle cx="55" cy="80" r="3.5" fill="#ffffff" filter="drop-shadow(0 0 6px #38bdf8)">
+              <animate attributeName="cx" values="35; 95; 150; 205; 265" dur="2.4s" repeatCount="indefinite" />
+            </circle>
+          </svg>
+        </div>
+
+        <!-- Info Details -->
+        <div class="vl-card-info">
+          <h2 class="vl-card-title">Quantum Gates Lab</h2>
+          <p class="vl-card-desc">
+            Apply and explore different quantum gates and observe their effect on quantum states.
+          </p>
+
+          <!-- Metadata -->
+          <div class="vl-card-meta">
+            <span class="vl-meta-item text-beginner">
+              <span class="vl-meter-bars meter-beginner">
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+              </span>
+              Beginner
+            </span>
+            <span class="vl-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ~ 20 mins
+            </span>
+          </div>
+
+          <!-- Open Lab Button -->
+          <a href="circuit-lab.html" class="vl-open-btn btn-cyan">
+            Open Lab
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- CARD 3: QUANTUM TELEPORTATION LAB -->
+      <article class="vl-lab-card" data-card="teleport" data-categories="communication cryptography" data-title="quantum teleportation lab entanglement alice bob epr bell pair channel">
+        <!-- Top Category Badge -->
+        <div class="vl-card-badge-wrap">
+          <span class="vl-card-badge badge-magenta">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/><path d="M4.93 4.93a10 10 0 0 1 14.14 0M1.39 1.39a15 15 0 0 1 21.22 0"/></svg>
+            Communication
+          </span>
+        </div>
+
+        <!-- Visual Preview: Alice & Bob Nodes with Double-Helical Entanglement Wave -->
+        <div class="vl-card-preview">
+          <svg class="vl-preview-svg" viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="entangle-beam-1" x1="60" y1="80" x2="260" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="50%" stop-color="#c084fc"/>
+                <stop offset="100%" stop-color="#ec4899"/>
+              </linearGradient>
+              <linearGradient id="entangle-beam-2" x1="60" y1="80" x2="260" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.4"/>
+                <stop offset="50%" stop-color="#8b5cf6"/>
+                <stop offset="100%" stop-color="#a855f7" stop-opacity="0.4"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Entanglement Channel Double-Helix Sine Waves -->
+            <path d="M 60 80 Q 110 40, 160 80 T 260 80" stroke="url(#entangle-beam-1)" stroke-width="3" fill="none" stroke-linecap="round">
+              <animate attributeName="d" values="M 60 80 Q 110 40, 160 80 T 260 80; M 60 80 Q 110 120, 160 80 T 260 80; M 60 80 Q 110 40, 160 80 T 260 80" dur="2.4s" repeatCount="indefinite" />
+            </path>
+            <path d="M 60 80 Q 110 120, 160 80 T 260 80" stroke="url(#entangle-beam-2)" stroke-width="2" fill="none" stroke-linecap="round">
+              <animate attributeName="d" values="M 60 80 Q 110 120, 160 80 T 260 80; M 60 80 Q 110 40, 160 80 T 260 80; M 60 80 Q 110 120, 160 80 T 260 80" dur="2.4s" repeatCount="indefinite" />
+            </path>
+
+            <!-- Node Left: Alice (Cyan Glow) -->
+            <g transform="translate(60, 80)">
+              <circle cx="0" cy="0" r="22" fill="#082f49" stroke="#38bdf8" stroke-width="2" />
+              <circle cx="0" cy="0" r="14" fill="#06b6d4" fill-opacity="0.4" />
+              <circle cx="0" cy="0" r="6" fill="#ffffff" />
+              <text x="0" y="36" font-family="'JetBrains Mono', monospace" font-size="9" fill="#94a3b8" text-anchor="middle">ALICE</text>
+            </g>
+
+            <!-- Node Right: Bob (Magenta Glow) -->
+            <g transform="translate(260, 80)">
+              <circle cx="0" cy="0" r="22" fill="#3b0764" stroke="#c084fc" stroke-width="2" />
+              <circle cx="0" cy="0" r="14" fill="#ec4899" fill-opacity="0.4" />
+              <circle cx="0" cy="0" r="6" fill="#ffffff" />
+              <text x="0" y="36" font-family="'JetBrains Mono', monospace" font-size="9" fill="#94a3b8" text-anchor="middle">BOB</text>
+            </g>
+
+            <!-- Traveling Teleportation Photon Packet -->
+            <circle cx="60" cy="80" r="4.5" fill="#ffffff" filter="drop-shadow(0 0 8px #a855f7)">
+              <animate attributeName="cx" values="60; 160; 260" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="cy" values="80; 60; 80" dur="2s" repeatCount="indefinite" />
+            </circle>
+          </svg>
+        </div>
+
+        <!-- Info Details -->
+        <div class="vl-card-info">
+          <h2 class="vl-card-title">Quantum Teleportation Lab</h2>
+          <p class="vl-card-desc">
+            Observe how quantum states can be teleported using entanglement and classical communication.
+          </p>
+
+          <!-- Metadata -->
+          <div class="vl-card-meta">
+            <span class="vl-meta-item text-advanced">
+              <span class="vl-meter-bars meter-advanced">
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+              </span>
+              Advanced
+            </span>
+            <span class="vl-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ~ 35 mins
+            </span>
+          </div>
+
+          <!-- Open Lab Button -->
+          <a href="quantum-teleportation.html" class="vl-open-btn btn-magenta">
+            Open Lab
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- CARD 4: GROVER SEARCH LAB -->
+      <article class="vl-lab-card" data-card="grover" data-categories="search quantum-computing" data-title="grover search lab amplitude amplification oracle database unstructured target">
+        <!-- Top Category Badge -->
+        <div class="vl-card-badge-wrap">
+          <span class="vl-card-badge badge-blue">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Search
+          </span>
+        </div>
+
+        <!-- Visual Preview: Isometric Grid with Target State Amplified -->
+        <div class="vl-card-preview">
+          <svg class="vl-preview-svg" viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grover-target-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ec4899"/>
+                <stop offset="100%" stop-color="#a855f7"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Isometric Base Matrix Grid (4x3 blocks) -->
+            <g transform="translate(160, 40)">
+              <!-- Row 1 -->
+              <polygon points="0,0 26,14 0,28 -26,14" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+              <polygon points="32,17 58,31 32,45 6,31" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+              <polygon points="-32,17 -6,31 -32,45 -58,31" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+
+              <!-- Row 2 -->
+              <polygon points="0,34 26,48 0,62 -26,48" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+              <polygon points="64,34 90,48 64,62 38,48" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+              <polygon points="-64,34 -38,48 -64,62 -90,48" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+
+              <!-- Row 3 (Target State in Center - Elevated and Glowing!) -->
+              <g transform="translate(0, 15)">
+                <!-- Elevation column -->
+                <polygon points="-26,48 0,62 0,44 -26,30" fill="#831843" />
+                <polygon points="0,62 26,48 26,30 0,44" fill="#9d174d" />
+                <!-- Top Cap Glowing Pink/Magenta -->
+                <polygon points="0,30 26,44 0,58 -26,44" fill="url(#grover-target-grad)" stroke="#f472b6" stroke-width="1.5" />
+                <circle cx="0" cy="44" r="5" fill="#ffffff">
+                  <animate attributeName="r" values="4; 7; 4" dur="1.8s" repeatCount="indefinite" />
+                </circle>
+              </g>
+
+              <!-- Row 4 -->
+              <polygon points="32,51 58,65 32,79 6,65" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+              <polygon points="-32,51 -6,65 -32,79 -58,65" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+              <polygon points="0,68 26,82 0,96 -26,82" fill="#0f172a" stroke="#1e293b" stroke-width="1.2" />
+
+              <!-- Targeting holographic beam / magnifying target marker -->
+              <circle cx="0" cy="59" r="28" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.8">
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="8s" repeatCount="indefinite" />
+              </circle>
+              <line x1="0" y1="20" x2="0" y2="98" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2 2" opacity="0.6" />
+              <line x1="-38" y1="59" x2="38" y2="59" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2 2" opacity="0.6" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Info Details -->
+        <div class="vl-card-info">
+          <h2 class="vl-card-title">Grover Search Lab</h2>
+          <p class="vl-card-desc">
+            Experience the power of Grover's algorithm for faster search in an unstructured database.
+          </p>
+
+          <!-- Metadata -->
+          <div class="vl-card-meta">
+            <span class="vl-meta-item text-intermediate">
+              <span class="vl-meter-bars meter-intermediate">
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+                <span class="vl-meter-bar"></span>
+              </span>
+              Intermediate
+            </span>
+            <span class="vl-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ~ 30 mins
+            </span>
+          </div>
+
+          <!-- Open Lab Button -->
+          <a href="grover.html" class="vl-open-btn btn-blue">
+            Open Lab
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Empty state when no cards match search / filter -->
+      <div class="vl-no-results" id="vl-no-results">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <p>No virtual laboratories found matching your criteria.</p>
+      </div>
+
+    </section>
+
+    <!-- 4. SUBTLE FOOTER MOTIF -->
+    <div class="vl-footer-motif-wrap">
+      <div class="vl-footer-line"></div>
+      <div class="vl-footer-motif">
+        PRACTICE <span>•</span> EXPERIMENT <span>•</span> MASTER QUANTUM COMPUTING
+      </div>
+      <div class="vl-footer-line"></div>
     </div>
+
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer__inner">
-      <div class="footer__brand">
-        <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
-          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="url(#fg)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
-          <defs><linearGradient id="fg" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
-        </svg>
-        <span>QuantumLab</span>
-      </div>
-      <p class="footer__tagline">A virtual quantum learning laboratory platform.</p>
-      <p class="footer__copy">© 2026 QuantumLab. Built for explorers.</p>
-    </div>
-  </footer>
-
-  <!-- OVERLAY & MODAL (Used by QL.openLabModal) -->
-  <div class="overlay" id="overlay"></div>
-
-  <div class="modal" id="modal" role="dialog" aria-modal="true">
-    <div class="modal__inner">
-      <button class="modal__close" id="modal-close">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-      <div class="modal__content" id="modal-content"></div>
-    </div>
-  </div>
-
   <!-- AI TUTOR PANEL -->
-  <div class="ai-panel" id="ai-panel">
+  <div id="ai-panel" class="ai-panel">
     <div class="ai-panel__header">
       <div class="ai-panel__title">
-        <span>🤖</span> AI Tutor
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        AI Quantum Tutor
       </div>
       <button class="ai-panel__close" id="ai-panel-close">✕</button>
     </div>
-    <div class="ai-panel__messages" id="ai-messages">
-      <div class="ai-msg ai-msg--bot">
-        <div class="ai-msg__avatar">🤖</div>
-        <div class="ai-msg__bubble">Hello! I'm your quantum AI tutor. Ask me anything about quantum computing, or click "Explain this" on any virtual lab or visualization.</div>
-      </div>
-    </div>
-    <div class="ai-panel__input">
-      <input type="text" class="ai-panel__field" id="ai-input" placeholder="Ask about quantum concepts..." />
-      <button class="ai-panel__send" id="ai-send">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
+    <div class="ai-panel__messages" id="ai-messages"></div>
+    <div class="ai-panel__input-wrap">
+      <input type="text" class="ai-panel__input" id="ai-input" placeholder="Ask about quantum experiments..." />
+      <button class="ai-panel__send" id="ai-send">→</button>
     </div>
   </div>
+  <div class="overlay" id="overlay"></div>
 
-  <!-- Scripts -->
+  <!-- SCRIPTS -->
   <script src="../js/data.js"></script>
-  <script src="../js/virtual-lab-data.js"></script>
-  <script src="../js/canvas.js"></script>
-  <script src="../js/labs.js"></script>
   <script src="../js/app.js"></script>
   <script>
-    // Virtual Labs Page-specific Interactive Enhancements
+    // Search and Category Filter Handler for Virtual Labs
     document.addEventListener('DOMContentLoaded', () => {
-      // Dynamic count badges
-      if (window.QL && QL.data && QL.data.labs) {
-        const count = QL.data.labs.length;
-        const countEl = document.getElementById('vlabs-count');
-        const badgeEl = document.getElementById('vlabs-badge-count');
-        const sideCountEl = document.getElementById('vlabs-sidebar-count');
-        if (countEl) countEl.textContent = count;
-        if (badgeEl) badgeEl.textContent = `${count} Labs`;
-        if (sideCountEl) sideCountEl.textContent = count;
+      const searchInput = document.getElementById('vl-search-input');
+      const filterPills = document.querySelectorAll('.vl-filter-pill');
+      const cards = document.querySelectorAll('.vl-lab-card');
+      const noResults = document.getElementById('vl-no-results');
+
+      let currentFilter = 'all';
+      let currentQuery = '';
+
+      function applyFilters() {
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const cardCategories = (card.getAttribute('data-categories') || '').toLowerCase();
+          const cardTitle = (card.getAttribute('data-title') || '').toLowerCase();
+          const cardText = card.textContent.toLowerCase();
+
+          // Category match
+          const matchesCategory = (currentFilter === 'all') || 
+            cardCategories.includes(currentFilter) ||
+            (currentFilter === 'simulation' && cardCategories.includes('simulation')) ||
+            (currentFilter === 'quantum-computing' && (cardCategories.includes('quantum-computing') || cardCategories.includes('gates'))) ||
+            (currentFilter === 'communication' && cardCategories.includes('communication')) ||
+            (currentFilter === 'search' && cardCategories.includes('search')) ||
+            (currentFilter === 'fundamentals' && cardCategories.includes('fundamentals')) ||
+            (currentFilter === 'cryptography' && (cardCategories.includes('cryptography') || cardCategories.includes('communication'))) ||
+            (currentFilter === 'quantum-ml' && cardCategories.includes('search'));
+
+          // Search query match
+          const matchesQuery = !currentQuery || 
+            cardTitle.includes(currentQuery) || 
+            cardText.includes(currentQuery);
+
+          if (matchesCategory && matchesQuery) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (visibleCount === 0) {
+          noResults.classList.add('visible');
+        } else {
+          noResults.classList.remove('visible');
+        }
       }
 
-      // Check URL parameters for direct lab deep linking (e.g. ?lab=circuit-lab)
-      const params = new URLSearchParams(window.location.search);
-      const labParam = params.get('lab');
-      if (labParam && window.QL && typeof QL.openLabModal === 'function') {
-        setTimeout(() => QL.openLabModal(labParam), 300);
-      }
-
-      // Star rating interaction
-      const starBtns = document.querySelectorAll('.vlabs-star-btn');
-      const ratingInput = document.getElementById('selected-rating');
-
-      function updateStars(val) {
-        starBtns.forEach(btn => {
-          const btnVal = parseInt(btn.dataset.value, 10);
-          btn.classList.toggle('active', btnVal <= val);
-        });
-      }
-
-      updateStars(5); // default 5 stars
-
-      starBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const val = parseInt(btn.dataset.value, 10);
-          if (ratingInput) ratingInput.value = val;
-          updateStars(val);
-        });
-        btn.addEventListener('mouseenter', () => {
-          const val = parseInt(btn.dataset.value, 10);
-          starBtns.forEach(b => {
-            b.classList.toggle('hovered', parseInt(b.dataset.value, 10) <= val);
-          });
-        });
-        btn.addEventListener('mouseleave', () => {
-          starBtns.forEach(b => b.classList.remove('hovered'));
+      // Filter Pill Click
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          currentFilter = pill.getAttribute('data-filter') || 'all';
+          applyFilters();
         });
       });
 
-      // Feedback form submission
-      const feedbackForm = document.getElementById('vlabs-feedback-form');
-      const feedbackStatus = document.getElementById('feedback-status');
-      if (feedbackForm && feedbackStatus) {
-        feedbackForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          feedbackForm.style.display = 'none';
-          feedbackStatus.classList.add('visible');
+      // Search Input
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          currentQuery = e.target.value.trim().toLowerCase();
+          applyFilters();
         });
       }
 
-      // Sidebar and mobile pill scrollspy
-      const sections = ['introduction', 'objective', 'labs-list', 'target-audience', 'learning-outcomes', 'course-alignment', 'feedback'];
-      const navLinks = document.querySelectorAll('.vlabs-nav-item, .vlabs-mobile-pill');
+      // Particle background animation
+      const canvas = document.getElementById('vl-particle-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
 
-      window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(id => {
-          const sec = document.getElementById(id);
-          if (sec && window.scrollY >= sec.offsetTop - 140) {
-            current = id;
-          }
+        window.addEventListener('resize', () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
         });
-        if (!current && sections.length > 0) current = sections[0];
 
-        navLinks.forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === `#${current}`) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
-        });
-      }, { passive: true });
+        const particles = [];
+        const count = 35;
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            size: Math.random() * 2 + 1,
+            color: Math.random() > 0.5 ? 'rgba(56, 189, 248, ' : 'rgba(168, 85, 247, ',
+            alpha: Math.random() * 0.4 + 0.1
+          });
+        }
+
+        function render() {
+          ctx.clearRect(0, 0, width, height);
+          particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0) p.x = width;
+            if (p.x > width) p.x = 0;
+            if (p.y < 0) p.y = height;
+            if (p.y > height) p.y = 0;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + p.alpha + ')';
+            ctx.fill();
+          });
+          requestAnimationFrame(render);
+        }
+        render();
+      }
     });
   </script>
 </body>

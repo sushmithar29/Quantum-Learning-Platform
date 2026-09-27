@@ -1615,6 +1615,14 @@
   display: block;
 }
 
+.qsvm-canvas-hud {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  display: none;
+  transition: opacity 0.15s ease-out;
+}
+
 .qsvm-caption-card {
   background: rgba(13, 17, 38, 0.8);
   border: 1px solid var(--vlab-border);
@@ -1833,3 +1841,191 @@
 }
 
 
+/* ============================================================
+   ALGORITHMS LANDING PAGE — NO-SIDEBAR FULL-WIDTH OVERRIDE
+   Overrides the default 240px 1fr grid so the experiment
+   directory expands across the full available content width.
+   Only applied when class="vlab-workspace--no-sidebar" is set.
+   All other virtual-lab pages with a real sidebar are unaffected.
+   ============================================================ */
+.vlab-workspace--no-sidebar {
+  display: block !important;
+  grid-template-columns: unset !important;
+  min-height: calc(100vh - 110px);
+}
+
+.vlab-workspace--no-sidebar .vlab-main-content {
+  max-width: none !important;
+  width: 100% !important;
+  box-sizing: border-box;
+  padding: 2.5rem 3rem;
+}
+
+/* Responsive: tablet */
+@media (max-width: 1100px) {
+  .vlab-workspace--no-sidebar .vlab-main-content {
+    padding: 2rem 1.75rem;
+  }
+}
+
+/* Responsive: mobile */
+@media (max-width: 768px) {
+  .vlab-workspace--no-sidebar .vlab-main-content {
+    padding: 1.25rem 1rem 2rem;
+  }
+}
+
+
+/* ============================================================
+   ALGORITHMS LANDING PAGE - EXPERIMENT DIRECTORY
+   Row Spacing + Professional Hover Effects
+   Scoped to .vlab-workspace--no-sidebar only.
+   ============================================================ */
+
+/* Table shell & wrapper */
+.vlab-workspace--no-sidebar .vlab-table-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vlab-workspace--no-sidebar .vlab-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 7px;
+  margin: 0;
+  table-layout: auto;
+}
+
+/* Column headers */
+.vlab-workspace--no-sidebar .vlab-table thead tr { background: transparent; }
+.vlab-workspace--no-sidebar .vlab-table thead th {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vlab-text-muted, #64748b);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: transparent;
+  white-space: nowrap;
+}
+
+/* Body rows - base */
+.vlab-workspace--no-sidebar .vlab-table tbody tr {
+  background: rgba(13,16,38,0.72);
+  transition: background 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+/* Rounded corners via first/last td */
+.vlab-workspace--no-sidebar .vlab-table tbody tr td:first-child {
+  border-radius: 10px 0 0 10px;
+  border-left: 1px solid rgba(255,255,255,0.07);
+}
+.vlab-workspace--no-sidebar .vlab-table tbody tr td:last-child {
+  border-radius: 0 10px 10px 0;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+
+/* Cells - base */
+.vlab-workspace--no-sidebar .vlab-table tbody tr td {
+  padding: 1.1rem 1.1rem;
+  font-size: 0.9rem;
+  color: var(--vlab-text-secondary, #94a3b8);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  vertical-align: middle;
+  transition: color 220ms ease, border-color 220ms ease;
+}
+
+/* Experiment number */
+.vlab-workspace--no-sidebar .vlab-table tbody tr td:first-child {
+  font-family: var(--vlab-mono, 'JetBrains Mono', monospace);
+  color: var(--vlab-cyan, #06b6d4);
+  font-weight: 700;
+  font-size: 0.88rem;
+  min-width: 52px;
+}
+
+/* Experiment name */
+.vlab-workspace--no-sidebar .vlab-table tbody tr td:nth-child(2) strong {
+  color: #e2e8f0;
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: color 220ms ease;
+}
+
+/* Action cell */
+.vlab-workspace--no-sidebar .vlab-table tbody tr td:last-child {
+  text-align: right;
+  min-width: 140px;
+}
+
+/* Body rows - HOVER */
+.vlab-workspace--no-sidebar .vlab-table tbody tr:hover {
+  background: linear-gradient(135deg, rgba(99,60,180,0.14) 0%, rgba(6,182,212,0.08) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(6,182,212,0.10), 0 2px 8px rgba(124,58,237,0.10);
+}
+.vlab-workspace--no-sidebar .vlab-table tbody tr:hover td {
+  border-top-color: rgba(6,182,212,0.25);
+  border-bottom-color: rgba(6,182,212,0.25);
+  color: #cbd5e1;
+}
+.vlab-workspace--no-sidebar .vlab-table tbody tr:hover td:first-child {
+  border-left-color: rgba(6,182,212,0.35);
+  color: #38bdf8;
+}
+.vlab-workspace--no-sidebar .vlab-table tbody tr:hover td:last-child {
+  border-right-color: rgba(6,182,212,0.35);
+}
+.vlab-workspace--no-sidebar .vlab-table tbody tr:hover td:nth-child(2) strong {
+  color: #fff;
+}
+
+/* Launch Lab button - base */
+.vlab-workspace--no-sidebar .vlab-table tbody .vlab-action-btn--primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.05rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff;
+  border: 1px solid rgba(124,58,237,0.5);
+  box-shadow: 0 0 12px rgba(124,58,237,0.25);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 220ms ease, box-shadow 220ms ease, transform 220ms ease, border-color 220ms ease;
+}
+
+/* Launch Lab button - hover */
+.vlab-workspace--no-sidebar .vlab-table tbody .vlab-action-btn--primary:hover {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  box-shadow: 0 0 20px rgba(139,92,246,0.55), 0 4px 14px rgba(124,58,237,0.35);
+  transform: translateY(-1px);
+  border-color: rgba(139,92,246,0.8);
+}
+
+/* Keyboard focus - accessibility */
+.vlab-workspace--no-sidebar .vlab-table tbody tr:focus-within {
+  background: linear-gradient(135deg, rgba(99,60,180,0.14) 0%, rgba(6,182,212,0.08) 100%);
+  box-shadow: 0 4px 20px rgba(6,182,212,0.10), 0 0 0 2px rgba(6,182,212,0.4);
+}
+.vlab-workspace--no-sidebar .vlab-table tbody .vlab-action-btn--primary:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .vlab-workspace--no-sidebar .vlab-table tbody tr td { padding: 0.85rem 0.75rem; font-size: 0.82rem; }
+  .vlab-workspace--no-sidebar .vlab-table thead th { padding: 0.5rem 0.75rem; }
+}
+@media (max-width: 600px) {
+  .vlab-workspace--no-sidebar .vlab-table tbody tr td { padding: 0.75rem 0.6rem; font-size: 0.78rem; }
+  .vlab-workspace--no-sidebar .vlab-table thead th:nth-child(3),
+  .vlab-workspace--no-sidebar .vlab-table tbody tr td:nth-child(3) { display: none; }
+}

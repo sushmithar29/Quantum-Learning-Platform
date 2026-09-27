@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classical vs Quantum — 3D Interactive Maze Experience | QuantumLab</title>
+  <meta name="description" content="Explore classical vs quantum computing through an interactive 3D labyrinth simulation. Watch classical sequential search versus quantum superposition, multi-path propagation, and wavefunction collapse." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/basics.css" />
+</head>
+<body class="basics-body">
+
+  <!-- BACKGROUND AMBIENT GLOWS -->
+  <div class="basics-bg-glow" aria-hidden="true">
+    <div class="basics-bg-glow__blob1"></div>
+    <div class="basics-bg-glow__blob2"></div>
+  </div>
+
+  <!-- TOP NAVIGATION BAR -->
+  <nav class="basics-nav" id="basics-nav">
+    <div class="basics-nav__left">
+      <a href="index.html" class="basics-nav__back" aria-label="Back to QuantumLab Home">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Home
+      </a>
+      <a href="index.html" class="basics-nav__logo">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="6" stroke="url(#nav-logo-grad)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#nav-logo-grad)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#nav-logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#nav-logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs>
+            <linearGradient id="nav-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>QuantumLab</span>
+      </a>
+      <span class="basics-nav__badge">Basics</span>
+    </div>
+
+    <div class="basics-nav__links">
+      <a href="basics.html" class="basics-nav__link active">Basics</a>
+      <a href="experiments.html" class="basics-nav__link">Experiments</a>
+      <a href="virtual-labs.html" class="basics-nav__link">Virtual Labs</a>
+      <a href="algorithms.html" class="basics-nav__link">Algorithms</a>
+      <a href="hardware.html" class="basics-nav__link">⚛ Hardware</a>
+    </div>
+
+    <div class="basics-nav__right">
+      <button class="basics-ctrl-btn basics-ctrl-btn--secondary" id="btn-fullscreen" title="Toggle Fullscreen Mode">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        <span>Fullscreen</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN EXPERIENCE CONTAINER -->
+  <main class="basics-main">
+
+    <!-- HERO HEADER -->
+    <header class="basics-header">
+      <div class="basics-header__badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Live 3D WebGL Simulation</span>
+      </div>
+      <h1 class="basics-header__title">
+        CLASSICAL <span class="basics-header__title-gradient">vs QUANTUM</span>
+      </h1>
+      <p class="basics-header__desc">
+        See the difference — don't just read about it. Watch how computation navigates the solution space.
+      </p>
+    </header>
+
+    <!-- 3D SHOWCASE CARD -->
+    <section class="basics-showcase" id="basics-stage-container" aria-label="Classical vs Quantum 3D Maze Simulation">
+
+      <!-- Showcase Top Bar -->
+      <div class="basics-showcase-bar">
+        <!-- Mode Toggle -->
+        <div class="basics-mode-switch">
+          <button class="basics-mode-btn active" id="btn-mode-classical" title="Run Classical sequential search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span>Classical</span>
+          </button>
+          <button class="basics-mode-btn basics-mode-btn--quantum" id="btn-mode-quantum" title="Run Quantum superposition exploration">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="4 4"/><path d="M12 1v4M12 19v4"/></svg>
+            <span>Quantum</span>
+          </button>
+          <button class="basics-mode-btn" id="btn-mode-compare" title="Dual comparison">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+            <span>Compare</span>
+          </button>
+        </div>
+
+        <!-- Camera Views -->
+        <div class="basics-cam-toolbar">
+          <span style="font-size:0.72rem; color:var(--text-muted); margin-right:4px;">Camera:</span>
+          <button class="basics-cam-btn active" id="btn-cam-perspective" title="3D Perspective view">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>3D Angle</span>
+          </button>
+          <button class="basics-cam-btn" id="btn-cam-topdown" title="Top-down framing matching reference video">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+            <span>Top-Down</span>
+          </button>
+          <button class="basics-cam-btn" id="btn-cam-closeup" title="Zoom to Entrance">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            <span>Close-Up</span>
+          </button>
+          <button class="basics-cam-btn" id="btn-reset-view" title="Reset camera view">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            <span>Reset View</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SINGLE 3D WebGL Canvas Viewport (Classical / Quantum) -->
+      <div class="basics-viewport" id="maze-viewport-single">
+
+        <!-- Dynamic Educational HUD Overlay -->
+        <div class="basics-hud">
+          <div class="basics-hud__top">
+            <span class="basics-hud__badge" id="hud-stage-badge">Step 2 of 8</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="hud-mode-tag hud-mode-tag--classical" id="hud-mode-tag">CLASSICAL MODE</span>
+              <button class="hud-toggle-btn" id="hud-toggle-btn" title="Toggle HUD details" aria-label="Minimize HUD details">−</button>
+            </div>
+          </div>
+          <h2 class="basics-hud__title" id="hud-stage-title">Deterministic Sequential Search</h2>
+          <p class="basics-hud__desc" id="hud-stage-desc">
+            Classical computation follows ONE definite route at a time. If it encounters a dead end, it must backtrack and re-evaluate.
+          </p>
+          <div class="basics-hud__math" id="hud-stage-math">x(t) ∈ {Path₁}</div>
+        </div>
+
+        <!-- Canvas Interaction Hint -->
+        <div class="basics-hint">
+          <span>Drag: Orbit 360° • Scroll: Zoom • Right-Drag: Pan • Hover: Inspect Branch</span>
+        </div>
+
+        <!-- Raycaster Tooltip -->
+        <div class="scene-tooltip" id="scene-tooltip"></div>
+      </div>
+
+      <!-- DUAL-FRAME SIDE-BY-SIDE COMPARISON VIEW -->
+      <div class="basics-compare-grid" id="maze-viewport-compare" style="display:none;">
+
+        <!-- FRAME 1: CLASSICAL COMPUTING -->
+        <div class="basics-compare-frame basics-compare-frame--classical">
+          <div class="basics-compare-frame__header">
+            <div class="basics-compare-frame__title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Classical Computing</span>
+            </div>
+            <span class="basics-compare-badge basics-compare-badge--classical">Sequential: 1 Path at a Time</span>
+          </div>
+          <div class="basics-compare-frame__canvas" id="canvas-compare-classical"></div>
+          <div class="basics-compare-frame__footer">
+            <span>Tests corridors one by one · Backtracks on dead ends</span>
+            <span class="complexity-tag complexity-tag--classical">O(N) Complexity</span>
+          </div>
+        </div>
+
+        <!-- FRAME 2: QUANTUM COMPUTING -->
+        <div class="basics-compare-frame basics-compare-frame--quantum">
+          <div class="basics-compare-frame__header">
+            <div class="basics-compare-frame__title basics-compare-frame__title--quantum">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="4 4"/><path d="M12 1v4M12 19v4"/></svg>
+              <span>Quantum Computing</span>
+            </div>
+            <span class="basics-compare-badge basics-compare-badge--quantum">Superposition: All Paths at Once</span>
+          </div>
+          <div class="basics-compare-frame__canvas" id="canvas-compare-quantum"></div>
+          <div class="basics-compare-frame__footer">
+            <span>Explores all branches simultaneously · Fast convergence</span>
+            <span class="complexity-tag complexity-tag--quantum">Instantaneous Speedup</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="basics-controls">
+        <div class="basics-ctrl-group">
+          <button class="basics-ctrl-btn basics-ctrl-btn--primary" id="btn-play-pause">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <span>Pause</span>
+          </button>
+          <button class="basics-ctrl-btn basics-ctrl-btn--secondary" id="btn-step" title="Advance to next stage [Right Arrow]">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            <span>Step</span>
+          </button>
+          <button class="basics-ctrl-btn basics-ctrl-btn--secondary" id="btn-reset" title="Restart simulation [R]">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            <span>Reset</span>
+          </button>
+          <button class="basics-ctrl-btn basics-ctrl-btn--measure" id="btn-measure" title="Collapse quantum superposition [M]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+            <span>MEASURE [M]</span>
+          </button>
+        </div>
+
+        <div class="basics-ctrl-group">
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Speed:</span>
+          <div class="basics-speed-selector">
+            <button class="basics-speed-btn" data-speed="0.5">0.5×</button>
+            <button class="basics-speed-btn active" data-speed="1">1×</button>
+            <button class="basics-speed-btn" data-speed="1.5">1.5×</button>
+            <button class="basics-speed-btn" data-speed="2">2×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive 8-Stage Timeline -->
+      <div class="basics-timeline-wrap">
+        <div class="basics-timeline-bar-bg">
+          <div class="basics-timeline-bar-fill" id="timeline-progress-bar"></div>
+        </div>
+        <div class="basics-timeline-steps">
+          <div class="basics-timeline-step" data-stage="1">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">01</div>
+            <div class="basics-step-label">Input</div>
+          </div>
+          <div class="basics-timeline-step active" data-stage="2">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">02</div>
+            <div class="basics-step-label">Classical Path</div>
+          </div>
+          <div class="basics-timeline-step" data-stage="3">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">03</div>
+            <div class="basics-step-label">Quantum State</div>
+          </div>
+          <div class="basics-timeline-step" data-stage="4">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">04</div>
+            <div class="basics-step-label">Branching</div>
+          </div>
+          <div class="basics-timeline-step" data-stage="5">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">05</div>
+            <div class="basics-step-label">Superposition</div>
+          </div>
+          <div class="basics-timeline-step" data-stage="6">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">06</div>
+            <div class="basics-step-label">Interference</div>
+          </div>
+          <div class="basics-timeline-step" data-stage="7">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">07</div>
+            <div class="basics-step-label">Measurement</div>
+          </div>
+          <div class="basics-timeline-step" data-stage="8">
+            <div class="basics-step-dot"></div>
+            <div class="basics-step-num">08</div>
+            <div class="basics-step-label">Final Result</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SCIENTIFIC METAPHOR EXPLANATION -->
+    <aside class="basics-note">
+      <div class="basics-note__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </div>
+      <div>
+        <h3 class="basics-note__title">Scientific Note on Computational Superposition</h3>
+        <p class="basics-note__body">
+          The maze is an educational visual metaphor. Quantum computing does not simply "run every test sequentially in duplicate realities". Rather, quantum algorithms configure a <strong>coherent superposition of basis states</strong>, where <strong>quantum interference</strong> mathematically suppresses undesirable branches (destructive interference) and constructively amplifies the correct solution amplitude before measurement.
+        </p>
+      </div>
+    </aside>
+
+    <!-- COMPARISON CARDS -->
+    <section class="basics-cards-section">
+
+      <!-- Classical Card -->
+      <article class="basics-card basics-card--classical">
+        <div class="basics-card__header">
+          <div class="basics-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <div class="basics-card__sub">Deterministic Traversal</div>
+            <h2 class="basics-card__title">Classical Computing</h2>
+          </div>
+        </div>
+
+        <blockquote class="basics-card__quote">
+          “A classical computer tests each path one at a time, making adjustments upon dead ends, then retrying. Many iterations are needed.”
+        </blockquote>
+
+        <ul class="basics-card__list">
+          <li class="basics-card__item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <span><strong>Binary State:</strong> Information is encoded in definite physical bits: either exactly <code>0</code> or <code>1</code>.</span>
+          </li>
+          <li class="basics-card__item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <span><strong>Sequential Evaluation:</strong> Each corridor must be physically evaluated to completion before discovering if it leads to a dead end.</span>
+          </li>
+          <li class="basics-card__item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <span><strong>Scaling:</strong> Search complexity scales linearly <code>O(N)</code> with the size of the branching tree.</span>
+          </li>
+        </ul>
+      </article>
+
+      <!-- Quantum Card -->
+      <article class="basics-card basics-card--quantum">
+        <div class="basics-card__header">
+          <div class="basics-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="4 4"/><path d="M12 1v4M12 19v4"/></svg>
+          </div>
+          <div>
+            <div class="basics-card__sub">Coherent Superposition</div>
+            <h2 class="basics-card__title">Quantum Computing</h2>
+          </div>
+        </div>
+
+        <blockquote class="basics-card__quote">
+          “A quantum computer explores the solution space across multiple computational amplitudes simultaneously.”
+        </blockquote>
+
+        <ul class="basics-card__list">
+          <li class="basics-card__item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <span><strong>Qubit Superposition:</strong> Qubits represent linear combinations: <code>|ψ⟩ = α|0⟩ + β|1⟩</code>.</span>
+          </li>
+          <li class="basics-card__item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <span><strong>Phase Interference:</strong> Algorithms (like Grover's search) invert phases to cancel false paths and constructively amplify the solution.</span>
+          </li>
+          <li class="basics-card__item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <span><strong>Measurement:</strong> Yields the amplified solution eigenstate with high fidelity upon readout.</span>
+          </li>
+        </ul>
+      </article>
+
+    </section>
+
+    <!-- CALL TO ACTION / NEXT STEPS -->
+    <section class="basics-cta">
+      <h2 class="basics-cta__title">Ready to construct quantum circuits yourself?</h2>
+      <p class="basics-cta__desc">
+        Apply these superposition principles directly on virtual multi-qubit registers or explore real IBM superconducting hardware.
+      </p>
+      <div class="basics-cta__actions">
+        <a href="virtual-labs.html" class="basics-ctrl-btn basics-ctrl-btn--primary" style="padding:0.65rem 1.4rem; font-size:0.9rem; text-decoration:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Open Virtual Labs
+        </a>
+        <a href="hardware.html" class="basics-ctrl-btn basics-ctrl-btn--secondary" style="padding:0.65rem 1.4rem; font-size:0.9rem; text-decoration:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4"/></svg>
+          Explore Quantum Hardware
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="basics-footer">
+    <p>QuantumLab © 2026 · Interactive Quantum Learning Platform · 3D WebGL Classical vs Quantum Simulation</p>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="js/vendor/three.min.js"></script>
+  <script src="js/vendor/OrbitControls.js"></script>
+  <script src="js/basics-maze-data.js"></script>
+  <script src="js/basics-simulation.js"></script>
+  <script src="js/basics-3d.js"></script>
+  <script src="js/basics-ui.js"></script>
+</body>
+</html>

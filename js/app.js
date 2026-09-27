@@ -408,13 +408,43 @@ function initNav() {
     });
   });
 
+  // Handle /algorithms navigation for file: protocol
+  document.querySelectorAll('a[href="/algorithms"], a[href="/algorithms/"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      if (window.location.protocol === 'file:') {
+        e.preventDefault();
+        const isInSubDir = window.location.pathname.includes('/experiments/') ||
+                           window.location.pathname.includes('/virtual-labs/') ||
+                           window.location.pathname.includes('/algorithms/') ||
+                           window.location.pathname.includes('/hardware/');
+        window.location.href = isInSubDir ? '../algorithms/index.html' : 'algorithms/index.html';
+      }
+    });
+  });
+
+  // Handle /hardware navigation for file: protocol
+  document.querySelectorAll('a[href="/hardware"], a[href="/hardware/"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      if (window.location.protocol === 'file:') {
+        e.preventDefault();
+        const isInSubDir = window.location.pathname.includes('/experiments/') ||
+                           window.location.pathname.includes('/virtual-labs/') ||
+                           window.location.pathname.includes('/algorithms/') ||
+                           window.location.pathname.includes('/hardware/');
+        window.location.href = isInSubDir ? '../hardware/index.html' : 'hardware/index.html';
+      }
+    });
+  });
+
   // Handle root link for file: protocol
   document.querySelectorAll('a[href="/"]').forEach(a => {
     a.addEventListener('click', (e) => {
       if (window.location.protocol === 'file:') {
         e.preventDefault();
         const isInSubDir = window.location.pathname.includes('/experiments/') ||
-                           window.location.pathname.includes('/virtual-labs/');
+                           window.location.pathname.includes('/virtual-labs/') ||
+                           window.location.pathname.includes('/algorithms/') ||
+                           window.location.pathname.includes('/hardware/');
         window.location.href = isInSubDir ? '../index.html' : 'index.html';
       }
     });

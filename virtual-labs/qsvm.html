@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QSVM Virtual Lab — QuantumLab</title>
+  <meta name="description" content="Perform quantum classification using QSVM. Configure parameters, watch particles transform, observe the quantum decision boundary, and analyze accuracy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/vlab-workspace.css" />
+</head>
+<body class="vlw-body">
+
+  <!-- LOADING SCREEN -->
+  <div class="vlw-loader" id="vlw-loader">
+    <div class="vlw-loader__ring"></div>
+    <div class="vlw-loader__text">Initializing Quantum Laboratory...</div>
+    <div class="vlw-loader__sub">Loading QSVM simulation engine · feature maps · kernel matrix</div>
+  </div>
+
+  <!-- TOP NAV -->
+  <nav class="vlw-topnav" id="vlw-topnav">
+    <!-- Injected by JS -->
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="vlw-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="vlw-sidebar" id="vlw-sidebar-content">
+      <!-- Injected by JS -->
+    </aside>
+
+    <!-- CENTER MAIN VISUALIZATION -->
+    <main class="vlw-main">
+      <!-- Step bar -->
+      <div class="vlw-step-bar" id="vlw-step-bar">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Canvas area -->
+      <div class="vlw-canvas-wrap" id="vlw-canvas-wrap">
+        <canvas id="vlw-canvas" class="vlw-sim-canvas" aria-label="QSVM quantum classification visualization canvas"></canvas>
+
+        <!-- Floating labels -->
+        <div class="vlw-viz-label vlw-viz-label--tl" id="vlw-viz-label-tl">⚛ QSVM Visualization</div>
+        <div class="vlw-viz-label vlw-viz-label--tr" id="vlw-viz-label-tr">Quantum Feature Space</div>
+        <div class="vlw-viz-label vlw-viz-label--bl">
+          <span style="color:var(--vlw-cyan-l)">●</span> Class +1 &nbsp;&nbsp;
+          <span style="color:var(--vlw-magenta)">●</span> Class −1 &nbsp;&nbsp;
+          <span style="color:var(--vlw-amber)">○</span> Support Vector
+        </div>
+
+        <!-- Completion overlay -->
+        <div class="vlw-complete-overlay" id="vlw-complete-overlay">
+          <div class="vlw-complete-card">
+            <div class="vlw-complete-icon">✅</div>
+            <div class="vlw-complete-title">Experiment Complete!</div>
+            <div class="vlw-complete-sub">
+              You have successfully classified data using a Quantum Support Vector Machine.<br/>
+              The quantum kernel mapped non-linearly separable classes into Hilbert space.
+            </div>
+            <div class="vlw-complete-metrics">
+              <div class="vlw-complete-metric">
+                <div class="vlw-complete-metric-val">100%</div>
+                <div class="vlw-complete-metric-label">QSVM Accuracy</div>
+              </div>
+              <div class="vlw-complete-metric">
+                <div class="vlw-complete-metric-val">56%</div>
+                <div class="vlw-complete-metric-label">Classical SVM</div>
+              </div>
+              <div class="vlw-complete-metric">
+                <div class="vlw-complete-metric-val">2ⁿ = 4</div>
+                <div class="vlw-complete-metric-label">Hilbert Dim.</div>
+              </div>
+              <div class="vlw-complete-metric">
+                <div class="vlw-complete-metric-val">2-qubit</div>
+                <div class="vlw-complete-metric-label">Feature Map</div>
+              </div>
+            </div>
+            <div class="vlw-complete-actions">
+              <button class="vlw-complete-btn vlw-complete-btn--secondary" onclick="VLW.Workspace.reset()">↺ Reset Lab</button>
+              <a href="../virtual-labs.html" class="vlw-complete-btn vlw-complete-btn--primary">← All Labs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT CONTROLS PANEL -->
+    <aside class="vlw-controls" id="vlw-controls-content">
+      <!-- Injected by JS -->
+    </aside>
+
+    <!-- BOTTOM TIMELINE BAR -->
+    <div class="vlw-timeline-bar">
+      <!-- Playback -->
+      <div class="vlw-playback">
+        <button class="vlw-ctrl-btn" onclick="VLW.Workspace.goStep(Math.max(0, VLW.Workspace.getStep() - 1))" title="Previous step" aria-label="Previous step">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 19 2 12 11 5 11 19"/><line x1="22" y1="5" x2="22" y2="19"/></svg>
+        </button>
+        <button class="vlw-ctrl-btn vlw-ctrl-btn--play" id="vlw-play-btn" onclick="VLW.Workspace.run()" aria-label="Run experiment">
+          <svg id="vlw-play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+        <button class="vlw-ctrl-btn" onclick="VLW.Workspace.stepForward()" title="Next step" aria-label="Next step">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 19 22 12 13 5 13 19"/><line x1="2" y1="5" x2="2" y2="19"/></svg>
+        </button>
+        <button class="vlw-ctrl-btn" onclick="VLW.Workspace.reset()" title="Reset" aria-label="Reset simulation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        </button>
+      </div>
+
+      <!-- Timeline steps -->
+      <div class="vlw-timeline-track-wrap">
+        <div class="vlw-timeline-steps" id="vlw-timeline-steps">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Time display -->
+      <div class="vlw-time-info">
+        <div class="vlw-time-display" id="vlw-time-display">0:00</div>
+        <div class="vlw-step-counter" id="vlw-step-counter">Step 1 of 6</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLTIP -->
+  <div class="vlw-tooltip" id="vlw-tooltip">
+    <div class="vlw-tooltip__title" id="vlw-tip-title">Component</div>
+    <div id="vlw-tip-desc">Description</div>
+  </div>
+
+  <script src="../js/vlab-workspace.js"></script>
+  <script>
+    // Fix step navigation references
+    VLW.Workspace.getStep = function() { return 0; };
+    document.addEventListener('DOMContentLoaded', function() {
+      VLW.Workspace.init('qsvm');
+    });
+  </script>
+</body>
+</html>

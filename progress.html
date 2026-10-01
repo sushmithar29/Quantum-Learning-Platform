@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personalized Quantum Learning Roadmap &amp; Progress — QuantumLab</title>
+  <meta name="description" content="Track your quantum computing journey with a personalized roadmap, daily scheduled activities, hands-on virtual experiments, and progress analytics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/progress.css" />
+</head>
+<body class="progress-body">
+
+  <!-- TOP NAVIGATION BAR -->
+  <nav class="nav scrolled" id="main-nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" id="logo-link">
+        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav__logo-text">QuantumLab</span>
+      </a>
+      <div class="nav__links">
+        <a href="basics.html" class="nav__link">Basics</a>
+        <a href="hardware.html" class="nav__link nav__link--highlight">⚛ Quantum Hardware</a>
+        <a href="learn.html" class="nav__link">Learn</a>
+        <a href="algorithms.html" class="nav__link">Algorithms</a>
+        <a href="virtual-labs.html" class="nav__link">Virtual Labs</a>
+        <a href="experiments.html" class="nav__link">Experiments</a>
+        <a href="visualizer.html" class="nav__link" style="display:inline-flex;align-items:center;gap:4px;color:#22d3ee;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          Visualizer
+        </a>
+        <a href="index.html#challenges" class="nav__link">Challenges</a>
+        <a href="progress.html" class="nav__link active" id="nav-progress" style="display:inline-flex;align-items:center;gap:5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Progress
+        </a>
+      </div>
+      <div class="nav__actions">
+        <button class="nav__ai-btn" id="ai-tutor-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          AI Tutor
+        </button>
+        <button class="nav__profile-btn" id="profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+      </div>
+      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="basics.html" class="nav__mobile-link">Basics</a>
+      <a href="experiments.html" class="nav__mobile-link">Experiments</a>
+      <a href="virtual-labs.html" class="nav__mobile-link">Virtual Labs</a>
+      <a href="algorithms.html" class="nav__mobile-link">Algorithms</a>
+      <a href="hardware.html" class="nav__mobile-link">⚛ Quantum Hardware</a>
+      <a href="learn.html" class="nav__mobile-link">Learn</a>
+      <a href="index.html#challenges" class="nav__mobile-link">Challenges</a>
+      <a href="progress.html" class="nav__mobile-link active">Progress</a>
+    </div>
+  </nav>
+
+  <!-- MAIN PROGRESS PAGE -->
+  <main class="progress-page">
+    <div class="progress-container">
+
+      <!-- HERO SECTION -->
+      <section class="progress-hero">
+        <canvas class="progress-hero__bg-canvas" id="progress-hero-canvas"></canvas>
+        <div class="progress-hero__inner">
+          <div class="progress-hero__content">
+            <div class="progress-hero__tag">
+              <span class="progress-hero__tag-dot"></span>
+              Personalized Learning System
+            </div>
+            <h1 class="progress-hero__title">
+              YOUR QUANTUM <span class="progress-hero__title-accent">JOURNEY</span>
+            </h1>
+            <p class="progress-hero__desc">
+              Build your quantum computing skills step by step. Create a personalized roadmap, track your experiments, and stay consistent with your daily learning.
+            </p>
+          </div>
+          <div class="progress-hero__actions">
+            <button type="button" class="btn-ql-primary" id="btn-hero-create-plan">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              + Create Quantum Roadmap
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TOP STATUS STRIP -->
+      <section class="progress-status-strip">
+        <div class="progress-status-box">
+          <span class="progress-status-label">CURRENT STREAK</span>
+          <div class="progress-status-val progress-status-val--amber" id="stat-streak-val">🔥 0 DAYS</div>
+        </div>
+        <div class="progress-status-box">
+          <span class="progress-status-label">ACTIVE PLAN</span>
+          <div class="progress-status-val progress-status-val--cyan" id="stat-plan-val" style="font-size:1.05rem;">No Active Plan</div>
+        </div>
+        <div class="progress-status-box">
+          <span class="progress-status-label">CURRENT DAY</span>
+          <div class="progress-status-val progress-status-val--purple" id="stat-day-val">—</div>
+        </div>
+        <div class="progress-status-box">
+          <span class="progress-status-label">ROADMAP PROGRESS</span>
+          <div class="progress-status-val progress-status-val--green" id="stat-prog-val">0%</div>
+        </div>
+      </section>
+
+      <!-- PLANS SWITCHER BAR -->
+      <div class="progress-plans-bar" id="progress-plans-bar">
+        <!-- Rendered dynamically by progress-ui.js -->
+      </div>
+
+      <!-- MAIN 2-COLUMN DASHBOARD GRID -->
+      <div class="progress-grid">
+
+        <!-- LEFT COLUMN: ACTIVE PLAN & DAILY ROADMAP -->
+        <div class="progress-main-col" id="progress-main-col">
+          <!-- Rendered dynamically (Active Plan card + Day list, or Empty state) -->
+        </div>
+
+        <!-- RIGHT COLUMN: OVERALL PROGRESS SIDEBAR -->
+        <aside class="progress-sidebar" id="progress-sidebar">
+          <!-- Rendered dynamically by progress-ui.js -->
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============================================================
+       MODAL 1: SET / EDIT QUANTUM ROADMAP MODAL
+       ============================================================ -->
+  <div class="ql-modal-backdrop" id="modal-roadmap-backdrop">
+    <div class="ql-modal">
+      <div class="ql-modal-header">
+        <div class="ql-modal-title-group">
+          <span class="ql-modal-tag">ROADMAP CONFIGURATION</span>
+          <h2 class="ql-modal-title" id="modal-roadmap-title">Set Quantum Roadmap</h2>
+          <p class="ql-modal-desc">Choose what you want to learn and create a personalized learning schedule.</p>
+        </div>
+        <button type="button" class="ql-modal-close" id="btn-close-roadmap-modal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="ql-modal-body" id="modal-roadmap-body">
+        <!-- Form steps populated dynamically by progress-ui.js -->
+      </div>
+
+      <div class="ql-modal-footer">
+        <button type="button" class="btn-ql-ghost" id="btn-modal-cancel">Cancel</button>
+        <button type="button" class="btn-ql-primary" id="btn-modal-submit">Start Your Quantum Journey</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 2: DAILY ACTIVITY DETAIL MODAL
+       ============================================================ -->
+  <div class="ql-modal-backdrop" id="modal-daily-backdrop">
+    <div class="ql-modal" style="max-width: 680px;">
+      <div class="ql-modal-header">
+        <div class="ql-modal-title-group">
+          <span class="ql-modal-tag">SCHEDULED ACTIVITIES</span>
+          <h2 class="ql-modal-title" id="modal-daily-title">Day Activities</h2>
+          <p class="ql-modal-desc" id="modal-daily-desc">Complete your scheduled quantum activities</p>
+        </div>
+        <button type="button" class="ql-modal-close" id="btn-close-daily-modal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="ql-modal-body" id="modal-daily-body">
+        <!-- Activities list populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 3: DELETE PLAN CONFIRMATION MODAL
+       ============================================================ -->
+  <div class="ql-modal-backdrop" id="modal-delete-backdrop">
+    <div class="ql-modal" style="max-width: 440px;">
+      <div class="ql-modal-header">
+        <div class="ql-modal-title-group">
+          <span class="ql-modal-tag" style="color:#f87171;">CONFIRM DELETION</span>
+          <h2 class="ql-modal-title" style="font-size:1.15rem;">Delete Learning Plan?</h2>
+        </div>
+        <button type="button" class="ql-modal-close" id="btn-close-delete-modal">&times;</button>
+      </div>
+      <div class="ql-modal-body" style="padding:20px 24px;">
+        <p style="color:var(--text-secondary);font-size:0.88rem;line-height:1.5;margin:0;">
+          Are you sure you want to delete this quantum learning plan? Your current progress and scheduled activities for this plan will be removed.
+        </p>
+      </div>
+      <div class="ql-modal-footer">
+        <button type="button" class="btn-ql-ghost" id="btn-cancel-delete">Cancel</button>
+        <button type="button" class="btn-ql-primary" id="btn-confirm-delete" style="background:linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);border-color:#ef4444;">
+          Delete Plan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/data.js"></script>
+  <script src="js/algorithms-vlab-data.js"></script>
+  <script src="js/progress-data.js"></script>
+  <script src="js/progress-store.js"></script>
+  <script src="js/progress-ui.js"></script>
+
+</body>
+</html>

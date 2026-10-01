@@ -6,7 +6,7 @@ window.QL = window.QL || {};
 
 QL.initBloch3D = function () {
   const container = document.getElementById('bloch-webgl-container');
-  const wrap      = document.getElementById('bloch-canvas-wrap');
+  const wrap = document.getElementById('bloch-canvas-wrap');
   if (!container || !wrap) return;
 
   if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
@@ -20,7 +20,7 @@ QL.initBloch3D = function () {
   /* ─── Helper: wait one frame for layout to settle ─── */
   function getSize() {
     return {
-      w: wrap.offsetWidth  || 520,
+      w: wrap.offsetWidth || 520,
       h: wrap.offsetHeight || 460
     };
   }
@@ -39,7 +39,7 @@ QL.initBloch3D = function () {
   /* ═══════════════════════════════════════════════════════
      2. SCENE + CAMERA
   ═══════════════════════════════════════════════════════ */
-  const scene  = new THREE.Scene();
+  const scene = new THREE.Scene();
   const DEFAULT_CAM = new THREE.Vector3(3.8, 2.6, 4.6);
 
   const camera = new THREE.PerspectiveCamera(38, W0 / H0, 0.1, 100);
@@ -50,24 +50,24 @@ QL.initBloch3D = function () {
      3. ORBIT CONTROLS
   ═══════════════════════════════════════════════════════ */
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping  = true;
-  controls.dampingFactor  = 0.07;
-  controls.enablePan      = false;
-  controls.minDistance    = 3.0;
-  controls.maxDistance    = 9.0;
-  controls.rotateSpeed    = 0.75;
-  controls.zoomSpeed      = 0.8;
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.07;
+  controls.enablePan = false;
+  controls.minDistance = 3.0;
+  controls.maxDistance = 9.0;
+  controls.rotateSpeed = 0.75;
+  controls.zoomSpeed = 0.8;
 
   let userActive = false;
   controls.addEventListener('start', () => { userActive = true; });
-  controls.addEventListener('end',   () => { setTimeout(() => { userActive = false; }, 2500); });
+  controls.addEventListener('end', () => { setTimeout(() => { userActive = false; }, 2500); });
 
   /* ═══════════════════════════════════════════════════════
      4. LIGHTS
   ═══════════════════════════════════════════════════════ */
   scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-  const dl1 = new THREE.DirectionalLight(0xa78bfa, 1.0); dl1.position.set(4, 7, 5);  scene.add(dl1);
-  const dl2 = new THREE.DirectionalLight(0x22d3ee, 0.7); dl2.position.set(-5,-3,-4); scene.add(dl2);
+  const dl1 = new THREE.DirectionalLight(0xa78bfa, 1.0); dl1.position.set(4, 7, 5); scene.add(dl1);
+  const dl2 = new THREE.DirectionalLight(0x22d3ee, 0.7); dl2.position.set(-5, -3, -4); scene.add(dl2);
 
   /* ═══════════════════════════════════════════════════════
      5. SPHERE RADIUS
@@ -78,22 +78,22 @@ QL.initBloch3D = function () {
 
   /* ─── 5a. Translucent glowing sphere shell ─── */
   const shellMat = new THREE.MeshPhongMaterial({
-    color:       0x0a1a3a,
-    emissive:    0x061228,
+    color: 0x0a1a3a,
+    emissive: 0x061228,
     transparent: true,
-    opacity:     0.55,
-    side:        THREE.FrontSide,
-    depthWrite:  false
+    opacity: 0.55,
+    side: THREE.FrontSide,
+    depthWrite: false
   });
   blochGroup.add(new THREE.Mesh(new THREE.SphereGeometry(R, 48, 32), shellMat));
 
   /* ─── 5b. Back-face filler (dark interior for depth) ─── */
   const innerMat = new THREE.MeshBasicMaterial({
-    color:       0x030810,
+    color: 0x030810,
     transparent: true,
-    opacity:     0.70,
-    side:        THREE.BackSide,
-    depthWrite:  false
+    opacity: 0.70,
+    side: THREE.BackSide,
+    depthWrite: false
   });
   blochGroup.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.995, 32, 24), innerMat));
 
@@ -131,8 +131,8 @@ QL.initBloch3D = function () {
 
   /* ─── 5e. Latitude rings ─── */
   [30, -30, 60, -60].forEach(deg => {
-    const rad  = (deg * Math.PI) / 180;
-    const y    = Math.sin(rad) * R;
+    const rad = (deg * Math.PI) / 180;
+    const y = Math.sin(rad) * R;
     const rLat = Math.cos(rad) * R;
     blochGroup.add(makeRing(rLat, y, 0x6d28d9, Math.abs(deg) === 30 ? 0.45 : 0.28));
   });
@@ -169,7 +169,7 @@ QL.initBloch3D = function () {
     const L = 0.22;
     const geo = new THREE.ConeGeometry(0.055, L, 12);
     const mat = new THREE.MeshBasicMaterial({ color });
-    const m   = new THREE.Mesh(geo, mat);
+    const m = new THREE.Mesh(geo, mat);
     m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
     m.position.copy(pos.clone().sub(dir.clone().normalize().multiplyScalar(L * 0.5)));
     return m;
@@ -177,18 +177,18 @@ QL.initBloch3D = function () {
 
   // Z axis (sky blue / vertical — |0⟩ up, |1⟩ down)
   blochGroup.add(makeLine(new THREE.Vector3(0, -AX, 0), new THREE.Vector3(0, AX, 0), 0x38bdf8, 0.95));
-  blochGroup.add(makeCone(new THREE.Vector3(0,  AX, 0), new THREE.Vector3( 0, 1, 0), 0x38bdf8));
-  blochGroup.add(makeCone(new THREE.Vector3(0, -AX, 0), new THREE.Vector3( 0,-1, 0), 0x38bdf8));
+  blochGroup.add(makeCone(new THREE.Vector3(0, AX, 0), new THREE.Vector3(0, 1, 0), 0x38bdf8));
+  blochGroup.add(makeCone(new THREE.Vector3(0, -AX, 0), new THREE.Vector3(0, -1, 0), 0x38bdf8));
 
   // X axis (coral/red)
   blochGroup.add(makeLine(new THREE.Vector3(-AX, 0, 0), new THREE.Vector3(AX, 0, 0), 0xf87171, 0.95));
-  blochGroup.add(makeCone(new THREE.Vector3( AX, 0, 0), new THREE.Vector3( 1, 0, 0), 0xf87171));
+  blochGroup.add(makeCone(new THREE.Vector3(AX, 0, 0), new THREE.Vector3(1, 0, 0), 0xf87171));
   blochGroup.add(makeCone(new THREE.Vector3(-AX, 0, 0), new THREE.Vector3(-1, 0, 0), 0xf87171));
 
   // Y axis (emerald green / depth)
   blochGroup.add(makeLine(new THREE.Vector3(0, 0, -AX), new THREE.Vector3(0, 0, AX), 0x34d399, 0.95));
-  blochGroup.add(makeCone(new THREE.Vector3(0, 0,  AX), new THREE.Vector3( 0, 0, 1), 0x34d399));
-  blochGroup.add(makeCone(new THREE.Vector3(0, 0, -AX), new THREE.Vector3( 0, 0,-1), 0x34d399));
+  blochGroup.add(makeCone(new THREE.Vector3(0, 0, AX), new THREE.Vector3(0, 0, 1), 0x34d399));
+  blochGroup.add(makeCone(new THREE.Vector3(0, 0, -AX), new THREE.Vector3(0, 0, -1), 0x34d399));
 
   /* ═══════════════════════════════════════════════════════
      7. SPRITE LABELS  (canvas textures, always face camera)
@@ -224,14 +224,14 @@ QL.initBloch3D = function () {
   const OFF = 0.32;
 
   // Pole labels
-  const lbl0 = makeLabel('|0⟩', 0xe0f2fe, 48, 0); lbl0.position.set(0,  R + OFF, 0); blochGroup.add(lbl0);
+  const lbl0 = makeLabel('|0⟩', 0xe0f2fe, 48, 0); lbl0.position.set(0, R + OFF, 0); blochGroup.add(lbl0);
   const lbl1 = makeLabel('|1⟩', 0xe0f2fe, 48, 0); lbl1.position.set(0, -R - OFF, 0); blochGroup.add(lbl1);
 
   // Equator labels
-  const lblP = makeLabel('|+⟩',  0xc4b5fd, 42, 0); lblP.position.set( R + OFF, 0, 0);  blochGroup.add(lblP);
-  const lblM = makeLabel('|-⟩',  0xc4b5fd, 42, 0); lblM.position.set(-R - OFF, 0, 0);  blochGroup.add(lblM);
-  const lblI = makeLabel('|+i⟩', 0xbae6fd, 38, 0); lblI.position.set(0, 0,  R + OFF);  blochGroup.add(lblI);
-  const lblNI= makeLabel('|-i⟩', 0xbae6fd, 38, 0); lblNI.position.set(0,0, -R - OFF);  blochGroup.add(lblNI);
+  const lblP = makeLabel('|+⟩', 0xc4b5fd, 42, 0); lblP.position.set(R + OFF, 0, 0); blochGroup.add(lblP);
+  const lblM = makeLabel('|-⟩', 0xc4b5fd, 42, 0); lblM.position.set(-R - OFF, 0, 0); blochGroup.add(lblM);
+  const lblI = makeLabel('|+i⟩', 0xbae6fd, 38, 0); lblI.position.set(0, 0, R + OFF); blochGroup.add(lblI);
+  const lblNI = makeLabel('|-i⟩', 0xbae6fd, 38, 0); lblNI.position.set(0, 0, -R - OFF); blochGroup.add(lblNI);
 
   // Axis labels
   const AL = AX + 0.30;
@@ -241,19 +241,19 @@ QL.initBloch3D = function () {
     s.position.set(x, y, z);
     blochGroup.add(s);
   }
-  axLabel('+Z', 0x38bdf8, 0, AL,  0);
-  axLabel('-Z', 0x38bdf8, 0,-AL,  0);
-  axLabel('+X', 0xf87171, AL, 0,  0);
-  axLabel('-X', 0xf87171,-AL, 0,  0);
-  axLabel('+Y', 0x34d399, 0,  0,  AL);
-  axLabel('-Y', 0x34d399, 0,  0, -AL);
+  axLabel('+Z', 0x38bdf8, 0, AL, 0);
+  axLabel('-Z', 0x38bdf8, 0, -AL, 0);
+  axLabel('+X', 0xf87171, AL, 0, 0);
+  axLabel('-X', 0xf87171, -AL, 0, 0);
+  axLabel('+Y', 0x34d399, 0, 0, AL);
+  axLabel('-Y', 0x34d399, 0, 0, -AL);
 
   /* ═══════════════════════════════════════════════════════
      8. QUANTUM STATE  (θ=polar from +Y, φ=azimuthal)
      Three.js Y = physics Z (vertical axis)
   ═══════════════════════════════════════════════════════ */
   let theta = Math.PI / 3;   // 60° polar
-  let phi   = Math.PI / 4;   // 45° azimuthal
+  let phi = Math.PI / 4;   // 45° azimuthal
 
   function stateVec(th, ph) {
     return new THREE.Vector3(
@@ -302,7 +302,7 @@ QL.initBloch3D = function () {
   vecGrp.add(psiLbl);
 
   // Projection (shadow line on equatorial plane)
-  const projGeo  = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
+  const projGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]);
   const projLine = new THREE.Line(projGeo, new THREE.LineBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.42 }));
   vecGrp.add(projLine);
 
@@ -340,7 +340,7 @@ QL.initBloch3D = function () {
   function updateArcs(th, ph) {
     // θ arc: from +Y axis down to tip along the meridian at angle ph
     const tPts = [];
-    const tR   = R * 0.55;
+    const tR = R * 0.55;
     for (let i = 0; i <= 48; i++) {
       const t = (i / 48) * th;
       tPts.push(new THREE.Vector3(tR * Math.sin(t) * Math.cos(ph), tR * Math.cos(t), tR * Math.sin(t) * Math.sin(ph)));
@@ -348,14 +348,14 @@ QL.initBloch3D = function () {
     thetaArcGeo.setFromPoints(tPts);
 
     const tMid = th / 2;
-    const tLR  = R * 0.70;
+    const tLR = R * 0.70;
     thetaLbl.position.set(tLR * Math.sin(tMid) * Math.cos(ph), tLR * Math.cos(tMid), tLR * Math.sin(tMid) * Math.sin(ph));
 
     // φ arc: equatorial arc from +X to projection
     const pPts = [];
-    const pR   = R * 0.45;
+    const pR = R * 0.45;
     const normPh = ((ph % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    const sweep  = normPh > Math.PI ? normPh - Math.PI * 2 : normPh;
+    const sweep = normPh > Math.PI ? normPh - Math.PI * 2 : normPh;
     for (let i = 0; i <= 48; i++) {
       const p = (i / 48) * sweep;
       pPts.push(new THREE.Vector3(pR * Math.cos(p), 0, pR * Math.sin(p)));
@@ -363,7 +363,7 @@ QL.initBloch3D = function () {
     phiArcGeo.setFromPoints(pPts);
 
     const pMid = sweep / 2;
-    const pLR  = R * 0.62;
+    const pLR = R * 0.62;
     phiLbl.position.set(pLR * Math.cos(pMid), 0.18, pLR * Math.sin(pMid));
   }
 
@@ -403,33 +403,33 @@ QL.initBloch3D = function () {
   /* ═══════════════════════════════════════════════════════
      13. UI SYNC
   ═══════════════════════════════════════════════════════ */
-  const elKet    = document.getElementById('bloch-state-ket');
+  const elKet = document.getElementById('bloch-state-ket');
   const elAngles = document.getElementById('bloch-state-angles');
-  const elP0     = document.getElementById('bloch-p0');
-  const elP1     = document.getElementById('bloch-p1');
+  const elP0 = document.getElementById('bloch-p0');
+  const elP1 = document.getElementById('bloch-p1');
 
   function syncUI(th, ph) {
     const thDeg = Math.round((th * 180) / Math.PI);
-    let   phDeg = Math.round((ph * 180) / Math.PI) % 360;
+    let phDeg = Math.round((ph * 180) / Math.PI) % 360;
     if (phDeg < 0) phDeg += 360;
     const p0 = Math.pow(Math.cos(th / 2), 2);
     const p1 = Math.pow(Math.sin(th / 2), 2);
 
     if (elAngles) elAngles.textContent = `θ: ${thDeg}° · φ: ${phDeg}°`;
-    if (elP0)     elP0.textContent     = `${Math.round(p0 * 100)}%`;
-    if (elP1)     elP1.textContent     = `${Math.round(p1 * 100)}%`;
+    if (elP0) elP0.textContent = `${Math.round(p0 * 100)}%`;
+    if (elP1) elP1.textContent = `${Math.round(p1 * 100)}%`;
 
     if (elKet) {
       const eps = 0.08;
       let name = '|ψ⟩';
-      if (th < eps)                                  name = '|0⟩';
-      else if (Math.abs(th - Math.PI) < eps)         name = '|1⟩';
+      if (th < eps) name = '|0⟩';
+      else if (Math.abs(th - Math.PI) < eps) name = '|1⟩';
       else if (Math.abs(th - Math.PI / 2) < eps) {
         const p = ((ph % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-        if (p < eps || p > Math.PI * 2 - eps)           name = '|+⟩';
-        else if (Math.abs(p - Math.PI)       < eps)     name = '|-⟩';
-        else if (Math.abs(p - Math.PI / 2)   < eps)     name = '|+i⟩';
-        else if (Math.abs(p - 1.5 * Math.PI) < eps)     name = '|-i⟩';
+        if (p < eps || p > Math.PI * 2 - eps) name = '|+⟩';
+        else if (Math.abs(p - Math.PI) < eps) name = '|-⟩';
+        else if (Math.abs(p - Math.PI / 2) < eps) name = '|+i⟩';
+        else if (Math.abs(p - 1.5 * Math.PI) < eps) name = '|-i⟩';
       }
       elKet.textContent = name;
     }
@@ -445,17 +445,17 @@ QL.initBloch3D = function () {
     ms = ms || 540;
     const fromTh = theta, fromPh = phi;
     let dPh = toPh - fromPh;
-    while (dPh >  Math.PI) dPh -= Math.PI * 2;
+    while (dPh > Math.PI) dPh -= Math.PI * 2;
     while (dPh < -Math.PI) dPh += Math.PI * 2;
     const t0 = performance.now();
     function step(now) {
       const prog = Math.min(1, (now - t0) / ms);
       const ease = 1 - Math.pow(1 - prog, 3);
       theta = fromTh + (toTh - fromTh) * ease;
-      phi   = fromPh + dPh * ease;
+      phi = fromPh + dPh * ease;
       updateStateVector();
       if (prog < 1) { animRaf = requestAnimationFrame(step); }
-      else          { theta = toTh; phi = toPh; updateStateVector(); animRaf = null; }
+      else { theta = toTh; phi = toPh; updateStateVector(); animRaf = null; }
     }
     animRaf = requestAnimationFrame(step);
   }
@@ -475,7 +475,7 @@ QL.initBloch3D = function () {
     // Put into three-js space
     let v = new THREE.Vector3(bx, bz, by);
 
-    if      (g === 'X') v.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);   // around phys X
+    if (g === 'X') v.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);   // around phys X
     else if (g === 'Y') v.applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI);   // around phys Y (three_z)
     else if (g === 'Z') v.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);   // around phys Z (three_y)
     else if (g === 'H') v.applyAxisAngle(new THREE.Vector3(1, 1, 0).normalize(), Math.PI); // (X+Z)/√2
@@ -483,7 +483,7 @@ QL.initBloch3D = function () {
     v.normalize();
     // Back to spherical: phys_z = three_y → newTh = acos(three_y)
     const newTh = Math.acos(Math.max(-1, Math.min(1, v.y)));
-    let   newPh = Math.atan2(v.z, v.x);
+    let newPh = Math.atan2(v.z, v.x);
     if (newPh < 0) newPh += Math.PI * 2;
     animateTo(newTh, newPh, 560);
   }
@@ -504,10 +504,10 @@ QL.initBloch3D = function () {
   ═══════════════════════════════════════════════════════ */
   function resetView() {
     const from = camera.position.clone();
-    const t0   = performance.now();
-    const dur  = 650;
+    const t0 = performance.now();
+    const dur = 650;
     function moveCam(now) {
-      const p    = Math.min(1, (now - t0) / dur);
+      const p = Math.min(1, (now - t0) / dur);
       const ease = 1 - Math.pow(1 - p, 3);
       camera.position.lerpVectors(from, DEFAULT_CAM, ease);
       camera.lookAt(0, 0, 0);

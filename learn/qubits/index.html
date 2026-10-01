@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qubits: Two-Level Quantum Systems – QuantumLab</title>
+  <meta name="description" content="Interactive learning module for Qubits: Explore computational basis states, complex probability amplitudes, and the Born rule." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles/main.css" />
+  <link rel="stylesheet" href="../../styles/learn.css" />
+</head>
+<body class="la-module-page">
+
+  <div class="la-module-container">
+
+    <!-- TOP HEADER -->
+    <header class="la-header-bar">
+      <div class="la-header-bar__left">
+        <a href="../../learn.html" class="la-back-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to Learn
+        </a>
+        <div class="la-header-title-group">
+          <h1>Concept 02 · Qubits</h1>
+          <p>Two-Level Quantum Systems · Computational Basis &amp; Amplitudes</p>
+        </div>
+      </div>
+      <div class="la-header-actions">
+        <a href="../linear-algebra.html" class="la-btn-sm">← Prev: Linear Algebra</a>
+        <a href="../superposition.html" class="la-btn-sm" style="color:var(--learn-cyan);border-color:var(--learn-cyan);">Next: Superposition →</a>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="la-workspace">
+
+      <!-- LEFT: CONTROLS & EXPLANATION -->
+      <section class="la-panel-left">
+        <div class="la-panel-step-badge">Foundation Concept</div>
+        <h2 class="la-panel-heading">What is a Qubit?</h2>
+        <p class="la-panel-desc">
+          A classical bit is strictly deterministic: either <code>0</code> or <code>1</code>. A <strong>quantum bit (qubit)</strong> is a two-level quantum physical system represented by a unit vector in a 2D complex Hilbert space $\mathbb{C}^2$:
+        </p>
+
+        <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;font-family:var(--font-mono);font-size:1.05rem;color:#38bdf8;text-align:center;margin-bottom:20px;">
+          |ψ⟩ = α|0⟩ + β|1⟩ &nbsp;&nbsp;(where |α|² + |β|² = 1)
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <label style="display:flex;justify-content:space-between;font-size:0.85rem;font-weight:600;margin-bottom:8px;">
+            <span>Probability Amplitude α (State |0⟩):</span>
+            <span id="qubit-alpha-val" style="color:var(--learn-cyan);font-family:var(--font-mono);">0.707</span>
+          </label>
+          <input type="range" id="qubit-slider" min="0" max="100" value="50" style="width:100%;accent-color:var(--learn-cyan);cursor:pointer;" oninput="updateQubitState(this.value)" />
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:24px;">
+          <button class="la-btn-action la-btn-back" style="flex:1;justify-content:center;" onclick="setQubitBasis(1, 0)">Set |0⟩ (Ground)</button>
+          <button class="la-btn-action la-btn-back" style="flex:1;justify-content:center;" onclick="setQubitBasis(0, 1)">Set |1⟩ (Excited)</button>
+          <button class="la-btn-action la-btn-next" style="flex:1;justify-content:center;" onclick="setQubitBasis(0.7071, 0.7071)">Set |+⟩ (Balanced)</button>
+        </div>
+
+        <div class="la-learned-box" style="margin-top:auto;">
+          <div class="la-learned-box__title"><span>🎓</span> Key Takeaways:</div>
+          <ul>
+            <li>Basis states $|0\rangle = \begin{bmatrix} 1 \\ 0 \end{bmatrix}$ and $|1\rangle = \begin{bmatrix} 0 \\ 1 \end{bmatrix}$ are orthogonal eigenvectors.</li>
+            <li>Amplitudes $\alpha$ and $\beta$ can be complex numbers, encoding relative phase.</li>
+            <li>Measuring the qubit yields outcome <code>0</code> with probability $|\alpha|^2$ and <code>1</code> with probability $|\beta|^2$.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RIGHT: LIVE VISUALIZATION -->
+      <aside class="la-panel-right">
+        <div class="la-viz-card">
+          <div class="la-viz-header">
+            <div class="la-viz-tag">Interactive Probability Amplitudes</div>
+            <div class="la-viz-stage-badge" id="qubit-state-tag">SUPERPOSITION</div>
+          </div>
+          <div class="la-viz-display">
+            <div style="width:100%;max-width:380px;text-align:center;">
+              <div id="qubit-ket-display" style="font-family:var(--font-mono);font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:20px;">
+                |ψ⟩ = 0.71|0⟩ + 0.71|1⟩
+              </div>
+              <div style="display:flex;gap:20px;justify-content:center;height:140px;align-items:flex-end;">
+                <!-- Bar 0 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <div id="bar-p0" style="width:60px;background:linear-gradient(to top, #06b6d4, #38bdf8);border-radius:6px 6px 0 0;height:50%;transition:height 0.2s;box-shadow:0 0 14px rgba(6,182,212,0.4);"></div>
+                  <span style="font-family:var(--font-mono);font-size:0.85rem;font-weight:700;margin-top:8px;">P(|0⟩): <span id="val-p0">50%</span></span>
+                </div>
+                <!-- Bar 1 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <div id="bar-p1" style="width:60px;background:linear-gradient(to top, #7c3aed, #a78bfa);border-radius:6px 6px 0 0;height:50%;transition:height 0.2s;box-shadow:0 0 14px rgba(124,58,237,0.4);"></div>
+                  <span style="font-family:var(--font-mono);font-size:0.85rem;font-weight:700;margin-top:8px;">P(|1⟩): <span id="val-p1">50%</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="la-edu-card">
+          <div class="la-edu-header"><span>💡</span> Physical Implementations</div>
+          <div class="la-edu-body">
+            In physical hardware, qubits can be realized as superconducting transmon circuits (Josephson junctions), trapped ions (hyperfine ground/excited states), photonic polarization modes, or silicon quantum dots.
+          </div>
+          <div class="la-edu-highlight"><strong>Born Rule:</strong> Total measurement probability is strictly conserved: P(|0⟩) + P(|1⟩) = 1.00 (100%).</div>
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <script>
+    function updateQubitState(val) {
+      const p0 = val / 100;
+      const p1 = 1 - p0;
+      const a = Math.sqrt(p0);
+      const b = Math.sqrt(p1);
+
+      document.getElementById('qubit-alpha-val').textContent = a.toFixed(3);
+      document.getElementById('qubit-ket-display').textContent = `|ψ⟩ = ${a.toFixed(2)}|0⟩ + ${b.toFixed(2)}|1⟩`;
+      document.getElementById('bar-p0').style.height = `${(p0 * 100)}%`;
+      document.getElementById('bar-p1').style.height = `${(p1 * 100)}%`;
+      document.getElementById('val-p0').textContent = `${(p0 * 100).toFixed(0)}%`;
+      document.getElementById('val-p1').textContent = `${(p1 * 100).toFixed(0)}%`;
+
+      const tag = document.getElementById('qubit-state-tag');
+      if (p0 > 0.98) tag.textContent = 'STATE |0⟩';
+      else if (p1 > 0.98) tag.textContent = 'STATE |1⟩';
+      else tag.textContent = 'SUPERPOSITION';
+    }
+
+    function setQubitBasis(a, b) {
+      const p0 = a * a;
+      document.getElementById('qubit-slider').value = p0 * 100;
+      updateQubitState(p0 * 100);
+    }
+  </script>
+</body>
+</html>

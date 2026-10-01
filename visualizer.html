@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Visualizer – QuantumLab</title>
+  <meta name="description" content="Interactive quantum computing visualizations — wave functions, entanglement, interference patterns, Bloch sphere ensembles, and quantum circuit state evolution." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/visualizer.css" />
+</head>
+<body>
+  <!-- NAVIGATION -->
+  <nav class="nav" id="main-nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" id="logo-link">
+        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav__logo-text">QuantumLab</span>
+      </a>
+      <div class="nav__links">
+        <a href="basics.html" class="nav__link">Basics</a>
+        <a href="hardware.html" class="nav__link nav__link--highlight">&#x2697; Quantum Hardware</a>
+        <a href="learn.html" class="nav__link">Learn</a>
+        <a href="algorithms.html" class="nav__link">Algorithms</a>
+        <a href="virtual-labs.html" class="nav__link">Virtual Labs</a>
+        <a href="experiments.html" class="nav__link">Experiments</a>
+        <a href="visualizer.html" class="nav__link active">&#128065; Visualizer</a>
+        <a href="index.html#challenges" class="nav__link">Challenges</a>
+        <a href="progress.html" class="nav__link" id="nav-progress" style="display:inline-flex;align-items:center;gap:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Progress
+        </a>
+      </div>
+      <div class="nav__actions">
+        <button class="nav__ai-btn" id="ai-tutor-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          AI Tutor
+        </button>
+        <button class="nav__profile-btn" id="profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+      </div>
+      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="basics.html" class="nav__mobile-link">Basics</a>
+      <a href="experiments.html" class="nav__mobile-link">Experiments</a>
+      <a href="virtual-labs.html" class="nav__mobile-link">Virtual Labs</a>
+      <a href="algorithms.html" class="nav__mobile-link">Algorithms</a>
+      <a href="hardware.html" class="nav__mobile-link">&#x2697; Quantum Hardware</a>
+      <a href="learn.html" class="nav__mobile-link">Learn</a>
+      <a href="visualizer.html" class="nav__mobile-link">&#128065; Visualizer</a>
+      <a href="progress.html" class="nav__mobile-link">Progress</a>
+    </div>
+  </nav>
+
+  <!-- HERO BANNER -->
+  <section class="viz-hero" id="viz-hero">
+    <canvas id="viz-hero-canvas" class="viz-hero__canvas"></canvas>
+    <div class="viz-hero__content">
+      <div class="viz-hero__badge">
+        <span class="viz-hero__badge-dot"></span>
+        Interactive Quantum Visualizations
+      </div>
+      <h1 class="viz-hero__title">Quantum <span class="viz-accent">Visualizer</span></h1>
+      <p class="viz-hero__sub">See quantum mechanics come alive. Explore wave functions, entanglement, interference, and circuit state evolution in real time.</p>
+      <div class="viz-hero__tabs" id="viz-tabs-nav" role="tablist">
+        <button class="viz-tab active" id="tab-wave" data-panel="wave" role="tab" aria-selected="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12 Q5 4 8 12 Q11 20 14 12 Q17 4 20 12 Q21 16 22 12"/></svg>
+          Wave Function
+        </button>
+        <button class="viz-tab" id="tab-circuit" data-panel="circuit" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="5" height="8" rx="1"/><rect x="17" y="8" width="5" height="8" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+          Circuit States
+        </button>
+        <button class="viz-tab" id="tab-entangle" data-panel="entangle" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="12" r="4"/><circle cx="16" cy="12" r="4"/></svg>
+          Entanglement
+        </button>
+        <button class="viz-tab" id="tab-interference" data-panel="interference" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M2 7l10 5-10 5"/><path d="M22 7L12 12l10 5"/></svg>
+          Interference
+        </button>
+        <button class="viz-tab" id="tab-ensemble" data-panel="ensemble" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/></svg>
+          Qubit Ensemble
+        </button>
+        <button class="viz-tab" id="tab-fourier" data-panel="fourier" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20 Q6 4 10 12 Q14 20 18 4 L22 4"/></svg>
+          Quantum Fourier
+        </button>
+        <button class="viz-tab viz-tab--code" id="tab-code" data-panel="code" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Code Editor
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN VISUALIZER AREA -->
+  <main class="viz-main" id="viz-main">
+
+    <!-- PANEL 1: WAVE FUNCTION VISUALIZER -->
+    <section class="viz-panel active" id="panel-wave" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon">&#x3C8;</span>Quantum Wave Function</h2>
+          <p class="viz-panel__desc">Visualize the probability amplitude |&#x3C8;(x)|&#xB2; of a quantum particle. Adjust parameters to see how the wavefunction evolves.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--cyan">Schrodinger Equation</span>
+          <span class="viz-badge viz-badge--violet">Live Simulation</span>
+        </div>
+      </div>
+      <div class="viz-layout viz-layout--2col">
+        <div class="viz-canvas-wrap" id="wave-canvas-wrap">
+          <canvas id="wave-canvas"></canvas>
+          <div class="viz-canvas-overlay" id="wave-overlay">
+            <span class="viz-canvas-label">psi(x,t) Probability Density</span>
+            <span class="viz-canvas-label" style="right:1rem;left:auto">|psi(x)|^2</span>
+          </div>
+          <div class="viz-legend" id="wave-legend">
+            <div class="viz-legend-item"><span class="viz-legend-dot" style="background:#7c3aed"></span>Real part Re(psi)</div>
+            <div class="viz-legend-item"><span class="viz-legend-dot" style="background:#06b6d4"></span>Imaginary Im(psi)</div>
+            <div class="viz-legend-item"><span class="viz-legend-dot" style="background:#f59e0b"></span>Probability |psi|^2</div>
+          </div>
+        </div>
+        <div class="viz-controls">
+          <div class="viz-control-group">
+            <label class="viz-label">Wave Type</label>
+            <div class="viz-btn-group" id="wave-type-group">
+              <button class="viz-choice active" data-type="gaussian" id="wtype-gaussian">Gaussian Packet</button>
+              <button class="viz-choice" data-type="plane" id="wtype-plane">Plane Wave</button>
+              <button class="viz-choice" data-type="superposition" id="wtype-super">Superposition</button>
+              <button class="viz-choice" data-type="well" id="wtype-well">Infinite Well</button>
+            </div>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Energy Level <span class="viz-val" id="wave-energy-val">n = 2</span></label>
+            <input type="range" class="viz-slider" id="wave-energy" min="1" max="6" step="1" value="2" aria-label="Energy level"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Wave Number k <span class="viz-val" id="wave-k-val">k = 3.0</span></label>
+            <input type="range" class="viz-slider" id="wave-k" min="1" max="10" step="0.1" value="3" aria-label="Wave number"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Packet Width sigma <span class="viz-val" id="wave-sigma-val">sigma = 0.15</span></label>
+            <input type="range" class="viz-slider" id="wave-sigma" min="0.05" max="0.4" step="0.01" value="0.15" aria-label="Sigma"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Speed <span class="viz-val" id="wave-speed-val">1.0x</span></label>
+            <input type="range" class="viz-slider" id="wave-speed" min="0.1" max="3" step="0.1" value="1" aria-label="Speed"/>
+          </div>
+          <div class="viz-actions">
+            <button class="viz-btn viz-btn--primary" id="wave-play-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span id="wave-play-label">Pause</span>
+            </button>
+            <button class="viz-btn" id="wave-reset-btn">Reset</button>
+            <button class="viz-btn" id="wave-measure-btn">Measure!</button>
+          </div>
+          <div class="viz-stats" id="wave-stats">
+            <div class="viz-stat"><span class="viz-stat__label">Position</span><span class="viz-stat__val" id="wave-stat-pos">0.50</span></div>
+            <div class="viz-stat"><span class="viz-stat__label">Momentum</span><span class="viz-stat__val" id="wave-stat-mom">3.00</span></div>
+            <div class="viz-stat"><span class="viz-stat__label">Delta-x</span><span class="viz-stat__val" id="wave-stat-dx">0.15</span></div>
+            <div class="viz-stat"><span class="viz-stat__label">Delta-p</span><span class="viz-stat__val" id="wave-stat-dp">3.33</span></div>
+          </div>
+          <div class="viz-info-box">
+            <div class="viz-info-box__title">Heisenberg Uncertainty Principle</div>
+            <div class="viz-info-box__eq" id="wave-hup">Delta-x * Delta-p &ge; hbar/2</div>
+            <div class="viz-info-box__note">Narrower wave packets have greater momentum spread</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 2: CIRCUIT STATE VISUALIZER -->
+    <section class="viz-panel" id="panel-circuit" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon">&#x2297;</span>Circuit State Evolution</h2>
+          <p class="viz-panel__desc">Drag gates onto quantum wires and watch the state vector evolve step by step through amplitude bars.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--violet">Drag &amp; Drop Gates</span>
+          <span class="viz-badge viz-badge--teal">Live State Vector</span>
+        </div>
+      </div>
+      <div class="viz-layout viz-layout--circuit">
+        <div class="circuit-palette" id="circuit-palette">
+          <div class="circuit-palette__title">Gate Library</div>
+          <div class="circuit-palette__gates">
+            <div class="circuit-gate-chip" data-gate="H" draggable="true" id="palette-H" title="Hadamard"><span class="cgc-symbol">H</span><span class="cgc-name">Hadamard</span></div>
+            <div class="circuit-gate-chip" data-gate="X" draggable="true" id="palette-X" title="Pauli-X"><span class="cgc-symbol">X</span><span class="cgc-name">Pauli-X</span></div>
+            <div class="circuit-gate-chip" data-gate="Y" draggable="true" id="palette-Y" title="Pauli-Y"><span class="cgc-symbol">Y</span><span class="cgc-name">Pauli-Y</span></div>
+            <div class="circuit-gate-chip" data-gate="Z" draggable="true" id="palette-Z" title="Pauli-Z"><span class="cgc-symbol">Z</span><span class="cgc-name">Pauli-Z</span></div>
+            <div class="circuit-gate-chip" data-gate="S" draggable="true" id="palette-S" title="S Gate"><span class="cgc-symbol">S</span><span class="cgc-name">S Phase</span></div>
+            <div class="circuit-gate-chip" data-gate="T" draggable="true" id="palette-T" title="T Gate"><span class="cgc-symbol">T</span><span class="cgc-name">T Phase</span></div>
+            <div class="circuit-gate-chip" data-gate="CNOT" draggable="true" id="palette-CNOT" title="CNOT"><span class="cgc-symbol" style="font-size:0.6rem">CNOT</span><span class="cgc-name">CNOT</span></div>
+          </div>
+          <div style="margin-top:1rem">
+            <div class="circuit-palette__title">Presets</div>
+            <button class="viz-btn viz-btn--sm" id="preset-bell">Bell State</button>
+            <button class="viz-btn viz-btn--sm" id="preset-ghz">GHZ State</button>
+            <button class="viz-btn viz-btn--sm" id="preset-qft">QFT</button>
+            <button class="viz-btn viz-btn--sm" id="preset-grover">Grover</button>
+          </div>
+        </div>
+        <div class="circuit-canvas-area">
+          <div class="circuit-workspace" id="circuit-workspace">
+            <div class="circuit-qubit-row">
+              <div class="circuit-qubit-label">|q&#x2080;&#x27E9;</div>
+              <div class="circuit-wire" id="wire-0">
+                <div class="circuit-wire-line"></div>
+                <div class="circuit-drop-zone" data-wire="0" data-slot="0" id="dz-0-0"></div>
+                <div class="circuit-drop-zone" data-wire="0" data-slot="1" id="dz-0-1"></div>
+                <div class="circuit-drop-zone" data-wire="0" data-slot="2" id="dz-0-2"></div>
+                <div class="circuit-drop-zone" data-wire="0" data-slot="3" id="dz-0-3"></div>
+                <div class="circuit-drop-zone" data-wire="0" data-slot="4" id="dz-0-4"></div>
+              </div>
+              <div class="circuit-meas" id="meas-q0">M</div>
+            </div>
+            <div class="circuit-qubit-row">
+              <div class="circuit-qubit-label">|q&#x2081;&#x27E9;</div>
+              <div class="circuit-wire" id="wire-1">
+                <div class="circuit-wire-line"></div>
+                <div class="circuit-drop-zone" data-wire="1" data-slot="0" id="dz-1-0"></div>
+                <div class="circuit-drop-zone" data-wire="1" data-slot="1" id="dz-1-1"></div>
+                <div class="circuit-drop-zone" data-wire="1" data-slot="2" id="dz-1-2"></div>
+                <div class="circuit-drop-zone" data-wire="1" data-slot="3" id="dz-1-3"></div>
+                <div class="circuit-drop-zone" data-wire="1" data-slot="4" id="dz-1-4"></div>
+              </div>
+              <div class="circuit-meas" id="meas-q1">M</div>
+            </div>
+            <div class="circuit-qubit-row">
+              <div class="circuit-qubit-label">|q&#x2082;&#x27E9;</div>
+              <div class="circuit-wire" id="wire-2">
+                <div class="circuit-wire-line"></div>
+                <div class="circuit-drop-zone" data-wire="2" data-slot="0" id="dz-2-0"></div>
+                <div class="circuit-drop-zone" data-wire="2" data-slot="1" id="dz-2-1"></div>
+                <div class="circuit-drop-zone" data-wire="2" data-slot="2" id="dz-2-2"></div>
+                <div class="circuit-drop-zone" data-wire="2" data-slot="3" id="dz-2-3"></div>
+                <div class="circuit-drop-zone" data-wire="2" data-slot="4" id="dz-2-4"></div>
+              </div>
+              <div class="circuit-meas" id="meas-q2">M</div>
+            </div>
+          </div>
+          <div class="state-vector-display" id="state-vector-display">
+            <div class="svd-title">State Vector |psi&#x27E9;</div>
+            <div class="svd-grid" id="svd-grid"></div>
+          </div>
+          <div class="prob-histogram" id="prob-histogram">
+            <div class="svd-title">Measurement Probabilities</div>
+            <canvas id="histogram-canvas"></canvas>
+          </div>
+        </div>
+        <div class="circuit-controls-panel">
+          <div class="viz-control-group">
+            <label class="viz-label">Init q&#x2080;</label>
+            <div class="viz-btn-group"><button class="viz-choice active" data-qubit="0" data-state="0" id="q0s0">|0&#x27E9;</button><button class="viz-choice" data-qubit="0" data-state="1" id="q0s1">|1&#x27E9;</button><button class="viz-choice" data-qubit="0" data-state="plus" id="q0sp">|+&#x27E9;</button></div>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Init q&#x2081;</label>
+            <div class="viz-btn-group"><button class="viz-choice active" data-qubit="1" data-state="0" id="q1s0">|0&#x27E9;</button><button class="viz-choice" data-qubit="1" data-state="1" id="q1s1">|1&#x27E9;</button><button class="viz-choice" data-qubit="1" data-state="plus" id="q1sp">|+&#x27E9;</button></div>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Init q&#x2082;</label>
+            <div class="viz-btn-group"><button class="viz-choice active" data-qubit="2" data-state="0" id="q2s0">|0&#x27E9;</button><button class="viz-choice" data-qubit="2" data-state="1" id="q2s1">|1&#x27E9;</button><button class="viz-choice" data-qubit="2" data-state="plus" id="q2sp">|+&#x27E9;</button></div>
+          </div>
+          <div class="viz-actions">
+            <button class="viz-btn viz-btn--primary" id="circuit-run-btn">Run</button>
+            <button class="viz-btn" id="circuit-step-btn">Step</button>
+            <button class="viz-btn" id="circuit-clear-btn">Clear</button>
+            <button class="viz-btn" id="circuit-measure-btn">Measure</button>
+          </div>
+          <div class="circuit-result-box" id="circuit-result-box">
+            <div class="crb-title">Result</div>
+            <div class="crb-outcome" id="crb-outcome">|000&#x27E9;</div>
+            <div class="crb-prob" id="crb-prob">P = 100%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 3: ENTANGLEMENT VISUALIZER -->
+    <section class="viz-panel" id="panel-entangle" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon">&#x221E;</span>Quantum Entanglement Explorer</h2>
+          <p class="viz-panel__desc">Observe spooky correlations of entangled qubit pairs. Measure one qubit and instantly see the other collapse.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--rose">Non-local Correlations</span>
+          <span class="viz-badge viz-badge--amber">Bell States</span>
+        </div>
+      </div>
+      <div class="viz-layout viz-layout--entangle">
+        <!-- ALICE'S QUBIT CARD (LAB A) -->
+        <div class="entangle-qubit-card" id="entangle-alice">
+          <div class="eqc-header">
+            <div class="eqc-header__info">
+              <div class="eqc-label eqc-label--alice">Alice's Qubit</div>
+              <div class="eqc-location"><span class="eqc-pulse eqc-pulse--alice"></span>Lab A &middot; Geneva</div>
+            </div>
+            <div class="code-bloch-tools">
+              <button class="bloch-tool-btn" id="btn-alice-bloch-autorotate" title="Toggle Auto-Rotation">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Spin</span>
+              </button>
+              <button class="bloch-tool-btn" id="btn-alice-bloch-reset-cam" title="Reset Camera View">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v5h5"/></svg>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+          <div class="eqc-sphere-wrap">
+            <div class="code-bloch-3d-stage" id="alice-bloch-3d-stage" style="height: 290px;">
+              <div id="alice-bloch-webgl-mount" class="code-bloch-webgl-mount"></div>
+              <!-- 3D Overlay HUD badge -->
+              <div class="code-bloch-hud" id="alice-bloch-hud">
+                <div class="code-bloch-hud__header">
+                  <span class="code-bloch-hud__qubit" style="color:#c4b5fd;">|&psi;<sub>A</sub>&rang;</span>
+                  <span class="code-bloch-hud__pure" id="alice-hud-state-badge" style="color:#c084fc;background:rgba(192,132,252,0.12);border-color:rgba(192,132,252,0.3);">Entangled (Mixed)</span>
+                </div>
+                <div class="code-bloch-hud__coords" id="alice-hud-coords">r: (0.00, 0.00, 0.00)</div>
+                <div class="code-bloch-hud__angles" id="alice-hud-angles">&theta;: &mdash; &middot; &phi;: &mdash;</div>
+                <div class="code-bloch-hud__state" id="alice-hud-state">|&psi;<sub>A</sub>&rang; = (|0&rang; + |1&rang;)/&radic;2 (Mixed)</div>
+                <div class="code-bloch-hud__probs">
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|0&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--0" id="alice-prob-fill-0" style="width:50%"></div></div>
+                    <span class="hud-prob-pct" id="alice-prob-pct-0">50%</span>
+                  </div>
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|1&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--1" id="alice-prob-fill-1" style="width:50%"></div></div>
+                    <span class="hud-prob-pct" id="alice-prob-pct-1">50%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="code-bloch-hint">Drag to orbit &middot; Scroll to zoom</div>
+            </div>
+            <div class="eqc-state" id="alice-state">|&psi;<sub>A</sub>&rang; = ? (Entangled)</div>
+          </div>
+          <button class="viz-btn viz-btn--primary eqc-measure-btn" id="alice-measure-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Measure Alice (Collapse Pair)
+          </button>
+          <div class="eqc-result" id="alice-result"></div>
+        </div>
+        <div class="entangle-center">
+          <div class="entangle-state-selector">
+            <div class="viz-label" style="text-align:center;margin-bottom:0.5rem">Bell State</div>
+            <div class="viz-btn-group vertical" id="bell-state-group">
+              <button class="viz-choice active" data-bell="phi+" id="bell-phi-plus">|Phi+&#x27E9; = (|00&#x27E9;+|11&#x27E9;)/sqrt(2)</button>
+              <button class="viz-choice" data-bell="phi-" id="bell-phi-minus">|Phi-&#x27E9; = (|00&#x27E9;-|11&#x27E9;)/sqrt(2)</button>
+              <button class="viz-choice" data-bell="psi+" id="bell-psi-plus">|Psi+&#x27E9; = (|01&#x27E9;+|10&#x27E9;)/sqrt(2)</button>
+              <button class="viz-choice" data-bell="psi-" id="bell-psi-minus">|Psi-&#x27E9; = (|01&#x27E9;-|10&#x27E9;)/sqrt(2)</button>
+            </div>
+          </div>
+          <div class="entangle-link" id="entangle-link">
+            <canvas id="entangle-link-canvas" width="200" height="160"></canvas>
+            <div class="entangle-link-label" id="entangle-correlation-label">Correlated: same outcomes</div>
+          </div>
+          <div class="entangle-chsh">
+            <div class="chsh-title">CHSH Test</div>
+            <div class="chsh-value" id="chsh-value">S = 2.83</div>
+            <div class="chsh-bar-wrap"><div class="chsh-bar" id="chsh-bar"><div class="chsh-bar-fill" id="chsh-bar-fill" style="width:70.75%"></div><div class="chsh-bar-classical-marker"></div></div></div>
+            <div class="chsh-note">Classical S &le; 2 | Quantum max S = 2&#x221A;2 &asymp; 2.83</div>
+          </div>
+          <button class="viz-btn viz-btn--primary" id="entangle-reset-btn" style="margin-top:1rem">Re-entangle</button>
+        </div>
+        <!-- BOB'S QUBIT CARD (LAB B) -->
+        <div class="entangle-qubit-card" id="entangle-bob">
+          <div class="eqc-header">
+            <div class="eqc-header__info">
+              <div class="eqc-label eqc-label--bob">Bob's Qubit</div>
+              <div class="eqc-location"><span class="eqc-pulse eqc-pulse--bob"></span>Lab B &middot; Vienna</div>
+            </div>
+            <div class="code-bloch-tools">
+              <button class="bloch-tool-btn" id="btn-bob-bloch-autorotate" title="Toggle Auto-Rotation">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Spin</span>
+              </button>
+              <button class="bloch-tool-btn" id="btn-bob-bloch-reset-cam" title="Reset Camera View">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v5h5"/></svg>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+          <div class="eqc-sphere-wrap">
+            <div class="code-bloch-3d-stage" id="bob-bloch-3d-stage" style="height: 290px;">
+              <div id="bob-bloch-webgl-mount" class="code-bloch-webgl-mount"></div>
+              <!-- 3D Overlay HUD badge -->
+              <div class="code-bloch-hud" id="bob-bloch-hud">
+                <div class="code-bloch-hud__header">
+                  <span class="code-bloch-hud__qubit" style="color:#67e8f9;">|&psi;<sub>B</sub>&rang;</span>
+                  <span class="code-bloch-hud__pure" id="bob-hud-state-badge" style="color:#22d3ee;background:rgba(34,211,238,0.12);border-color:rgba(34,211,238,0.3);">Entangled (Mixed)</span>
+                </div>
+                <div class="code-bloch-hud__coords" id="bob-hud-coords">r: (0.00, 0.00, 0.00)</div>
+                <div class="code-bloch-hud__angles" id="bob-hud-angles">&theta;: &mdash; &middot; &phi;: &mdash;</div>
+                <div class="code-bloch-hud__state" id="bob-hud-state">|&psi;<sub>B</sub>&rang; = (|0&rang; + |1&rang;)/&radic;2 (Mixed)</div>
+                <div class="code-bloch-hud__probs">
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|0&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--0" id="bob-prob-fill-0" style="width:50%"></div></div>
+                    <span class="hud-prob-pct" id="bob-prob-pct-0">50%</span>
+                  </div>
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|1&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--1" id="bob-prob-fill-1" style="width:50%"></div></div>
+                    <span class="hud-prob-pct" id="bob-prob-pct-1">50%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="code-bloch-hint">Drag to orbit &middot; Scroll to zoom</div>
+            </div>
+            <div class="eqc-state" id="bob-state">|&psi;<sub>B</sub>&rang; = ? (Entangled)</div>
+          </div>
+          <button class="viz-btn viz-btn--primary eqc-measure-btn" id="bob-measure-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Measure Bob (Collapse Pair)
+          </button>
+          <div class="eqc-result" id="bob-result"></div>
+        </div>
+      </div>
+      <div class="entangle-history">
+        <div class="svd-title">Measurement History</div>
+        <div class="entangle-history-grid" id="entangle-history-grid">
+          <div class="ehg-header"><span>Trial</span><span>Alice</span><span>Bob</span><span>Correlated?</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 4: INTERFERENCE VISUALIZER -->
+    <section class="viz-panel" id="panel-interference" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon">&#x2248;</span>Quantum Interference Patterns</h2>
+          <p class="viz-panel__desc">The quantum double-slit experiment. Toggle the observer to collapse interference — see wave-particle duality live.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--emerald">Double-Slit</span>
+          <span class="viz-badge viz-badge--cyan">Wave-Particle Duality</span>
+        </div>
+      </div>
+      <div class="viz-layout viz-layout--2col">
+        <div class="viz-canvas-wrap interference-canvas-wrap">
+          <canvas id="interference-canvas"></canvas>
+          <div class="observer-badge" id="observer-badge" data-active="false">
+            <span class="obs-dot" id="obs-dot"></span>
+            <span id="obs-label">Observer: OFF</span>
+          </div>
+        </div>
+        <div class="viz-controls">
+          <div class="viz-control-group">
+            <label class="viz-label">Slit Width <span class="viz-val" id="slit-width-val">0.12</span></label>
+            <input type="range" class="viz-slider" id="slit-width" min="0.05" max="0.3" step="0.01" value="0.12" aria-label="Slit width"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Slit Separation <span class="viz-val" id="slit-sep-val">0.25</span></label>
+            <input type="range" class="viz-slider" id="slit-sep" min="0.1" max="0.6" step="0.01" value="0.25" aria-label="Separation"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Wavelength lambda <span class="viz-val" id="wavelength-val">0.08</span></label>
+            <input type="range" class="viz-slider" id="wavelength" min="0.02" max="0.2" step="0.005" value="0.08" aria-label="Wavelength"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Particle Count <span class="viz-val" id="particle-count-val">800</span></label>
+            <input type="range" class="viz-slider" id="particle-count" min="100" max="2000" step="100" value="800" aria-label="Count"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Particle Type</label>
+            <div class="viz-btn-group" id="particle-type-group">
+              <button class="viz-choice active" data-ptype="electron" id="ptype-electron">Electron</button>
+              <button class="viz-choice" data-ptype="photon" id="ptype-photon">Photon</button>
+              <button class="viz-choice" data-ptype="neutron" id="ptype-neutron">Neutron</button>
+              <button class="viz-choice" data-ptype="atom" id="ptype-atom">C60</button>
+            </div>
+          </div>
+          <div class="viz-control-group observer-control">
+            <label class="viz-label">
+              Observer (Which-Path)
+              <label class="viz-toggle">
+                <input type="checkbox" id="observer-toggle" aria-label="Toggle observer"/>
+                <span class="viz-toggle-track"></span>
+              </label>
+            </label>
+          </div>
+          <div class="viz-actions">
+            <button class="viz-btn viz-btn--primary" id="interference-fire-btn">Fire Particles</button>
+            <button class="viz-btn" id="interference-clear-btn">Clear</button>
+          </div>
+          <div class="viz-stats">
+            <div class="viz-stat"><span class="viz-stat__label">Fringe Spacing</span><span class="viz-stat__val" id="fringe-spacing">48 px</span></div>
+            <div class="viz-stat"><span class="viz-stat__label">Visibility</span><span class="viz-stat__val" id="fringe-visibility">98%</span></div>
+            <div class="viz-stat"><span class="viz-stat__label">Fired</span><span class="viz-stat__val" id="particles-fired">0</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 5: QUBIT ENSEMBLE -->
+    <section class="viz-panel" id="panel-ensemble" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon">&#x25C8;</span>Qubit Ensemble — Bloch Sphere Array</h2>
+          <p class="viz-panel__desc">Multiple qubits on their Bloch spheres. Apply gates collectively and watch state vectors rotate in sync.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--violet">Multi-Qubit</span>
+          <span class="viz-badge viz-badge--amber">Bloch Spheres</span>
+        </div>
+      </div>
+      <div class="viz-layout viz-layout--ensemble">
+        <div class="ensemble-main-stage">
+          <!-- 3D Three.js Bloch Sphere Featured Stage -->
+          <div class="ensemble-3d-section">
+            <div class="code-bloch-header">
+              <div class="code-bloch-title-wrap">
+                <span class="svd-title" style="margin-bottom:0;">3D Bloch Sphere Inspector</span>
+                <span class="code-bloch-badge">Three.js WebGL</span>
+                <span class="code-bloch-live-indicator"><span class="live-pulse"></span>LIVE</span>
+              </div>
+              <div class="code-bloch-header-right">
+                <span class="ensemble-target-badge" id="ensemble-target-badge">Inspecting |q0⟩</span>
+                <div class="code-bloch-tools">
+                  <button class="bloch-tool-btn" id="btn-ens-bloch-autorotate" title="Toggle Auto-Rotation">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span>Spin</span>
+                  </button>
+                  <button class="bloch-tool-btn" id="btn-ens-bloch-reset-cam" title="Reset Camera View">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v5h5"/></svg>
+                    <span>Reset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3D Stage Viewport -->
+            <div class="code-bloch-3d-stage" id="ensemble-3d-stage" style="height: 330px;">
+              <div id="ensemble-bloch-webgl-mount" class="code-bloch-webgl-mount"></div>
+              <!-- 3D Overlay HUD badge -->
+              <div class="code-bloch-hud" id="ensemble-bloch-hud">
+                <div class="code-bloch-hud__header">
+                  <span class="code-bloch-hud__qubit" id="ens-hud-qubit">|q0⟩</span>
+                  <span class="code-bloch-hud__pure" id="ens-hud-pure">Pure State</span>
+                </div>
+                <div class="code-bloch-hud__coords" id="ens-hud-coords">
+                  r: (0.00, 0.00, 1.00)
+                </div>
+                <div class="code-bloch-hud__angles" id="ens-hud-angles">
+                  &theta;: 0.0&deg; &middot; &phi;: 0.0&deg;
+                </div>
+                <div class="code-bloch-hud__state" id="ens-hud-state">
+                  |&psi;&rang; = 1.000|0&rang; + 0.000|1&rang;
+                </div>
+                <div class="code-bloch-hud__probs">
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|0&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--0" id="ens-prob-fill-0" style="width:100%"></div></div>
+                    <span class="hud-prob-pct" id="ens-prob-pct-0">100%</span>
+                  </div>
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|1&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--1" id="ens-prob-fill-1" style="width:0%"></div></div>
+                    <span class="hud-prob-pct" id="ens-prob-pct-1">0%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="code-bloch-hint">Drag mouse to rotate in 3D &middot; Click any qubit below to inspect</div>
+            </div>
+          </div>
+
+          <!-- Synchronized Qubit Array Grid -->
+          <div class="ensemble-grid-header" style="margin-top: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <span class="svd-title" style="margin-bottom:0;">Qubit Array &middot; Click to inspect in 3D</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);" id="ens-active-count-label">8 Qubits in Synchronized Array</span>
+          </div>
+          <div class="ensemble-grid" id="ensemble-grid"></div>
+        </div>
+        <div class="ensemble-controls-panel">
+          <div class="viz-control-group">
+            <label class="viz-label">Qubit Count</label>
+            <div class="viz-btn-group" id="qubit-count-group">
+              <button class="viz-choice" data-n="4" id="ensemble-n4">4</button>
+              <button class="viz-choice active" data-n="8" id="ensemble-n8">8</button>
+              <button class="viz-choice" data-n="12" id="ensemble-n12">12</button>
+            </div>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Apply Gate to All</label>
+            <div class="ensemble-gate-grid" id="ensemble-gate-grid">
+              <button class="viz-btn" data-gate="H" id="ens-gate-H">H</button>
+              <button class="viz-btn" data-gate="X" id="ens-gate-X">X</button>
+              <button class="viz-btn" data-gate="Y" id="ens-gate-Y">Y</button>
+              <button class="viz-btn" data-gate="Z" id="ens-gate-Z">Z</button>
+              <button class="viz-btn" data-gate="S" id="ens-gate-S">S</button>
+              <button class="viz-btn" data-gate="T" id="ens-gate-T">T</button>
+            </div>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Rotation Angle theta <span class="viz-val" id="ens-theta-val">pi/4</span></label>
+            <input type="range" class="viz-slider" id="ens-theta" min="0" max="6.28" step="0.05" value="0.785" aria-label="Theta"/>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Rotation Axis</label>
+            <div class="viz-btn-group">
+              <button class="viz-btn" id="ens-rx-btn">Rx</button>
+              <button class="viz-btn" id="ens-ry-btn">Ry</button>
+              <button class="viz-btn" id="ens-rz-btn">Rz</button>
+            </div>
+          </div>
+          <div class="viz-control-group">
+            <label class="viz-label">Animation</label>
+            <div class="viz-btn-group" id="ens-anim-group">
+              <button class="viz-choice active" data-anim="static" id="anim-static">Static</button>
+              <button class="viz-choice" data-anim="precession" id="anim-precession">Precession</button>
+              <button class="viz-choice" data-anim="random" id="anim-random">Random Walk</button>
+            </div>
+          </div>
+          <div class="viz-actions">
+            <button class="viz-btn viz-btn--primary" id="ensemble-reset-btn">Reset All |0&#x27E9;</button>
+            <button class="viz-btn" id="ensemble-random-btn">Randomize</button>
+          </div>
+          <div class="density-matrix-display">
+            <div class="svd-title">Average State</div>
+            <div class="dm-grid" id="dm-grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 6: QUANTUM FOURIER TRANSFORM -->
+    <section class="viz-panel" id="panel-fourier" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon">F</span>Quantum Fourier Transform</h2>
+          <p class="viz-panel__desc">Compare classical DFT vs QFT. Input a signal and see the exponential speedup of quantum frequency decomposition.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--cyan">QFT vs DFT</span>
+          <span class="viz-badge viz-badge--violet">Exponential Speedup</span>
+        </div>
+      </div>
+      <div class="viz-layout viz-layout--fourier">
+        <div class="fourier-input-panel">
+          <div class="svd-title">Input Signal</div>
+          <canvas id="fourier-input-canvas" style="cursor:crosshair"></canvas>
+          <div class="fourier-controls">
+            <div class="viz-control-group">
+              <label class="viz-label">Signal Preset</label>
+              <div class="viz-btn-group" id="signal-preset-group">
+                <button class="viz-choice active" data-sig="sinusoid" id="sig-sin">Sinusoid</button>
+                <button class="viz-choice" data-sig="square" id="sig-square">Square</button>
+                <button class="viz-choice" data-sig="sawtooth" id="sig-saw">Sawtooth</button>
+                <button class="viz-choice" data-sig="gaussian" id="sig-gauss">Gaussian</button>
+                <button class="viz-choice" data-sig="random" id="sig-random">Random</button>
+              </div>
+            </div>
+            <div class="viz-control-group">
+              <label class="viz-label">Frequency <span class="viz-val" id="fourier-freq-val">3 Hz</span></label>
+              <input type="range" class="viz-slider" id="fourier-freq" min="1" max="12" step="1" value="3" aria-label="Frequency"/>
+            </div>
+            <div class="viz-control-group">
+              <label class="viz-label">Qubits n <span class="viz-val" id="fourier-qubits-val">n=4, N=16</span></label>
+              <input type="range" class="viz-slider" id="fourier-qubits" min="2" max="6" step="1" value="4" aria-label="Qubits"/>
+            </div>
+          </div>
+        </div>
+        <div class="fourier-output-panel">
+          <div class="fourier-compare">
+            <div class="fourier-spectrum-card">
+              <div class="fsc-title">Classical DFT</div>
+              <div class="fsc-complexity">O(N log N)</div>
+              <canvas id="dft-canvas"></canvas>
+            </div>
+            <div class="fourier-speed-comparison">
+              <div class="fsc-arrow">&#x21D2;</div>
+              <div class="fsc-speedup" id="fsc-speedup">4&#xD7;</div>
+              <div class="fsc-label">QFT Speedup</div>
+            </div>
+            <div class="fourier-spectrum-card fourier-spectrum-card--quantum">
+              <div class="fsc-title">Quantum QFT</div>
+              <div class="fsc-complexity">O(n&#xB2;) = O(log&#xB2; N)</div>
+              <canvas id="qft-canvas"></canvas>
+            </div>
+          </div>
+          <div class="fourier-stats-row">
+            <div class="viz-info-box"><div class="viz-info-box__title">Classical Ops</div><div class="viz-info-box__eq" id="classical-ops">64</div></div>
+            <div class="viz-info-box" style="border-color:rgba(6,182,212,0.3)"><div class="viz-info-box__title">Quantum Ops</div><div class="viz-info-box__eq" id="quantum-ops">16</div></div>
+            <div class="viz-info-box" style="border-color:rgba(245,158,11,0.3)"><div class="viz-info-box__title">Speedup</div><div class="viz-info-box__eq" id="speedup-factor">4.0&#xD7;</div></div>
+          </div>
+          <div class="viz-actions">
+            <button class="viz-btn viz-btn--primary" id="fourier-run-btn">Run QFT</button>
+            <button class="viz-btn" id="fourier-animate-btn">Animate Steps</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 7: QASM CODE EDITOR -->
+    <section class="viz-panel" id="panel-code" role="tabpanel">
+      <div class="viz-panel__header">
+        <div>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon" style="background:rgba(34,211,238,0.1);border-color:rgba(34,211,238,0.25);color:#22d3ee">&lt;/&gt;</span>QASM Live Code Editor</h2>
+          <p class="viz-panel__desc">Write or edit OpenQASM 2.0 code and instantly see the circuit, Bloch spheres, and state vector update in real time. Every keystroke re-simulates.</p>
+        </div>
+        <div class="viz-panel__badges">
+          <span class="viz-badge viz-badge--cyan">OpenQASM 2.0</span>
+          <span class="viz-badge viz-badge--emerald">Live Simulation</span>
+          <span class="viz-badge viz-badge--violet">Editable</span>
+        </div>
+      </div>
+
+      <div class="code-editor-layout">
+        <!-- LEFT: CODE EDITOR -->
+        <div class="code-editor-pane">
+          <div class="code-editor-header">
+            <span class="code-editor-title">quantum_circuit.qasm</span>
+            <div class="code-preset-btns" id="code-preset-btns">
+              <button class="code-preset-btn active" data-preset="superpos" id="cp-superpos">SUPERPOS</button>
+              <button class="code-preset-btn" data-preset="bell" id="cp-bell">BELL</button>
+              <button class="code-preset-btn" data-preset="ghz" id="cp-ghz">GHZ</button>
+              <button class="code-preset-btn" data-preset="qft" id="cp-qft">QFT</button>
+              <button class="code-preset-btn" data-preset="deutsch" id="cp-deutsch">DEUTSCH</button>
+              <button class="code-preset-btn" data-preset="grover" id="cp-grover">GROVER</button>
+              <button class="code-preset-btn" data-preset="teleport" id="cp-teleport">TELEPORT</button>
+            </div>
+          </div>
+
+          <div class="code-editor-wrap" id="code-editor-wrap">
+            <!-- Line numbers -->
+            <div class="code-line-nums" id="code-line-nums"></div>
+            <div class="code-editor-field">
+              <!-- Syntax-highlighted overlay -->
+              <pre class="code-highlight-layer" id="code-highlight-layer" aria-hidden="true"></pre>
+              <!-- Actual editable textarea -->
+              <textarea
+                class="code-textarea"
+                id="code-textarea"
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="off"
+                aria-label="QASM code editor"
+                aria-multiline="true"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="code-editor-footer">
+            <div class="code-status" id="code-status">
+              <span class="code-status-dot" id="code-status-dot"></span>
+              <span id="code-status-msg">Ready</span>
+            </div>
+            <div class="code-actions">
+              <button class="viz-btn viz-btn--primary" id="code-run-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Run
+              </button>
+              <button class="viz-btn" id="code-step-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 15 12 5 21 5 3"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                Step
+              </button>
+              <button class="viz-btn" id="code-reset-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v5h5"/></svg>
+                Reset
+              </button>
+              <button class="viz-btn" id="code-copy-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- Error output -->
+          <div class="code-error-box" id="code-error-box">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="code-error-msg"></span>
+          </div>
+
+          <!-- Gate reference card -->
+          <div class="gate-reference" id="gate-reference">
+            <div class="svd-title">Gate Reference</div>
+            <div class="gate-ref-grid">
+              <div class="gate-ref-item"><code>h q[i]</code><span>Hadamard</span></div>
+              <div class="gate-ref-item"><code>x q[i]</code><span>Pauli-X (NOT)</span></div>
+              <div class="gate-ref-item"><code>y q[i]</code><span>Pauli-Y</span></div>
+              <div class="gate-ref-item"><code>z q[i]</code><span>Pauli-Z</span></div>
+              <div class="gate-ref-item"><code>s q[i]</code><span>S (&#x03C0;/2 phase)</span></div>
+              <div class="gate-ref-item"><code>t q[i]</code><span>T (&#x03C0;/4 phase)</span></div>
+              <div class="gate-ref-item"><code>sdg q[i]</code><span>S&#x2020; (inverse S)</span></div>
+              <div class="gate-ref-item"><code>tdg q[i]</code><span>T&#x2020; (inverse T)</span></div>
+              <div class="gate-ref-item"><code>cx q[i],q[j]</code><span>CNOT</span></div>
+              <div class="gate-ref-item"><code>cz q[i],q[j]</code><span>CZ gate</span></div>
+              <div class="gate-ref-item"><code>swap q[i],q[j]</code><span>SWAP</span></div>
+              <div class="gate-ref-item"><code>rx(&#x03B8;) q[i]</code><span>Rx rotation</span></div>
+              <div class="gate-ref-item"><code>ry(&#x03B8;) q[i]</code><span>Ry rotation</span></div>
+              <div class="gate-ref-item"><code>rz(&#x03B8;) q[i]</code><span>Rz rotation</span></div>
+              <div class="gate-ref-item"><code>ccx a,b,c</code><span>Toffoli (CCNOT)</span></div>
+              <div class="gate-ref-item"><code>measure q&#x2192;c</code><span>Measure qubit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: LIVE VISUALIZATION -->
+        <div class="code-viz-pane" id="code-viz-pane">
+          <!-- 3D Three.js Bloch Sphere Section -->
+          <div class="code-bloch-section" id="code-bloch-section">
+            <div class="code-bloch-header">
+              <div class="code-bloch-title-wrap">
+                <span class="svd-title" style="margin-bottom:0;">3D Bloch Sphere</span>
+                <span class="code-bloch-badge">Three.js WebGL</span>
+                <span class="code-bloch-live-indicator"><span class="live-pulse"></span>LIVE</span>
+              </div>
+              <div class="code-bloch-header-right">
+                <div class="code-bloch-qubit-pills" id="code-bloch-qubit-pills" aria-label="Select qubit for 3D view">
+                  <!-- Generated by JS: q[0], q[1], ... -->
+                </div>
+                <div class="code-bloch-tools">
+                  <button class="bloch-tool-btn" id="btn-bloch-autorotate" title="Toggle Auto-Rotation">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span>Spin</span>
+                  </button>
+                  <button class="bloch-tool-btn" id="btn-bloch-reset-cam" title="Reset Camera View">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v5h5"/></svg>
+                    <span>Reset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Three.js 3D Viewport -->
+            <div class="code-bloch-3d-stage" id="code-bloch-3d-stage">
+              <div id="code-bloch-webgl-mount" class="code-bloch-webgl-mount"></div>
+              <!-- 3D Overlay HUD badge -->
+              <div class="code-bloch-hud" id="code-bloch-hud">
+                <div class="code-bloch-hud__header">
+                  <span class="code-bloch-hud__qubit" id="bloch-hud-qubit">q[0]</span>
+                  <span class="code-bloch-hud__pure" id="bloch-hud-pure">Pure State</span>
+                </div>
+                <div class="code-bloch-hud__coords" id="bloch-hud-coords">
+                  r: (0.00, 0.00, 1.00)
+                </div>
+                <div class="code-bloch-hud__angles" id="bloch-hud-angles">
+                  &theta;: 0.0&deg; &middot; &phi;: 0.0&deg;
+                </div>
+                <div class="code-bloch-hud__state" id="bloch-hud-state">
+                  |&psi;&rang; = 1.000|0&rang; + 0.000|1&rang;
+                </div>
+                <div class="code-bloch-hud__probs">
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|0&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--0" id="hud-prob-fill-0" style="width:100%"></div></div>
+                    <span class="hud-prob-pct" id="hud-prob-pct-0">100%</span>
+                  </div>
+                  <div class="hud-prob-bar">
+                    <span class="hud-prob-label">|1&rang;</span>
+                    <div class="hud-prob-track"><div class="hud-prob-fill hud-prob-fill--1" id="hud-prob-fill-1" style="width:0%"></div></div>
+                    <span class="hud-prob-pct" id="hud-prob-pct-1">0%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="code-bloch-hint">Drag mouse to orbit in 3D &middot; Scroll to zoom</div>
+            </div>
+
+            <!-- Multi-Qubit Mini Preview Cards (shown when nQ > 1) -->
+            <div class="code-bloch-row" id="code-bloch-row">
+              <!-- Dynamically populated cards -->
+            </div>
+          </div>
+
+          <!-- Circuit Diagram -->
+          <div class="code-circuit-section">
+            <div class="svd-title">Circuit Diagram</div>
+            <div class="code-circuit-diagram" id="code-circuit-diagram">
+              <canvas id="code-circuit-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- State Vector -->
+          <div class="code-state-section">
+            <div class="svd-title">State Vector |&#x03C8;&#x27E9;</div>
+            <div class="code-sv-grid" id="code-sv-grid"></div>
+          </div>
+
+          <!-- Probability Histogram -->
+          <div class="code-hist-section">
+            <div class="svd-title">Measurement Probabilities</div>
+            <canvas id="code-hist-canvas"></canvas>
+          </div>
+
+          <!-- Step-through log -->
+          <div class="code-step-section" id="code-step-section">
+            <div class="svd-title">Execution Log</div>
+            <div class="code-step-log" id="code-step-log"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
+          <circle cx="16" cy="16" r="6" stroke="url(#fg2)" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="url(#fg2)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg2)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg2)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <defs><linearGradient id="fg2" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+        </svg>
+        <span>QuantumLab</span>
+      </div>
+      <p class="footer__tagline">A virtual quantum learning laboratory.</p>
+      <p class="footer__copy">&copy; 2026 QuantumLab. Built for explorers.</p>
+    </div>
+  </footer>
+
+  <script src="js/vendor/three.min.js"></script>
+  <script src="js/vendor/OrbitControls.js"></script>
+  <script src="js/visualizer.js"></script>
+</body>
+</html>

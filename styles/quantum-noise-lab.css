@@ -148,10 +148,10 @@ body.nl-body {
    ============================================================ */
 .nl-workspace {
   display: grid;
-  grid-template-columns: 310px 1fr 310px;
+  grid-template-columns: 320px 1fr 320px;
   gap: 20px;
-  padding: 20px 24px 30px 24px;
-  max-width: 1700px;
+  padding: 16px 24px 30px 24px;
+  max-width: 1720px;
   margin: 0 auto;
   align-items: start;
 }
@@ -175,6 +175,7 @@ body.nl-body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .nl-setup-card {
@@ -754,6 +755,7 @@ body.nl-body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 /* 3D Bloch Sphere Card Container */
@@ -762,7 +764,8 @@ body.nl-body {
   background: var(--nl-bg-card);
   border: 1px solid var(--nl-border);
   border-radius: 18px;
-  height: 420px;
+  height: calc(100vh - 110px);
+  min-height: 520px;
   overflow: hidden;
   backdrop-filter: blur(14px);
   display: flex;
@@ -1248,7 +1251,8 @@ body.nl-body {
 .nl-panel-right {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  min-width: 0;
 }
 
 /* Live Stats Card */

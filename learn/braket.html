@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bra-Ket Notation: Dirac Algebra & Inner Products – QuantumLab</title>
+  <meta name="description" content="Interactive learning module for Bra-Ket Notation: Master Dirac kets, bras, inner products, outer product projections, and state overlap." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/learn.css" />
+</head>
+<body class="la-module-page">
+
+  <div class="la-module-container">
+
+    <!-- TOP HEADER -->
+    <header class="la-header-bar">
+      <div class="la-header-bar__left">
+        <a href="../learn.html" class="la-back-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to Learn
+        </a>
+        <div class="la-header-title-group">
+          <h1>Concept 04 · Bra-Ket Notation</h1>
+          <p>Dirac Algebra · Bras, Kets &amp; State Overlap</p>
+        </div>
+      </div>
+      <div class="la-header-actions">
+        <a href="superposition.html" class="la-btn-sm">← Prev: Superposition</a>
+        <a href="entanglement.html" class="la-btn-sm" style="color:var(--learn-cyan);border-color:var(--learn-cyan);">Next: Entanglement →</a>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="la-workspace">
+
+      <!-- LEFT: CONTROLS & EXPLANATION -->
+      <section class="la-panel-left">
+        <div class="la-panel-step-badge">Foundation Concept</div>
+        <h2 class="la-panel-heading">Dirac Bra-Ket Notation</h2>
+        <p class="la-panel-desc">
+          Introduced by Paul Dirac in 1939, this algebraic grammar represents state vectors as <strong>kets</strong> $|ψ⟩$ and their dual conjugate transpose row vectors as <strong>bras</strong> $\langleφ|$.
+        </p>
+
+        <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;font-family:var(--font-mono);font-size:0.95rem;color:#38bdf8;margin-bottom:20px;line-height:1.7;">
+          <div>Ket (Column): &nbsp;|ψ⟩ = [c₀, c₁]ᵀ</div>
+          <div>Bra (Row Dual): ⟨φ| = (|φ⟩)† = [d₀*, d₁*]</div>
+          <div>Bracket (Inner Product): ⟨φ|ψ⟩ = d₀*c₀ + d₁*c₁</div>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <label style="font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Select Bra State ⟨φ|:</label>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <button class="la-preset-chip active" id="btn-bra-0" onclick="setBraState('0')">⟨0|</button>
+            <button class="la-preset-chip" id="btn-bra-1" onclick="setBraState('1')">⟨1|</button>
+            <button class="la-preset-chip" id="btn-bra-plus" onclick="setBraState('+')">⟨+|</button>
+            <button class="la-preset-chip" id="btn-bra-minus" onclick="setBraState('-')">⟨-|</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <label style="font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Select Ket State |ψ⟩:</label>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <button class="la-preset-chip" id="btn-ket-0" onclick="setKetState('0')">|0⟩</button>
+            <button class="la-preset-chip" id="btn-ket-1" onclick="setKetState('1')">|1⟩</button>
+            <button class="la-preset-chip active" id="btn-ket-plus" onclick="setKetState('+')">|+⟩</button>
+            <button class="la-preset-chip" id="btn-ket-minus" onclick="setKetState('-')">|-⟩</button>
+          </div>
+        </div>
+
+        <div class="la-learned-box" style="margin-top:auto;">
+          <div class="la-learned-box__title"><span>🎓</span> Key Takeaways:</div>
+          <ul>
+            <li><strong>Orthonormality:</strong> $\langle 0|0\rangle = 1$, $\langle 1|1\rangle = 1$, while $\langle 0|1\rangle = 0$ (orthogonal).</li>
+            <li><strong>Born Rule:</strong> Probability of measuring state $|\phi\rangle$ from state $|\psi\rangle$ is $P = |\langle\phi|\psi\rangle|^2$.</li>
+            <li><strong>Outer Product $|\psi\rangle\langle\phi|$:</strong> Creates an operator or density matrix mapping states to states.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RIGHT: LIVE VISUALIZATION -->
+      <aside class="la-panel-right">
+        <div class="la-viz-card">
+          <div class="la-viz-header">
+            <div class="la-viz-tag">Live Dirac Bracket Evaluation</div>
+            <div class="la-viz-stage-badge">INNER PRODUCT</div>
+          </div>
+          <div class="la-viz-display">
+            <div style="width:100%;text-align:center;">
+              <div id="bracket-eval-title" style="font-family:var(--font-mono);font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:12px;">
+                ⟨0|+⟩
+              </div>
+              <div id="bracket-eval-math" style="font-family:var(--font-mono);font-size:1.1rem;color:#38bdf8;margin-bottom:18px;">
+                = [1, 0] · [1/√2, 1/√2]ᵀ = 1/√2 ≈ 0.707
+              </div>
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;display:inline-block;">
+                <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;">Transition Probability |⟨φ|ψ⟩|²:</div>
+                <div id="bracket-prob-val" style="font-family:var(--font-mono);font-size:1.5rem;font-weight:800;color:#34d399;margin-top:4px;">
+                  50.0%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="la-edu-card">
+          <div class="la-edu-header"><span>💡</span> Geometric Meaning</div>
+          <div class="la-edu-body">
+            The inner product <code>⟨φ|ψ⟩</code> calculates the projection of vector |ψ⟩ onto vector |φ⟩. If <code>⟨φ|ψ⟩ = 0</code>, the states are mutually exclusive and distinguishable in a single measurement.
+          </div>
+          <div class="la-edu-highlight"><strong>Completeness Relation:</strong> |0⟩⟨0| + |1⟩⟨1| = I (Identity operator).</div>
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <script>
+    let curBra = '0';
+    let curKet = '+';
+
+    function setBraState(b) {
+      curBra = b;
+      ['0', '1', '+', '-'].forEach(k => {
+        const el = document.getElementById(`btn-bra-${k === '+' ? 'plus' : (k === '-' ? 'minus' : k)}`);
+        if (el) el.classList.toggle('active', k === b);
+      });
+      calcBracket();
+    }
+
+    function setKetState(k) {
+      curKet = k;
+      ['0', '1', '+', '-'].forEach(b => {
+        const el = document.getElementById(`btn-ket-${b === '+' ? 'plus' : (b === '-' ? 'minus' : b)}`);
+        if (el) el.classList.toggle('active', b === k);
+      });
+      calcBracket();
+    }
+
+    function calcBracket() {
+      const getVec = (s) => {
+        if (s === '0') return [1, 0];
+        if (s === '1') return [0, 1];
+        if (s === '+') return [1/Math.SQRT2, 1/Math.SQRT2];
+        if (s === '-') return [1/Math.SQRT2, -1/Math.SQRT2];
+      };
+
+      const bra = getVec(curBra);
+      const ket = getVec(curKet);
+
+      const inner = bra[0]*ket[0] + bra[1]*ket[1];
+      const prob = inner * inner;
+
+      document.getElementById('bracket-eval-title').textContent = `⟨${curBra}|${curKet}⟩`;
+      document.getElementById('bracket-eval-math').textContent = `= [${bra.map(n=>n.toFixed(2)).join(', ')}] · [${ket.map(n=>n.toFixed(2)).join(', ')}]ᵀ = ${inner.toFixed(3)}`;
+      document.getElementById('bracket-prob-val').textContent = `${(prob * 100).toFixed(1)}%`;
+    }
+  </script>
+</body>
+</html>

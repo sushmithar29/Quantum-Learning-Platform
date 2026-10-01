@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QuantumLab – Explore Quantum Computing</title>
-  <meta name="description" content="Learn quantum computing by exploring, experimenting, simulating, and visualizing concepts interactively. QuantumLab is your virtual quantum laboratory." />
+  <meta name="description"
+    content="Learn quantum computing by exploring, experimenting, simulating, and visualizing concepts interactively. QuantumLab is your virtual quantum laboratory." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="styles/main.css" />
   <link rel="stylesheet" href="styles/animations.css" />
   <link rel="stylesheet" href="styles/components.css" />
 </head>
+
 <body>
   <!-- NAVIGATION -->
   <nav class="nav" id="main-nav">
     <div class="nav__inner">
       <a href="#" class="nav__logo" id="logo-link">
         <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5" />
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6"
+            transform="rotate(-30 16 16)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6"
+            transform="rotate(30 16 16)" />
           <defs>
             <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#7c3aed"/>
-              <stop offset="100%" stop-color="#06b6d4"/>
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
             </linearGradient>
           </defs>
         </svg>
@@ -33,20 +40,50 @@
       </a>
       <div class="nav__links">
         <a href="basics.html" class="nav__link">Basics</a>
-        <a href="/experiments" class="nav__link">Experiments</a>
-        <a href="/virtual-labs" class="nav__link">Virtual Labs</a>
-        <a href="/algorithms" class="nav__link">Algorithms</a>
         <a href="/hardware" class="nav__link nav__link--highlight">⚛ Quantum Hardware</a>
-        <a href="#learn" class="nav__link">Learn</a>
+        <a href="learn.html" class="nav__link">Learn</a>
+        <a href="/algorithms" class="nav__link">Algorithms</a>
+        <a href="/virtual-labs" class="nav__link">Virtual Labs</a>
+        <a href="/experiments" class="nav__link">Experiments</a>
+        <a href="visualizer.html" class="nav__link"
+          style="display:inline-flex;align-items:center;gap:4px;color:#22d3ee;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          Visualizer
+        </a>
+        <a href="circuit-designer.html" class="nav__link"
+          style="display:inline-flex;align-items:center;gap:4px;color:#a78bfa;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="8" width="4" height="8" rx="1"/><rect x="17" y="8" width="4" height="8" rx="1"/>
+            <line x1="7" y1="12" x2="17" y2="12"/><circle cx="7" cy="12" r="2" fill="currentColor"/>
+          </svg>
+          Circuit Designer
+        </a>
         <a href="#challenges" class="nav__link">Challenges</a>
+        <a href="progress.html" class="nav__link" id="nav-progress"
+          style="display:inline-flex;align-items:center;gap:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M18 20V10M12 20V4M6 20v-6" />
+          </svg>
+          Progress
+        </a>
       </div>
       <div class="nav__actions">
         <button class="nav__ai-btn" id="ai-tutor-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+          </svg>
           AI Tutor
         </button>
         <button class="nav__profile-btn" id="profile-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
           Profile
         </button>
       </div>
@@ -56,12 +93,15 @@
     </div>
     <div class="nav__mobile" id="mobile-menu">
       <a href="basics.html" class="nav__mobile-link">Basics</a>
-      <a href="/experiments" class="nav__mobile-link">Experiments</a>
-      <a href="/virtual-labs" class="nav__mobile-link">Virtual Labs</a>
-      <a href="/algorithms" class="nav__mobile-link">Algorithms</a>
       <a href="/hardware" class="nav__mobile-link">⚛ Quantum Hardware</a>
-      <a href="#learn" class="nav__mobile-link">Learn</a>
+      <a href="learn.html" class="nav__mobile-link">Learn</a>
+      <a href="/algorithms" class="nav__mobile-link">Algorithms</a>
+      <a href="/virtual-labs" class="nav__mobile-link">Virtual Labs</a>
+      <a href="/experiments" class="nav__mobile-link">Experiments</a>
+      <a href="visualizer.html" class="nav__mobile-link" style="color:#22d3ee">👁 Visualizer</a>
+      <a href="circuit-designer.html" class="nav__mobile-link" style="color:#a78bfa">⊗ Circuit Designer</a>
       <a href="#challenges" class="nav__mobile-link">Challenges</a>
+      <a href="progress.html" class="nav__mobile-link">Progress</a>
     </div>
   </nav>
 
@@ -74,11 +114,14 @@
           <span class="hero__badge-dot"></span>
           Virtual Quantum Laboratory
         </div>
-        <h1 class="hero__title">Explore Quantum<br/><span class="hero__title-accent">Computing</span></h1>
-        <p class="hero__subtitle">Learn quantum concepts by experimenting, simulating,<br/>and visualizing them interactively.</p>
+        <h1 class="hero__title">Explore Quantum<br /><span class="hero__title-accent">Computing</span></h1>
+        <p class="hero__subtitle">Learn quantum concepts by experimenting, simulating,<br />and visualizing them
+          interactively.</p>
         <div class="hero__actions">
           <button class="btn btn--primary btn--lg" id="start-exploring-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
             Start Exploring
           </button>
           <button class="btn btn--ghost btn--lg" id="playground-btn">
@@ -86,13 +129,20 @@
           </button>
         </div>
         <div class="hero__stats">
-          <div class="hero__stat" id="hero-exp-stat" style="cursor:pointer" onclick="window.location.href='/experiments'"><span class="hero__stat-num" id="hero-exp-count">12</span><span class="hero__stat-label">Experiments</span></div>
+          <div class="hero__stat" id="hero-exp-stat" style="cursor:pointer"
+            onclick="window.location.href='/experiments'"><span class="hero__stat-num"
+              id="hero-exp-count">12</span><span class="hero__stat-label">Experiments</span></div>
           <div class="hero__stat-divider"></div>
-          <div class="hero__stat" id="hero-labs-stat" style="cursor:pointer" onclick="window.location.href='/virtual-labs'"><span class="hero__stat-num" id="hero-labs-count">5</span><span class="hero__stat-label">Virtual Labs</span></div>
+          <div class="hero__stat" id="hero-labs-stat" style="cursor:pointer"
+            onclick="window.location.href='/virtual-labs'"><span class="hero__stat-num"
+              id="hero-labs-count">5</span><span class="hero__stat-label">Virtual Labs</span></div>
           <div class="hero__stat-divider"></div>
-          <div class="hero__stat" id="hero-algo-stat" style="cursor:pointer" onclick="window.location.href='/algorithms'"><span class="hero__stat-num" id="hero-algo-count">15</span><span class="hero__stat-label">Algorithms</span></div>
+          <div class="hero__stat" id="hero-algo-stat" style="cursor:pointer"
+            onclick="window.location.href='/algorithms'"><span class="hero__stat-num" id="hero-algo-count">5</span><span
+              class="hero__stat-label">Algorithms</span></div>
           <div class="hero__stat-divider"></div>
-          <div class="hero__stat"><span class="hero__stat-num">5</span><span class="hero__stat-label">Challenges</span></div>
+          <div class="hero__stat"><span class="hero__stat-num">5</span><span class="hero__stat-label">Challenges</span>
+          </div>
         </div>
       </div>
 
@@ -106,10 +156,12 @@
               <span class="bloch-state-indicator__ket" id="bloch-state-ket">|ψ⟩</span>
               <span class="bloch-state-indicator__angles" id="bloch-state-angles">θ: 60° · φ: 45°</span>
             </div>
-            <button class="bloch-reset-btn" id="bloch-reset-btn" title="Reset camera &amp; state · double-click sphere to reset" aria-label="Reset Bloch sphere camera and quantum state">
+            <button class="bloch-reset-btn" id="bloch-reset-btn"
+              title="Reset camera &amp; state · double-click sphere to reset"
+              aria-label="Reset Bloch sphere camera and quantum state">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                <path d="M3 3v5h5"/>
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
               </svg>
               Reset
             </button>
@@ -130,10 +182,14 @@
             <div class="bloch-gates" id="bloch-gates">
               <span class="bloch-gates__label">APPLY GATE:</span>
               <div class="bloch-gates__row">
-                <button class="bloch-gate-btn tooltip" id="gate-H" data-gate="H" title="H — Hadamard Gate" data-tip="H — Hadamard Gate" aria-label="Apply Hadamard gate">H</button>
-                <button class="bloch-gate-btn tooltip" id="gate-X" data-gate="X" title="X — Pauli-X Gate" data-tip="X — Pauli-X Gate" aria-label="Apply Pauli-X gate">X</button>
-                <button class="bloch-gate-btn tooltip" id="gate-Y" data-gate="Y" title="Y — Pauli-Y Gate" data-tip="Y — Pauli-Y Gate" aria-label="Apply Pauli-Y gate">Y</button>
-                <button class="bloch-gate-btn tooltip" id="gate-Z" data-gate="Z" title="Z — Pauli-Z Gate" data-tip="Z — Pauli-Z Gate" aria-label="Apply Pauli-Z gate">Z</button>
+                <button class="bloch-gate-btn tooltip" id="gate-H" data-gate="H" title="H — Hadamard Gate"
+                  data-tip="H — Hadamard Gate" aria-label="Apply Hadamard gate">H</button>
+                <button class="bloch-gate-btn tooltip" id="gate-X" data-gate="X" title="X — Pauli-X Gate"
+                  data-tip="X — Pauli-X Gate" aria-label="Apply Pauli-X gate">X</button>
+                <button class="bloch-gate-btn tooltip" id="gate-Y" data-gate="Y" title="Y — Pauli-Y Gate"
+                  data-tip="Y — Pauli-Y Gate" aria-label="Apply Pauli-Y gate">Y</button>
+                <button class="bloch-gate-btn tooltip" id="gate-Z" data-gate="Z" title="Z — Pauli-Z Gate"
+                  data-tip="Z — Pauli-Z Gate" aria-label="Apply Pauli-Z gate">Z</button>
               </div>
             </div>
             <div class="bloch-probs" id="bloch-probs">
@@ -159,11 +215,18 @@
     <div class="footer__inner">
       <div class="footer__brand">
         <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
-          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="url(#fg)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
-          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
-          <defs><linearGradient id="fg" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5" />
+          <circle cx="16" cy="16" r="2" fill="url(#fg)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6"
+            transform="rotate(-30 16 16)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6"
+            transform="rotate(30 16 16)" />
+          <defs>
+            <linearGradient id="fg" x1="2" y1="2" x2="30" y2="30">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
         </svg>
         <span>QuantumLab</span>
       </div>
@@ -179,7 +242,9 @@
   <div class="modal" id="modal" role="dialog" aria-modal="true">
     <div class="modal__inner">
       <button class="modal__close" id="modal-close">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
       </button>
       <div class="modal__content" id="modal-content"></div>
     </div>
@@ -196,13 +261,17 @@
     <div class="ai-panel__messages" id="ai-messages">
       <div class="ai-msg ai-msg--bot">
         <div class="ai-msg__avatar">🤖</div>
-        <div class="ai-msg__bubble">Hello! I'm your quantum AI tutor. Ask me anything about quantum computing, or click "Explain this" on any experiment or visualization.</div>
+        <div class="ai-msg__bubble">Hello! I'm your quantum AI tutor. Ask me anything about quantum computing, or click
+          "Explain this" on any experiment or visualization.</div>
       </div>
     </div>
     <div class="ai-panel__input">
       <input type="text" class="ai-panel__field" id="ai-input" placeholder="Ask about quantum concepts..." />
       <button class="ai-panel__send" id="ai-send">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
       </button>
     </div>
   </div>
@@ -215,5 +284,16 @@
   <script src="js/canvas.js"></script>
   <script src="js/labs.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    if (window.location.hash === '#learn') {
+      window.location.href = 'learn.html';
+    }
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#learn') {
+        window.location.href = 'learn.html';
+      }
+    });
+  </script>
 </body>
+
 </html>

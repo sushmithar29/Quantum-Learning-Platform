@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Superposition: Linear Combinations & Interference – QuantumLab</title>
+  <meta name="description" content="Interactive learning module for Superposition: Explore quantum interference, phase shifts, Hadamard transformations, and constructive/destructive interference." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles/main.css" />
+  <link rel="stylesheet" href="../../styles/learn.css" />
+</head>
+<body class="la-module-page">
+
+  <div class="la-module-container">
+
+    <!-- TOP HEADER -->
+    <header class="la-header-bar">
+      <div class="la-header-bar__left">
+        <a href="../../learn.html" class="la-back-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to Learn
+        </a>
+        <div class="la-header-title-group">
+          <h1>Concept 03 · Superposition</h1>
+          <p>Coherent Linear Combinations &amp; Quantum Interference</p>
+        </div>
+      </div>
+      <div class="la-header-actions">
+        <a href="../qubits.html" class="la-btn-sm">← Prev: Qubits</a>
+        <a href="../braket.html" class="la-btn-sm" style="color:var(--learn-cyan);border-color:var(--learn-cyan);">Next: Bra-Ket Notation →</a>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="la-workspace">
+
+      <!-- LEFT: CONTROLS & EXPLANATION -->
+      <section class="la-panel-left">
+        <div class="la-panel-step-badge">Foundation Concept</div>
+        <h2 class="la-panel-heading">Quantum Superposition</h2>
+        <p class="la-panel-desc">
+          Superposition is not merely classical ignorance or probabilistic mixture. A qubit in superposition simultaneously traverses multiple computational paths until measured.
+        </p>
+
+        <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;font-family:var(--font-mono);font-size:1.05rem;color:#38bdf8;text-align:center;margin-bottom:20px;">
+          H|0⟩ = |+⟩ = \frac{1}{\sqrt{2}}(|0⟩ + |1⟩)
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <label style="display:flex;justify-content:space-between;font-size:0.85rem;font-weight:600;margin-bottom:8px;">
+            <span>Relative Phase Angle φ:</span>
+            <span id="sup-phase-val" style="color:var(--learn-cyan);font-family:var(--font-mono);">0°</span>
+          </label>
+          <input type="range" id="phase-slider" min="0" max="360" value="0" style="width:100%;accent-color:var(--learn-cyan);cursor:pointer;" oninput="updateSuperposition(this.value)" />
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:24px;">
+          <button class="la-btn-action la-btn-back" style="flex:1;justify-content:center;" onclick="applyHadamard()">Apply Hadamard (H)</button>
+          <button class="la-btn-action la-btn-back" style="flex:1;justify-content:center;" onclick="setPhase(180)">Phase π (|-⟩ State)</button>
+        </div>
+
+        <div class="la-learned-box" style="margin-top:auto;">
+          <div class="la-learned-box__title"><span>🎓</span> Key Takeaways:</div>
+          <ul>
+            <li>Applying Hadamard twice restores the initial state: $H(H|0\rangle) = |0\rangle$ due to constructive &amp; destructive interference.</li>
+            <li>Relative phase $\phi$ is invisible in direct Z-measurement, but causes interference when rotated.</li>
+            <li>Quantum algorithms (Grover, Shor) use superposition for parallel evaluation and interference to amplify the correct answer.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RIGHT: LIVE VISUALIZATION -->
+      <aside class="la-panel-right">
+        <div class="la-viz-card">
+          <div class="la-viz-header">
+            <div class="la-viz-tag">Interference &amp; Phase Visualization</div>
+            <div class="la-viz-stage-badge" id="sup-state-badge">STATE |+⟩</div>
+          </div>
+          <div class="la-viz-display">
+            <div style="width:100%;text-align:center;">
+              <canvas id="sup-wave-canvas" width="360" height="150" style="width:100%;height:150px;"></canvas>
+              <div id="sup-formula-text" style="font-family:var(--font-mono);font-size:1.15rem;font-weight:700;color:#38bdf8;margin-top:10px;">
+                |ψ⟩ = (1/√2)|0⟩ + (e^(i·0°)/√2)|1⟩
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="la-edu-card">
+          <div class="la-edu-header"><span>💡</span> Why Phase Matters</div>
+          <div class="la-edu-body">
+            Both states <code>|+⟩ = (|0⟩ + |1⟩)/√2</code> and <code>|-⟩ = (|0⟩ - |1⟩)/√2</code> have 50% probability of yielding 0 or 1. However, passing them through a second beam-splitter / Hadamard gate yields 100% |0⟩ for |+⟩, and 100% |1⟩ for |-⟩.
+          </div>
+          <div class="la-edu-highlight"><strong>Interference:</strong> Amplitudes can cancel out (destructively) or amplify (constructively), enabling quantum speedups.</div>
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <script>
+    let currentDeg = 0;
+    const canvas = document.getElementById('sup-wave-canvas');
+    const ctx = canvas.getContext('2d');
+    let t = 0;
+
+    function drawWave() {
+      t += 0.04;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const cy = h * 0.5;
+      const rad = (currentDeg * Math.PI) / 180;
+
+      // Draw Wave 0
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const y = cy + Math.sin(x * 0.05 + t) * 22;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Draw Wave 1 with phase shift
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.4)';
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const y = cy + Math.sin(x * 0.05 + t + rad) * 22;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Combined Interference
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const y1 = Math.sin(x * 0.05 + t) * 20;
+        const y2 = Math.sin(x * 0.05 + t + rad) * 20;
+        const y = cy + (y1 + y2) * 0.7;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      requestAnimationFrame(drawWave);
+    }
+    requestAnimationFrame(drawWave);
+
+    function updateSuperposition(deg) {
+      currentDeg = parseInt(deg, 10);
+      document.getElementById('sup-phase-val').textContent = `${currentDeg}°`;
+      
+      const badge = document.getElementById('sup-state-badge');
+      if (currentDeg === 0) badge.textContent = 'STATE |+⟩ (In Phase)';
+      else if (currentDeg === 180) badge.textContent = 'STATE |-⟩ (Out of Phase)';
+      else badge.textContent = `PHASE SHIFT ${currentDeg}°`;
+
+      const sign = (currentDeg === 180) ? '- (1/√2)|1⟩' : `+ (e^(i·${currentDeg}°)/√2)|1⟩`;
+      document.getElementById('sup-formula-text').textContent = `|ψ⟩ = (1/√2)|0⟩ ${sign}`;
+    }
+
+    function setPhase(deg) {
+      document.getElementById('phase-slider').value = deg;
+      updateSuperposition(deg);
+    }
+
+    function applyHadamard() {
+      currentDeg = (currentDeg === 0) ? 180 : 0;
+      setPhase(currentDeg);
+    }
+  </script>
+</body>
+</html>

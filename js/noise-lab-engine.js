@@ -35,11 +35,11 @@
      2. CHANNEL DEFINITIONS
   ══════════════════════════════════════════════════════════ */
   const CHANNEL_TYPES = [
-    { value: 'depolarizing',     label: 'Depolarizing',     color: '#38bdf8' },
-    { value: 'amplitude_damp',   label: 'Amplitude Damping',color: '#a78bfa' },
-    { value: 'phase_flip',       label: 'Phase Flip (Z)',   color: '#34d399' },
-    { value: 'bit_flip',         label: 'Bit Flip (X)',     color: '#f87171' },
-    { value: 'bit_phase_flip',   label: 'Bit-Phase Flip',   color: '#fbbf24' },
+    { value: 'depolarizing',     label: 'Depolarizing',          color: '#38bdf8' },
+    { value: 'phase_flip',       label: 'Phase Flip (T\u2082)',  color: '#34d399' },
+    { value: 'bit_flip',         label: 'Bit Flip',              color: '#f87171' },
+    { value: 'amplitude_damp',   label: 'Amplitude Damping (T\u2081)', color: '#a78bfa' },
+    { value: 'bit_phase_flip',   label: 'Bit-Phase Flip',        color: '#fbbf24' },
   ];
 
   /* ══════════════════════════════════════════════════════════
@@ -67,10 +67,10 @@
         return { rx: rx * s, ry: ry * s, rz: rz * s };
 
       case 'amplitude_damp': {
-        // Amplitude damping: rz → (1−2p)rz + (2p−2)*0.5  ... simplified
-        // r_x → sqrt(1-p)*rx, r_y → sqrt(1-p)*ry, r_z → (1-p)*rz + p*(2*0-1) via standard
+        // Amplitude damping toward |0⟩ (rz=+1 ground state)
+        // Kraus: rx,ry → sqrt(1-p)*r; rz → (1-p)*rz + p
         const sq = Math.sqrt(1 - p);
-        return { rx: sq * rx, ry: sq * ry, rz: (1 - p) * rz + p * (-1) };
+        return { rx: sq * rx, ry: sq * ry, rz: (1 - p) * rz + p };
       }
 
       case 'phase_flip':
@@ -311,8 +311,8 @@
     const psiLbl = makeLabel('|\u03C8\u27E9', 0x38bdf8, 46);
     vecGrp.add(psiLbl);
 
-    /* Hide vector initially */
-    vecGrp.visible = false;
+    /* Vector starts visible — will be set by showInitialState() */
+    vecGrp.visible = true;
 
     /* Render loop */
     let raf;
@@ -873,18 +873,9 @@
 
     setStatus('READY', 'status-ready');
 
-    // Reset Bloch sphere
-    if (three) {
-      three.vecGrp.visible = false;
-      if (three.animRaf) cancelAnimationFrame(three.animRaf);
-    }
-    const waiting = document.getElementById('bloch-waiting');
-    if (waiting) waiting.style.display = 'flex';
-    const badge = document.getElementById('state-badge');
-    if (badge) {
-      badge.textContent = 'AWAITING SIMULATION';
-      badge.className = 'nl-state-badge badge-coherent';
-    }
+    // Reset Bloch sphere back to clean initial state (keep visible)
+    if (three && three.animRaf) cancelAnimationFrame(three.animRaf);
+    showInitialState();
 
     // Clear graphs
     ['component-graph', 'probability-graph'].forEach(id => {
@@ -932,9 +923,28 @@
   /* ══════════════════════════════════════════════════════════
      16. INIT
   ══════════════════════════════════════════════════════════ */
+  /* Show the clean (no-noise) initial state on the Bloch sphere */
+  function showInitialState() {
+    const [rx, ry, rz] = INITIAL_STATES[state.initialState] || INITIAL_STATES.plus;
+    setBlochVector(rx, ry, rz, false);
+    // Update state badge to reflect the initial state
+    const badge = document.getElementById('state-badge');
+    if (badge) {
+      badge.textContent = 'INITIAL STATE';
+      badge.className = 'nl-state-badge badge-coherent';
+    }
+  }
+
   function init() {
     // Init Three.js Bloch sphere
     initThree();
+
+    // Show initial Bloch vector immediately
+    showInitialState();
+
+    // Hide the waiting overlay — sphere is always visible
+    const waiting = document.getElementById('bloch-waiting');
+    if (waiting) waiting.style.display = 'none';
 
     // Initial donut state
     updateDonut(0);
@@ -961,9 +971,16 @@
     if (decBtn) decBtn.addEventListener('click', () => updateQubits(state.qubits - 1));
     if (incBtn) incBtn.addEventListener('click', () => updateQubits(state.qubits + 1));
 
-    // Initial state select
+    // Initial state select — always update Bloch sphere live
     const initSel = document.getElementById('select-initial-state');
-    if (initSel) initSel.addEventListener('change', () => { state.initialState = initSel.value; });
+    if (initSel) initSel.addEventListener('change', () => {
+      state.initialState = initSel.value;
+      // Clear any previous simulation so sphere shows clean initial state
+      state.hasResults = false;
+      state.results = null;
+      if (three && three.animRaf) cancelAnimationFrame(three.animRaf);
+      showInitialState();
+    });
 
     // Channel count select
     const chanSel = document.getElementById('select-num-channels');

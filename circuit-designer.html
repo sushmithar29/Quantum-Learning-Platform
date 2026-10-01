@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Circuit Designer – QuantumLab</title>
+  <meta name="description" content="Full-featured drag-and-drop quantum circuit designer with real-time statevector simulation, OpenQASM and Qiskit code editors, Bloch sphere visualisation, and save/export tools." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/circuit-designer.css" />
+</head>
+<body>
+
+<!-- ══ NAVIGATION (identical pattern to all other pages) ══ -->
+<nav class="nav" id="main-nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo" id="logo-link">
+      <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="6" stroke="url(#ld)" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="2" fill="url(#ld)"/>
+        <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#ld)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+        <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#ld)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+        <defs><linearGradient id="ld" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+      </svg>
+      <span class="nav__logo-text">QuantumLab</span>
+    </a>
+    <div class="nav__links">
+      <a href="basics.html" class="nav__link">Basics</a>
+      <a href="hardware.html" class="nav__link nav__link--highlight">&#x2697; Quantum Hardware</a>
+      <a href="learn.html" class="nav__link">Learn</a>
+      <a href="algorithms.html" class="nav__link">Algorithms</a>
+      <a href="virtual-labs.html" class="nav__link">Virtual Labs</a>
+      <a href="experiments.html" class="nav__link">Experiments</a>
+      <a href="visualizer.html" class="nav__link">&#128065; Visualizer</a>
+      <a href="circuit-designer.html" class="nav__link active" style="color:#22d3ee;display:inline-flex;align-items:center;gap:4px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="8" width="4" height="8" rx="1"/><rect x="17" y="8" width="4" height="8" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/><circle cx="7" cy="12" r="2" fill="currentColor"/></svg>
+        Circuit Designer
+      </a>
+      <a href="progress.html" class="nav__link" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Progress
+      </a>
+    </div>
+    <div class="nav__actions">
+      <button class="nav__ai-btn" id="ai-tutor-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        AI Tutor
+      </button>
+    </div>
+    <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile" id="mobile-menu">
+    <a href="basics.html" class="nav__mobile-link">Basics</a>
+    <a href="learn.html" class="nav__mobile-link">Learn</a>
+    <a href="algorithms.html" class="nav__mobile-link">Algorithms</a>
+    <a href="visualizer.html" class="nav__mobile-link">&#128065; Visualizer</a>
+    <a href="circuit-designer.html" class="nav__mobile-link" style="color:#22d3ee">&#x2299; Circuit Designer</a>
+    <a href="progress.html" class="nav__mobile-link">Progress</a>
+  </div>
+</nav>
+
+<div class="qcd-page" id="qcd-page">
+
+  <!-- ══ HERO ══ -->
+  <header class="qcd-hero" id="qcd-hero" role="banner">
+    <div class="qcd-hero__left">
+      <div class="qcd-hero__badge">
+        <span class="qcd-hero__badge-dot"></span>
+        Quantum Circuit Designer · Live Simulation
+      </div>
+      <h1 class="qcd-hero__title">Quantum Circuit Designer</h1>
+      <p class="qcd-hero__sub">Build circuits with drag-and-drop or code. Simulate up to 10 qubits in real time. Export to QASM, Qiskit, SVG, and PNG.</p>
+    </div>
+    <div class="qcd-hero__actions">
+      <button class="qcd-btn qcd-btn--primary" id="qcd-templates-btn" aria-label="Open template library">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+        Templates
+      </button>
+      <button class="qcd-btn qcd-btn--cyan" id="qcd-share-link" aria-label="Copy share link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share
+      </button>
+      <button class="qcd-btn" id="qcd-tour-btn" aria-label="Start guided tour">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Tour
+      </button>
+      <button class="qcd-btn" id="qcd-shortcuts-btn" aria-label="Keyboard shortcuts">⌨</button>
+    </div>
+  </header>
+
+  <!-- ══ TOOLBAR ══ -->
+  <div class="qcd-toolbar" id="qcd-toolbar" role="toolbar" aria-label="Circuit toolbar">
+    <div class="qcd-toolbar__group">
+      <span class="qcd-toolbar__label">History</span>
+      <button class="qcd-btn qcd-btn--icon" id="qcd-undo" title="Undo (Ctrl+Z)" aria-label="Undo" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M3 13A9 9 0 1 0 5.14 6.14"/></svg>
+      </button>
+      <button class="qcd-btn qcd-btn--icon" id="qcd-redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M21 13A9 9 0 1 1 18.86 6.14"/></svg>
+      </button>
+    </div>
+    <div class="qcd-toolbar__group">
+      <span class="qcd-toolbar__label">Qubits</span>
+      <div class="qcd-qubit-controls">
+        <button class="qcd-btn qcd-btn--icon" id="qcd-remove-qubit" title="Remove qubit" aria-label="Remove qubit">−</button>
+        <span class="qcd-qubit-count" id="qcd-qubit-count" aria-live="polite">2</span>
+        <button class="qcd-btn qcd-btn--icon" id="qcd-add-qubit" title="Add qubit (max 10)" aria-label="Add qubit">+</button>
+      </div>
+    </div>
+    <div class="qcd-toolbar__group">
+      <span class="qcd-toolbar__label">Edit</span>
+      <button class="qcd-btn qcd-btn--icon" id="qcd-delete-gate" title="Delete selected gate (Del)" aria-label="Delete selected gate">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+      <button class="qcd-btn qcd-btn--danger" id="qcd-clear" title="Clear all gates">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 2l20 20M12 2l0 0C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c.85-.6 1.56-1.4 2.06-2.34"/></svg>
+        Clear
+      </button>
+    </div>
+    <div class="qcd-toolbar__group">
+      <span class="qcd-toolbar__label">Export</span>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-export-qasm" title="Download .qasm file">QASM</button>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-export-json" title="Download .json file">JSON</button>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-export-svg" title="Download circuit as SVG">SVG</button>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-export-png" title="Download circuit as PNG">PNG</button>
+    </div>
+    <div class="qcd-toolbar__group">
+      <span class="qcd-toolbar__label">Import</span>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-import-json" title="Load circuit from JSON">Load JSON</button>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-import-qasm" title="Load circuit from .qasm">Load QASM</button>
+    </div>
+    <div class="qcd-toolbar__group">
+      <span class="qcd-toolbar__label">View</span>
+      <button class="qcd-btn qcd-btn--sm" id="qcd-results-toggle-btn" title="Toggle results panel (mobile)">Results ▶</button>
+    </div>
+  </div>
+
+  <!-- ══ MAIN 3-COLUMN LAYOUT ══ -->
+  <div class="qcd-layout" id="qcd-main-layout">
+
+    <!-- ┌── LEFT: GATE PALETTE ─────────────────────────────┐ -->
+    <aside class="qcd-palette" id="qcd-palette" aria-label="Gate palette">
+      <div class="qcd-palette__header">
+        <div class="qcd-palette__title">Gate Library</div>
+        <input type="search" class="qcd-palette__search" id="qcd-palette-search"
+          placeholder="Search gates…" aria-label="Search gates" autocomplete="off" />
+      </div>
+      <div class="qcd-palette__scroll" role="list">
+
+        <!-- Single-qubit -->
+        <div class="qcd-palette__group-label">Single Qubit</div>
+        <div class="qcd-palette__grid">
+          <div class="qcd-gate-chip" data-gate="H" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="Hadamard gate">
+            <span class="qcd-gate-chip__sym">H</span><span class="qcd-gate-chip__name">Hadamard</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="X" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="Pauli-X gate">
+            <span class="qcd-gate-chip__sym">X</span><span class="qcd-gate-chip__name">Pauli-X</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="Y" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="Pauli-Y gate">
+            <span class="qcd-gate-chip__sym">Y</span><span class="qcd-gate-chip__name">Pauli-Y</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="Z" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="Pauli-Z gate">
+            <span class="qcd-gate-chip__sym">Z</span><span class="qcd-gate-chip__name">Pauli-Z</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="S" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="S gate">
+            <span class="qcd-gate-chip__sym">S</span><span class="qcd-gate-chip__name">S Phase</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="Sdg" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="S-dagger gate">
+            <span class="qcd-gate-chip__sym">S†</span><span class="qcd-gate-chip__name">S†</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="T" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="T gate">
+            <span class="qcd-gate-chip__sym">T</span><span class="qcd-gate-chip__name">T Phase</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="Tdg" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="T-dagger gate">
+            <span class="qcd-gate-chip__sym">T†</span><span class="qcd-gate-chip__name">T†</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="SX" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="Root-X gate">
+            <span class="qcd-gate-chip__sym">√X</span><span class="qcd-gate-chip__name">Sqrt-X</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="I" data-group="single" draggable="true" role="listitem" tabindex="0" aria-label="Identity gate">
+            <span class="qcd-gate-chip__sym">I</span><span class="qcd-gate-chip__name">Identity</span>
+          </div>
+        </div>
+
+        <!-- Parametric -->
+        <div class="qcd-palette__group-label">Parametric</div>
+        <div class="qcd-palette__grid">
+          <div class="qcd-gate-chip" data-gate="Rx" data-group="param" draggable="true" role="listitem" tabindex="0" aria-label="Rx rotation gate">
+            <span class="qcd-gate-chip__sym">Rx</span><span class="qcd-gate-chip__name">Rx(θ)</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="Ry" data-group="param" draggable="true" role="listitem" tabindex="0" aria-label="Ry rotation gate">
+            <span class="qcd-gate-chip__sym">Ry</span><span class="qcd-gate-chip__name">Ry(θ)</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="Rz" data-group="param" draggable="true" role="listitem" tabindex="0" aria-label="Rz rotation gate">
+            <span class="qcd-gate-chip__sym">Rz</span><span class="qcd-gate-chip__name">Rz(θ)</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="P" data-group="param" draggable="true" role="listitem" tabindex="0" aria-label="Phase gate">
+            <span class="qcd-gate-chip__sym">P</span><span class="qcd-gate-chip__name">Phase(λ)</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="U3" data-group="param" draggable="true" role="listitem" tabindex="0" aria-label="Universal U3 gate">
+            <span class="qcd-gate-chip__sym">U3</span><span class="qcd-gate-chip__name">U3(θ,φ,λ)</span>
+          </div>
+        </div>
+
+        <!-- Two-qubit -->
+        <div class="qcd-palette__group-label">Two Qubit</div>
+        <div class="qcd-palette__grid">
+          <div class="qcd-gate-chip" data-gate="CNOT" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="CNOT gate">
+            <span class="qcd-gate-chip__sym">CX</span><span class="qcd-gate-chip__name">CNOT</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="CZ" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="CZ gate">
+            <span class="qcd-gate-chip__sym">CZ</span><span class="qcd-gate-chip__name">Ctrl-Z</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="CY" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="CY gate">
+            <span class="qcd-gate-chip__sym">CY</span><span class="qcd-gate-chip__name">Ctrl-Y</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="CH" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="CH gate">
+            <span class="qcd-gate-chip__sym">CH</span><span class="qcd-gate-chip__name">Ctrl-H</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="SWAP" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="SWAP gate">
+            <span class="qcd-gate-chip__sym">SWAP</span><span class="qcd-gate-chip__name">SWAP</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="CPhase" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="Controlled Phase gate">
+            <span class="qcd-gate-chip__sym">CP</span><span class="qcd-gate-chip__name">CPhase(λ)</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="CRz" data-group="two" draggable="true" role="listitem" tabindex="0" aria-label="Controlled-Rz gate">
+            <span class="qcd-gate-chip__sym">CRz</span><span class="qcd-gate-chip__name">CRz(θ)</span>
+          </div>
+        </div>
+
+        <!-- Three-qubit -->
+        <div class="qcd-palette__group-label">Three Qubit</div>
+        <div class="qcd-palette__grid">
+          <div class="qcd-gate-chip" data-gate="CCX" data-group="three" draggable="true" role="listitem" tabindex="0" aria-label="Toffoli gate">
+            <span class="qcd-gate-chip__sym">CCX</span><span class="qcd-gate-chip__name">Toffoli</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="CSWAP" data-group="three" draggable="true" role="listitem" tabindex="0" aria-label="Fredkin gate">
+            <span class="qcd-gate-chip__sym">CSWAP</span><span class="qcd-gate-chip__name">Fredkin</span>
+          </div>
+        </div>
+
+        <!-- Misc -->
+        <div class="qcd-palette__group-label">Other</div>
+        <div class="qcd-palette__grid">
+          <div class="qcd-gate-chip" data-gate="M" data-group="misc" draggable="true" role="listitem" tabindex="0" aria-label="Measure gate">
+            <span class="qcd-gate-chip__sym">M</span><span class="qcd-gate-chip__name">Measure</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="RESET" data-group="misc" draggable="true" role="listitem" tabindex="0" aria-label="Reset gate">
+            <span class="qcd-gate-chip__sym">|0⟩</span><span class="qcd-gate-chip__name">Reset</span>
+          </div>
+          <div class="qcd-gate-chip" data-gate="BARRIER" data-group="misc" draggable="true" role="listitem" tabindex="0" aria-label="Barrier">
+            <span class="qcd-gate-chip__sym">|</span><span class="qcd-gate-chip__name">Barrier</span>
+          </div>
+        </div>
+
+        <!-- Convention note -->
+        <div style="margin-top:1rem; padding:0.5rem 0.3rem; background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.15); border-radius:8px; font-size:0.65rem; color:#4d5a7a; line-height:1.5;">
+          <strong style="color:#06b6d4;">Qubit order:</strong> Qiskit convention — qubit 0 = least-significant bit. State labels: |q<sub>n-1</sub>…q<sub>1</sub>q<sub>0</sub>⟩
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ┌── CENTRE: CIRCUIT CANVAS + CODE EDITOR ──────────┐ -->
+    <div class="qcd-canvas-area" id="qcd-canvas-area">
+
+      <!-- Canvas sub-toolbar -->
+      <div class="qcd-canvas-toolbar">
+        <div class="qcd-playhead-bar" style="flex:1;border:none;padding:0;background:none;">
+          <button class="qcd-btn qcd-btn--icon" id="qcd-step-reset" title="Reset playhead" aria-label="Reset to start">⏮</button>
+          <button class="qcd-btn qcd-btn--icon" id="qcd-step-back" title="Step back" aria-label="Step back">⏪</button>
+          <button class="qcd-btn qcd-btn--icon" id="qcd-play-btn" title="Play/Pause step-through" aria-label="Play">▶</button>
+          <button class="qcd-btn qcd-btn--icon" id="qcd-step-fwd" title="Step forward" aria-label="Step forward">⏩</button>
+          <input type="range" class="qcd-step-slider" id="qcd-playhead-slider" min="-1" value="-1" step="1" aria-label="Circuit step" />
+          <span class="qcd-step-counter" id="qcd-step-counter" aria-live="polite">Full</span>
+        </div>
+        <!-- View mode toggle -->
+        <div style="display:flex;gap:0.4rem;margin-left:auto;">
+          <button class="qcd-btn qcd-btn--sm qcd-btn--active" id="qcd-view-canvas" aria-pressed="true">Canvas</button>
+          <button class="qcd-btn qcd-btn--sm" id="qcd-view-code" aria-pressed="false">Code</button>
+        </div>
+      </div>
+
+      <!-- ── SVG CANVAS VIEW ── -->
+      <div class="qcd-canvas-wrap" id="qcd-canvas-wrap" role="application" aria-label="Quantum circuit canvas">
+        <svg id="qcd-svg-circuit" aria-label="Circuit diagram" role="img">
+          <title>Quantum Circuit Diagram</title>
+          <desc>Interactive drag-and-drop quantum circuit. Use the gate palette to add gates.</desc>
+        </svg>
+      </div>
+
+      <!-- ── CODE EDITOR VIEW (hidden by default) ── -->
+      <div id="qcd-code-area" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="qcd-code-tabs-bar" role="tablist" aria-label="Code language">
+          <button class="qcd-code-tab-btn active" data-tab="qasm" role="tab" aria-selected="true" id="codetab-qasm">OpenQASM 2.0</button>
+          <button class="qcd-code-tab-btn" data-tab="qiskit" role="tab" aria-selected="false" id="codetab-qiskit">Qiskit (Python)</button>
+          <button class="qcd-code-tab-btn" data-tab="cirq" role="tab" aria-selected="false" id="codetab-cirq">Cirq (read-only)</button>
+          <button class="qcd-code-tab-btn" data-tab="pennylane" role="tab" aria-selected="false" id="codetab-pennylane">PennyLane (read-only)</button>
+        </div>
+        <div class="qcd-editor-toolbar">
+          <!-- Compiler & Runner Actions -->
+          <button class="qcd-btn qcd-btn--sm qcd-btn--action" id="qcd-code-compile" title="Compile and validate code syntax">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Compile
+          </button>
+          <button class="qcd-btn qcd-btn--primary qcd-btn--sm qcd-btn--action" id="qcd-code-run" title="Run code and execute quantum circuit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Run
+          </button>
+          <button class="qcd-btn qcd-btn--sm qcd-btn--action qcd-btn--vis" id="qcd-code-visualize" title="Visualize code execution step-by-step">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Visualize Code
+          </button>
+
+          <span class="qcd-toolbar-separator"></span>
+
+          <button class="qcd-btn qcd-btn--sm" id="qcd-code-copy" title="Copy code to clipboard">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+          <button class="qcd-btn qcd-btn--sm" id="qcd-code-download" title="Download code file">⬇ Download</button>
+
+          <!-- Backend Status Badge -->
+          <div class="qcd-backend-badge" id="qcd-backend-badge" title="Status of the Python Backend Server">
+            <span class="qcd-backend-dot" id="qcd-backend-dot"></span>
+            <span id="qcd-backend-label">Checking Backend...</span>
+          </div>
+
+          <div id="qcd-code-readonly-msg" style="font-size:0.7rem;color:#4d5a7a;margin-left:0.5rem;display:none;">Read-only — generated from canvas</div>
+        </div>
+
+        <!-- Step-by-Step Code Visualizer Bar (active when Visualize Code is toggled) -->
+        <div class="qcd-vis-stepper-bar" id="qcd-vis-stepper-bar" style="display:none;" role="region" aria-label="Step by step code visualizer">
+          <div class="qcd-vis-top-row">
+            <div class="qcd-vis-controls">
+              <button class="qcd-btn qcd-btn--xs" id="qcd-vis-first" title="First step (⏮)">⏮</button>
+              <button class="qcd-btn qcd-btn--xs" id="qcd-vis-prev" title="Previous step (◀)">◀</button>
+              <button class="qcd-btn qcd-btn--primary qcd-btn--xs" id="qcd-vis-play" title="Play / Pause step-by-step animation">▶ Play</button>
+              <button class="qcd-btn qcd-btn--xs" id="qcd-vis-next" title="Next step (▶)">▶</button>
+              <button class="qcd-btn qcd-btn--xs" id="qcd-vis-last" title="Last step (⏭)">⏭</button>
+              <button class="qcd-btn qcd-btn--xs" id="qcd-vis-exit" title="Exit visualize mode">✕ Exit Visualizer</button>
+            </div>
+            <div class="qcd-vis-scrub">
+              <input type="range" class="qcd-vis-slider" id="qcd-vis-slider" min="0" max="0" value="0" aria-label="Step scrubber" />
+              <span class="qcd-vis-counter" id="qcd-vis-counter">Step 0 / 0</span>
+            </div>
+          </div>
+          <div class="qcd-vis-step-info" id="qcd-vis-step-info">
+            <div class="qcd-vis-instruction" id="qcd-vis-instruction"><span class="qcd-badge-step">Initial State</span> |0...0⟩ Ground state</div>
+            <div class="qcd-vis-expl" id="qcd-vis-expl">Initialized quantum registers. Ready to execute gates step by step.</div>
+          </div>
+        </div>
+
+        <div class="qcd-error-banner" id="qcd-code-error" role="alert" aria-live="assertive">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="qcd-code-error-text"></span>
+        </div>
+        <div class="qcd-editor-body">
+          <div class="qcd-active-line-marker" id="qcd-active-line-marker"></div>
+          <div class="qcd-line-numbers" id="qcd-line-numbers" aria-hidden="true"></div>
+          <textarea class="qcd-textarea" id="qcd-code-textarea"
+            spellcheck="false" autocorrect="off" autocapitalize="off"
+            aria-label="Code editor — OpenQASM or Qiskit Python"
+            aria-multiline="true"></textarea>
+        </div>
+
+        <!-- Terminal / Compiler Output Drawer -->
+        <div class="qcd-terminal" id="qcd-terminal">
+          <div class="qcd-terminal__header" id="qcd-terminal-header">
+            <div class="qcd-terminal__title">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span>Terminal &amp; Compiler Output</span>
+              <span class="qcd-terminal__badge" id="qcd-terminal-badge">Ready</span>
+            </div>
+            <div class="qcd-terminal__actions">
+              <button class="qcd-btn-ghost-xs" id="qcd-terminal-clear" title="Clear terminal">Clear</button>
+              <button class="qcd-btn-ghost-xs" id="qcd-terminal-toggle" title="Toggle terminal height">▲</button>
+            </div>
+          </div>
+          <pre class="qcd-terminal__body" id="qcd-terminal-body"><code class="qcd-terminal__code" id="qcd-terminal-code">[QuantumLab Compiler] Ready. Write or generate Python/Qiskit code, then click 'Compile' or 'Run'.
+Backend status: Checking connection...</code></pre>
+        </div>
+      </div>
+
+      <!-- Status bar -->
+      <div class="qcd-status-bar" role="status" aria-live="polite">
+        <span><span class="qcd-sim-dot" id="qcd-sim-dot"></span> Live simulation</span>
+        <span id="qcd-status-qubits">2Q</span>
+        <span id="qcd-status-steps">0 gates</span>
+        <span id="qcd-status-selected" style="color:var(--cyan);"></span>
+        <span style="margin-left:auto;font-size:0.62rem;">Qubit 0 = LSB · State: |q<sub>n-1</sub>…q<sub>0</sub>⟩</span>
+      </div>
+    </div>
+
+    <!-- ┌── RIGHT: RESULTS PANEL ────────────────────────────┐ -->
+    <aside class="qcd-results" id="qcd-results" aria-label="Simulation results">
+      <div class="qcd-results-tabs" role="tablist" aria-label="Results">
+        <button class="qcd-results-tab active" data-panel="state" role="tab" aria-selected="true" id="rtab-state">State</button>
+        <button class="qcd-results-tab" data-panel="hist" role="tab" aria-selected="false" id="rtab-hist">Shots</button>
+        <button class="qcd-results-tab" data-panel="bloch" role="tab" aria-selected="false" id="rtab-bloch">Bloch</button>
+        <button class="qcd-results-tab" data-panel="metrics" role="tab" aria-selected="false" id="rtab-metrics">Metrics</button>
+      </div>
+      <div class="qcd-results-scroll">
+
+        <!-- ── STATE VECTOR ── -->
+        <div class="qcd-results-panel active" id="qcd-panel-state" role="tabpanel" aria-labelledby="rtab-state">
+          <div class="qcd-explainer">
+            <strong>State vector |ψ⟩:</strong> Each row is a basis state. Magnitude = how much amplitude; Phase = colour wheel. Probability = |amplitude|². Sort by column header.
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.72rem;">
+              <input type="checkbox" id="qcd-hide-zero"> Hide near-zero
+            </label>
+          </div>
+          <table class="qcd-amp-table" aria-label="Amplitude table">
+            <thead>
+              <tr>
+                <th data-sort="state" id="thState" scope="col">State ↕</th>
+                <th data-sort="mag" id="thMag" scope="col">|amp| ↕</th>
+                <th scope="col">Phase</th>
+                <th scope="col">Prob</th>
+                <th data-sort="prob" id="thProb" scope="col">% ↕</th>
+              </tr>
+            </thead>
+            <tbody id="qcd-amp-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- ── HISTOGRAM ── -->
+        <div class="qcd-results-panel" id="qcd-panel-hist" role="tabpanel" aria-labelledby="rtab-hist">
+          <div class="qcd-explainer">
+            <strong>Shot simulation:</strong> Runs the circuit many times and counts outcomes. Violet bars = expected probability; coloured bars = shot counts.
+          </div>
+          <div class="qcd-shot-row">
+            <label for="qcd-shot-count">Shots:</label>
+            <input type="number" class="qcd-input-sm" id="qcd-shot-count" value="1024" min="100" max="100000" step="100" aria-label="Number of shots" />
+            <button class="qcd-btn qcd-btn--primary qcd-btn--sm" id="qcd-run-shots">Run</button>
+            <button class="qcd-btn qcd-btn--sm" id="qcd-export-csv" title="Export histogram as CSV">CSV</button>
+          </div>
+          <div class="qcd-histogram-wrap">
+            <canvas id="qcd-histogram-canvas" aria-label="Measurement histogram" height="150"></canvas>
+            <div class="qcd-histogram-meta" id="qcd-hist-meta"></div>
+          </div>
+        </div>
+
+        <!-- ── BLOCH SPHERES ── -->
+        <div class="qcd-results-panel" id="qcd-panel-bloch" role="tabpanel" aria-labelledby="rtab-bloch">
+          <div class="qcd-explainer">
+            <strong>Bloch spheres:</strong> Each sphere shows one qubit's state. A point at the surface = pure state. Mixed (entangled) states show a shorter vector and a "Mixed" badge.
+          </div>
+          <div class="qcd-bloch-row" id="qcd-bloch-row" aria-label="Per-qubit Bloch spheres"></div>
+        </div>
+
+        <!-- ── METRICS ── -->
+        <div class="qcd-results-panel" id="qcd-panel-metrics" role="tabpanel" aria-labelledby="rtab-metrics">
+          <div class="qcd-explainer">
+            <strong>Circuit metrics:</strong> Depth = longest gate sequence. T-count matters for fault-tolerant computing. Two-qubit gates are hardest on real hardware.
+          </div>
+          <div class="qcd-metrics-grid">
+            <div class="qcd-metric-card">
+              <div class="qcd-metric-card__label">Depth</div>
+              <div class="qcd-metric-card__val" id="qcd-metric-depth">0</div>
+            </div>
+            <div class="qcd-metric-card">
+              <div class="qcd-metric-card__label">Gate Count</div>
+              <div class="qcd-metric-card__val" id="qcd-metric-gates">0</div>
+            </div>
+            <div class="qcd-metric-card">
+              <div class="qcd-metric-card__label">2-Qubit Gates</div>
+              <div class="qcd-metric-card__val" id="qcd-metric-2q">0</div>
+            </div>
+            <div class="qcd-metric-card">
+              <div class="qcd-metric-card__label">T-Count</div>
+              <div class="qcd-metric-card__val" id="qcd-metric-tcount">0</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div><!-- /qcd-layout -->
+
+</div><!-- /qcd-page -->
+
+<!-- ══ PARAMETER POPOVER ══ -->
+<div class="qcd-popover" id="qcd-popover" role="dialog" aria-modal="true" aria-label="Gate parameters"></div>
+
+<!-- ══ GATE TOOLTIP ══ -->
+<div class="qcd-tooltip" id="qcd-gate-tooltip" role="tooltip" aria-hidden="true">
+  <div class="qcd-tooltip__name"></div>
+  <div class="qcd-tooltip__matrix"></div>
+  <div class="qcd-tooltip__desc"></div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="qcd-toast" id="qcd-toast" role="status" aria-live="polite"></div>
+
+<!-- ══ TOUR TIP ══ -->
+<div class="qcd-tour-tip" id="qcd-tour-tip" role="dialog" aria-modal="false" aria-label="Guided tour">
+  <div class="qcd-tour-tip__title"></div>
+  <div class="qcd-tour-tip__body"></div>
+  <div class="qcd-tour-tip__nav">
+    <button class="qcd-btn qcd-btn--sm" id="qcd-tour-skip">Skip Tour</button>
+    <span class="qcd-tour-tip__count"></span>
+    <button class="qcd-btn qcd-btn--primary qcd-btn--sm" id="qcd-tour-next">Next →</button>
+  </div>
+</div>
+
+<!-- ══ TEMPLATE MODAL ══ -->
+<div class="qcd-modal-overlay" id="qcd-template-overlay" role="dialog" aria-modal="true" aria-labelledby="qcd-tmpl-title">
+  <div class="qcd-modal">
+    <div class="qcd-modal__header">
+      <h2 class="qcd-modal__title" id="qcd-tmpl-title">Template Library</h2>
+      <button class="qcd-modal__close" aria-label="Close">✕</button>
+    </div>
+    <div class="qcd-modal__body">
+      <div class="qcd-template-grid" id="qcd-template-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KEYBOARD SHORTCUTS MODAL ══ -->
+<div class="qcd-modal-overlay" id="qcd-shortcuts-overlay" role="dialog" aria-modal="true" aria-labelledby="qcd-kbsc-title">
+  <div class="qcd-modal">
+    <div class="qcd-modal__header">
+      <h2 class="qcd-modal__title" id="qcd-kbsc-title">⌨ Keyboard Shortcuts</h2>
+      <button class="qcd-modal__close" aria-label="Close">✕</button>
+    </div>
+    <div class="qcd-modal__body">
+      <table class="qcd-shortcuts-table">
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Undo</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></td><td>Redo</td></tr>
+        <tr><td><kbd>Delete</kbd> / <kbd>Backspace</kbd></td><td>Delete selected gate</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Copy selected gate</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>V</kbd></td><td>Paste gate</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>X</kbd></td><td>Cut selected gate</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Deselect / cancel placement</td></tr>
+        <tr><td>Click gate chip</td><td>Select for click-to-place</td></tr>
+        <tr><td>Click drop zone</td><td>Place selected gate</td></tr>
+        <tr><td>Double-click gate (canvas)</td><td>Edit parameters</td></tr>
+        <tr><td>Drag from palette</td><td>Drop onto wire</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
+        <circle cx="16" cy="16" r="6" stroke="url(#fgd)" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="2" fill="url(#fgd)"/>
+        <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fgd)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)"/>
+        <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fgd)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)"/>
+        <defs><linearGradient id="fgd" x1="2" y1="2" x2="30" y2="30"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+      </svg>
+      <span>QuantumLab</span>
+    </div>
+    <p class="footer__tagline">A virtual quantum learning laboratory.</p>
+    <p class="footer__copy">&copy; 2026 QuantumLab. Built for explorers.</p>
+  </div>
+</footer>
+
+<!-- ══ SCRIPTS ══ -->
+<script src="js/vendor/three.min.js"></script>
+<script src="js/vendor/OrbitControls.js"></script>
+<script src="js/circuit-designer.js"></script>
+
+<script>
+/* Minimal nav scroll behaviour (mirrors other pages) */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+
+/* Mobile menu */
+const mBtn = document.getElementById('mobile-menu-btn');
+const mMenu = document.getElementById('mobile-menu');
+if (mBtn && mMenu) mBtn.addEventListener('click', () => mMenu.classList.toggle('open'));
+
+/* Canvas / Code view toggle */
+const canvasWrap = document.getElementById('qcd-canvas-wrap');
+const codeArea = document.getElementById('qcd-code-area');
+const btnCanvas = document.getElementById('qcd-view-canvas');
+const btnCode = document.getElementById('qcd-view-code');
+function showView(v) {
+  const isCode = v === 'code';
+  canvasWrap.style.display = isCode ? 'none' : '';
+  codeArea.style.display = isCode ? 'flex' : 'none';
+  btnCanvas.classList.toggle('qcd-btn--active', !isCode);
+  btnCode.classList.toggle('qcd-btn--active', isCode);
+  btnCanvas.setAttribute('aria-pressed', !isCode);
+  btnCode.setAttribute('aria-pressed', isCode);
+  if (isCode && window.QuantumLabDesigner) {
+    // trigger code sync
+    const ta = document.getElementById('qcd-code-textarea');
+    if (ta) ta.dispatchEvent(new Event('sync'));
+  }
+}
+if (btnCanvas) btnCanvas.addEventListener('click', () => showView('canvas'));
+if (btnCode) btnCode.addEventListener('click', () => showView('code'));
+
+/* Code copy / download buttons */
+document.getElementById('qcd-code-copy')?.addEventListener('click', () => {
+  const ta = document.getElementById('qcd-code-textarea');
+  if (!ta) return;
+  if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(() => {
+    const t = document.getElementById('qcd-toast');
+    if (t) { t.textContent = 'Code copied!'; t.classList.add('visible'); setTimeout(()=>t.classList.remove('visible'),2500); }
+  });
+});
+document.getElementById('qcd-code-download')?.addEventListener('click', () => {
+  const ta = document.getElementById('qcd-code-textarea');
+  if (!ta) return;
+  const tab = document.querySelector('.qcd-code-tab-btn.active')?.dataset.tab || 'qasm';
+  const ext = tab === 'qiskit' || tab === 'cirq' || tab === 'pennylane' ? '.py' : '.qasm';
+  const blob = new Blob([ta.value], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'circuit' + ext; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+/* Mobile results toggle */
+document.getElementById('qcd-results-toggle-btn')?.addEventListener('click', () => {
+  document.getElementById('qcd-results')?.classList.toggle('open');
+});
+
+/* Close modals on overlay click */
+document.querySelectorAll('.qcd-modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('visible');
+  });
+  overlay.querySelector('.qcd-modal__close')?.addEventListener('click', () => overlay.classList.remove('visible'));
+});
+
+/* Error banner sync */
+const errBanner = document.getElementById('qcd-code-error');
+const errText = document.getElementById('qcd-code-error-text');
+if (errBanner && errText) {
+  const orig = errBanner.textContent;
+  const obs = new MutationObserver(() => {
+    errText.textContent = errBanner.textContent.replace(/^.*?:/, '').trim();
+  });
+}
+</script>
+
+</body>
+</html>

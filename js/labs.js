@@ -4,7 +4,7 @@
 
 window.QL = window.QL || {};
 
-QL.renderLabs = function() {
+QL.renderLabs = function () {
   const grid = document.getElementById('labs-grid');
   if (!grid) return;
 
@@ -219,7 +219,7 @@ function animateLabPreview(container, lab) {
 }
 
 /* ---- LAB MODAL CONTENT ---- */
-QL.openLabModal = function(labId) {
+QL.openLabModal = function (labId) {
   const lab = QL.data.labs.find(l => l.id === labId);
   if (!lab) return;
   const content = document.getElementById('modal-content');
@@ -257,9 +257,9 @@ function buildCircuitLab(lab) {
     <div class="circuit-builder">
       <div class="gate-panel">
         <div class="gate-panel__label">Gates</div>
-        ${['H','X','Y','Z','S','T','CNOT','SWAP'].map(g =>
-          `<button class="gate-btn" data-gate="${g}" draggable="true">${g}</button>`
-        ).join('')}
+        ${['H', 'X', 'Y', 'Z', 'S', 'T', 'CNOT', 'SWAP'].map(g =>
+    `<button class="gate-btn" data-gate="${g}" draggable="true">${g}</button>`
+  ).join('')}
         <div style="margin-top:0.75rem;border-top:1px solid rgba(255,255,255,0.06);padding-top:0.6rem">
           <button class="gate-btn" id="add-qubit-btn" style="color:var(--cyan-light);border-color:rgba(6,182,212,0.3)">+ Qubit</button>
           <button class="gate-btn" id="clear-circuit-btn" style="color:var(--text-muted);margin-top:0.3rem">Clear</button>
@@ -323,10 +323,10 @@ function buildBlochLab(lab) {
         <div>
           <div class="bloch-control__label">Rotations</div>
           ${[
-            { id: 'rx', name: 'X rotation (θ)', min: 0, max: 314, val: 45 },
-            { id: 'ry', name: 'Y rotation', min: 0, max: 314, val: 0 },
-            { id: 'rz', name: 'Z rotation (φ)', min: 0, max: 628, val: 90 }
-          ].map(s => `
+      { id: 'rx', name: 'X rotation (θ)', min: 0, max: 314, val: 45 },
+      { id: 'ry', name: 'Y rotation', min: 0, max: 314, val: 0 },
+      { id: 'rz', name: 'Z rotation (φ)', min: 0, max: 628, val: 90 }
+    ].map(s => `
             <div class="slider-wrap">
               <div class="slider-row">
                 <span class="slider-name">${s.name}</span>
@@ -339,9 +339,9 @@ function buildBlochLab(lab) {
         <div>
           <div class="bloch-control__label" style="margin-top:0.75rem">Apply Gate</div>
           <div style="display:flex;flex-wrap:wrap;gap:0.35rem">
-            ${['H','X','Y','Z','S','T'].map(g =>
-              `<button class="gate-btn bloch-gate-btn" style="width:auto;padding:0.3rem 0.6rem" data-gate="${g}">${g}</button>`
-            ).join('')}
+            ${['H', 'X', 'Y', 'Z', 'S', 'T'].map(g =>
+      `<button class="gate-btn bloch-gate-btn" style="width:auto;padding:0.3rem 0.6rem" data-gate="${g}">${g}</button>`
+    ).join('')}
           </div>
         </div>
         <div style="margin-top:0.75rem">
@@ -386,9 +386,9 @@ function buildMeasurementLab(lab) {
         <div>
           <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:0.5rem">Qubit State</div>
           <div class="meas-basis-btns">
-            ${['|0⟩','|1⟩','|+⟩','|-⟩'].map((s,i) =>
-              `<button class="basis-btn ${i===2?'active':''}" data-state="${s}">${s}</button>`
-            ).join('')}
+            ${['|0⟩', '|1⟩', '|+⟩', '|-⟩'].map((s, i) =>
+    `<button class="basis-btn ${i === 2 ? 'active' : ''}" data-state="${s}">${s}</button>`
+  ).join('')}
           </div>
         </div>
       </div>
@@ -493,8 +493,8 @@ function buildStateLab(lab) {
     <div class="state-explorer">
       <div class="state-selector">
         <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:0.5rem">Select State</div>
-        ${states.map((s,i) => `
-          <div class="state-btn ${i===2?'active':''}" data-state-idx="${i}" data-p0="${s.p0}" data-p1="${s.p1}">
+        ${states.map((s, i) => `
+          <div class="state-btn ${i === 2 ? 'active' : ''}" data-state-idx="${i}" data-p0="${s.p0}" data-p1="${s.p1}">
             <span class="state-btn__ket">${s.ket}</span>
             <span class="state-btn__label">α=${s.a0}, β=${s.a1}</span>
           </div>
@@ -547,7 +547,7 @@ function buildStateLab(lab) {
 }
 
 /* ---- LAB INTERACTIONS ---- */
-QL.initLabInteractions = function(labId) {
+QL.initLabInteractions = function (labId) {
   if (labId === 'circuit-lab') initCircuitLab();
   if (labId === 'bloch-sphere') initBlochLab();
   if (labId === 'measurement-lab') initMeasurementLab();
@@ -594,7 +594,7 @@ function initCircuitLab() {
       qubitCount++;
       const lines = document.getElementById('circuit-lines');
       const newLine = document.createElement('div');
-      newLine.innerHTML = buildCircuitLine(`q${qubitCount-1}`, [null, null, 'M']);
+      newLine.innerHTML = buildCircuitLine(`q${qubitCount - 1}`, [null, null, 'M']);
       lines.appendChild(newLine.firstElementChild);
     });
   }
@@ -620,7 +620,7 @@ function initBlochLab() {
 
   function updateSphere() {
     sphere.setAngles(theta, phi);
-    const p0 = Math.round(Math.cos(theta/2) ** 2 * 100);
+    const p0 = Math.round(Math.cos(theta / 2) ** 2 * 100);
     const p1 = 100 - p0;
     document.getElementById('bloch-p0').style.width = p0 + '%';
     document.getElementById('bloch-p1').style.width = p1 + '%';
@@ -642,7 +642,7 @@ function initBlochLab() {
   document.querySelectorAll('.bloch-gate-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const gate = btn.dataset.gate;
-      if (gate === 'H') { theta = Math.PI/2; phi = 0; }
+      if (gate === 'H') { theta = Math.PI / 2; phi = 0; }
       if (gate === 'X') theta = Math.PI - theta;
       if (gate === 'Y') { theta = Math.PI - theta; phi += Math.PI; }
       if (gate === 'Z') phi += Math.PI;
@@ -664,7 +664,7 @@ function initBlochLab() {
 }
 
 function initMeasurementLab() {
-  const stateProbs = { '|0⟩': [100,0], '|1⟩': [0,100], '|+⟩': [50,50], '|-⟩': [50,50] };
+  const stateProbs = { '|0⟩': [100, 0], '|1⟩': [0, 100], '|+⟩': [50, 50], '|-⟩': [50, 50] };
   let currentState = '|+⟩';
   let shots = 100;
   let history = [];
@@ -711,14 +711,14 @@ function initMeasurementLab() {
     const histEl = document.getElementById('meas-history');
     if (histEl) {
       histEl.innerHTML = history.map(h =>
-        `<span style="width:10px;height:10px;border-radius:2px;background:${h===0?'rgba(124,58,237,0.6)':'rgba(6,182,212,0.6)'};display:inline-block" title="${h}"></span>`
+        `<span style="width:10px;height:10px;border-radius:2px;background:${h === 0 ? 'rgba(124,58,237,0.6)' : 'rgba(6,182,212,0.6)'};display:inline-block" title="${h}"></span>`
       ).join('');
     }
   });
 }
 
 function initNoiseLab() {
-  ['bit-flip','phase-flip','depolarizing','amp-damping'].forEach(id => {
+  ['bit-flip', 'phase-flip', 'depolarizing', 'amp-damping'].forEach(id => {
     const slider = document.getElementById(`${id}-slider`);
     if (slider) slider.addEventListener('input', e => {
       document.getElementById(`${id}-val`).textContent = e.target.value + '%';
@@ -745,10 +745,10 @@ function initNoiseLab() {
     // Draw both Bloch spheres
     const idealCanvas = document.getElementById('noise-ideal-canvas');
     const noisyCanvas = document.getElementById('noise-noisy-canvas');
-    if (idealCanvas) QL.BlochSphere(idealCanvas, { animate: false, theta: Math.PI/4, phi: 0 });
+    if (idealCanvas) QL.BlochSphere(idealCanvas, { animate: false, theta: Math.PI / 4, phi: 0 });
     if (noisyCanvas) {
-      const noisyTheta = Math.PI/4 + (totalNoise / 100) * 0.8;
-      QL.BlochSphere(noisyCanvas, { animate: false, theta: noisyTheta, phi: (totalNoise/100) * Math.PI });
+      const noisyTheta = Math.PI / 4 + (totalNoise / 100) * 0.8;
+      QL.BlochSphere(noisyCanvas, { animate: false, theta: noisyTheta, phi: (totalNoise / 100) * Math.PI });
     }
   });
 }
@@ -784,8 +784,8 @@ function initStateLab() {
   if (thetaSlider) thetaSlider.addEventListener('input', e => {
     theta = (e.target.value / 180) * Math.PI;
     document.getElementById('state-theta-val').textContent = e.target.value + '°';
-    const p0 = Math.round(Math.cos(theta/2)**2 * 100);
-    updateDisplay(p0, 100-p0);
+    const p0 = Math.round(Math.cos(theta / 2) ** 2 * 100);
+    updateDisplay(p0, 100 - p0);
   });
   if (phiSlider) phiSlider.addEventListener('input', e => {
     phi = (e.target.value / 360) * 2 * Math.PI;

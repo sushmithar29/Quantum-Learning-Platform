@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles/main.css" />
-  <link rel="stylesheet" href="../styles/quantum-noise-lab.css" />
+  <link rel="stylesheet" href="../styles/quantum-noise-lab.css?v=8" />
   <style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
 </head>
 <body class="nl-body">
@@ -124,33 +124,12 @@
           <div class="nl-exec-step" data-step="4"><div class="nl-exec-step-dot"></div>SIMULATION COMPLETE</div>
         </div>
 
-        <div class="nl-status-card">
-          <span class="nl-status-title">Status</span>
-          <span class="nl-status-badge status-ready" id="status-badge">READY</span>
-        </div>
 
-        <button type="button" class="nl-btn-run-simulation" id="btn-run-simulation">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
-          RUN SIMULATION
-        </button>
 
-        <button type="button" class="nl-btn-reset-full" id="btn-reset-experiment">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          Reset Experiment
-        </button>
-
-        <!-- Post-simulation Summary (hidden initially) -->
-        <div class="nl-summary-card" id="summary-card" style="display:none;">
-          <div class="nl-summary-header">
-            <span>EXPERIMENT SUMMARY</span>
-            <span id="summary-timestamp" style="color: var(--nl-text-muted); font-weight:400;"></span>
-          </div>
-          <div class="nl-summary-grid" id="summary-grid"></div>
-        </div>
       </div>
     </section>
 
-    <!-- CENTER PANEL: 3D BLOCH SPHERE & GRAPHS -->
+    <!-- CENTER PANEL: 3D BLOCH SPHERE -->
     <section class="nl-panel-center">
 
       <!-- 3D Bloch Sphere Card -->
@@ -179,49 +158,33 @@
         <div class="nl-webgl-container" id="bloch-webgl-container"></div>
         <button type="button" class="nl-reset-view-btn" id="btn-reset-view" style="z-index:15;">Reset View</button>
       </div>
-
-      <!-- Bloch Vector Evolution Graph -->
-      <div class="nl-graph-card">
-        <div class="nl-graph-header">
-          <span class="nl-graph-title">Bloch Vector Evolution</span>
-          <div class="nl-graph-filters">
-            <button type="button" class="nl-gf-btn active" data-series="coherence">|R|</button>
-            <button type="button" class="nl-gf-btn active" data-series="x">X</button>
-            <button type="button" class="nl-gf-btn active" data-series="y">Y</button>
-            <button type="button" class="nl-gf-btn active" data-series="z">Z</button>
-          </div>
-        </div>
-        <div class="nl-canvas-wrapper">
-          <canvas id="component-graph" class="nl-component-canvas"></canvas>
-          <div class="nl-graph-empty" id="graph-empty-comp">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Run simulation to see Bloch vector evolution
-          </div>
-        </div>
-        <div class="nl-graph-legend">
-          <span class="nl-legend-item leg-coherence"><span class="nl-legend-dot dot-coherence"></span> COHERENCE |R|</span>
-          <span class="nl-legend-item leg-x"><span class="nl-legend-dot dot-x"></span> X</span>
-          <span class="nl-legend-item leg-y"><span class="nl-legend-dot dot-y"></span> Y</span>
-          <span class="nl-legend-item leg-z"><span class="nl-legend-dot dot-z"></span> Z</span>
-        </div>
-      </div>
-
-      <!-- Measurement Probability Graph -->
-      <div class="nl-prob-card">
-        <span class="nl-prob-label">Measurement Probability</span>
-        <div class="nl-prob-canvas-wrapper">
-          <canvas id="probability-graph" class="nl-prob-canvas"></canvas>
-          <div class="nl-graph-empty" id="graph-empty-prob">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg>
-            P(|0&rang;) / P(|1&rang;) evolution
-          </div>
-        </div>
-      </div>
-
     </section>
 
-    <!-- RIGHT PANEL: ANALYSIS -->
+    <!-- RIGHT PANEL: ANALYSIS & CONTROLS -->
     <section class="nl-panel-right">
+
+      <!-- Action Buttons -->
+      <div class="nl-action-group" style="display:flex; flex-direction:column; gap:8px;">
+        <span id="status-badge" style="display:none;">READY</span>
+        <button type="button" class="nl-btn-run-simulation" id="btn-run-simulation">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+          RUN SIMULATION
+        </button>
+        <button type="button" class="nl-btn-reset-full" id="btn-reset-experiment">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset Experiment
+        </button>
+      </div>
+
+      <!-- Post-simulation Summary (hidden initially) -->
+      <div class="nl-summary-card" id="summary-card" style="display:none;">
+        <div class="nl-summary-header">
+          <span>EXPERIMENT SUMMARY</span>
+          <span id="summary-timestamp" style="color: var(--nl-text-muted); font-weight:400;"></span>
+        </div>
+        <div class="nl-summary-grid" id="summary-grid"></div>
+      </div>
+
       <h2 class="nl-panel-heading">Analysis</h2>
 
       <div class="nl-stats-card">

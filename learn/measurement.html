@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Measurement: Born Rule & State Collapse – QuantumLab</title>
+  <meta name="description" content="Interactive learning module for Quantum Measurement: Explore projective measurement, wavefunction collapse, measurement bases, and Born rule statistics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="../styles/learn.css" />
+</head>
+<body class="la-module-page">
+
+  <div class="la-module-container">
+
+    <!-- TOP HEADER -->
+    <header class="la-header-bar">
+      <div class="la-header-bar__left">
+        <a href="../learn.html" class="la-back-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to Learn
+        </a>
+        <div class="la-header-title-group">
+          <h1>Concept 07 · Quantum Measurement</h1>
+          <p>State Collapse · Projective Measurement &amp; The Born Rule</p>
+        </div>
+      </div>
+      <div class="la-header-actions">
+        <a href="bloch-sphere.html" class="la-btn-sm">← Prev: Bloch Sphere</a>
+        <a href="../learn.html" class="la-btn-sm" style="color:var(--learn-cyan);border-color:var(--learn-cyan);">All Modules Overview →</a>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="la-workspace">
+
+      <!-- LEFT: CONTROLS & EXPLANATION -->
+      <section class="la-panel-left">
+        <div class="la-panel-step-badge">Foundation Concept</div>
+        <h2 class="la-panel-heading">Wavefunction Collapse</h2>
+        <p class="la-panel-desc">
+          Prior to measurement, a quantum system evolves continuously and unitarily. Measurement breaks unitarity, non-reversibly projecting the state vector onto one of the operator's eigenstates:
+        </p>
+
+        <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;font-family:var(--font-mono);font-size:1.05rem;color:#38bdf8;text-align:center;margin-bottom:20px;">
+          P(m) = |\langle m|\psi\rangle|^2 &nbsp;&nbsp;\Rightarrow&nbsp;&nbsp; |\psi\rangle \xrightarrow{\text{measure}} |m\rangle
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <label style="font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;">1. Select Initial Quantum State:</label>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+            <button class="la-preset-chip active" id="btn-st-plus" onclick="setMeasureState('plus')">|+⟩: (50% 0, 50% 1)</button>
+            <button class="la-preset-chip" id="btn-st-0" onclick="setMeasureState('0')">|0⟩: Deterministic 0</button>
+            <button class="la-preset-chip" id="btn-st-1" onclick="setMeasureState('1')">|1⟩: Deterministic 1</button>
+            <button class="la-preset-chip" id="btn-st-biased" onclick="setMeasureState('biased')">Biased: (85% 0, 15% 1)</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:22px;">
+          <label style="font-size:0.82rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;">2. Measurement Basis:</label>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <button class="la-preset-chip active" id="btn-basis-z" onclick="setBasis('Z')">Z-Basis {|0⟩, |1⟩}</button>
+            <button class="la-preset-chip" id="btn-basis-x" onclick="setBasis('X')">X-Basis {|+⟩, |-⟩}</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:24px;">
+          <button class="la-btn-action la-btn-next" style="flex:1;justify-content:center;" onclick="fireSingleShot()">⚡ Fire 1 Shot</button>
+          <button class="la-btn-action la-btn-back" style="flex:1;justify-content:center;" onclick="runMultiShots(100)">Run 100 Shots</button>
+        </div>
+
+        <div class="la-learned-box" style="margin-top:auto;">
+          <div class="la-learned-box__title"><span>🎓</span> Key Takeaways:</div>
+          <ul>
+            <li>Measurement is inherently probabilistic: single outcomes cannot be predicted with certainty.</li>
+            <li>Repeated measurement immediately after collapse deterministically returns the exact same eigenstate.</li>
+            <li>Changing the measurement basis ($Z$ to $X$) alters the eigenstates and observables.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RIGHT: LIVE VISUALIZATION -->
+      <aside class="la-panel-right">
+        <div class="la-viz-card">
+          <div class="la-viz-header">
+            <div class="la-viz-tag">Detector Readout &amp; Histogram</div>
+            <div class="la-viz-stage-badge" id="meas-detector-badge">DETECTOR READY</div>
+          </div>
+          <div class="la-viz-display">
+            <div style="width:100%;text-align:center;">
+              <div id="meas-last-outcome" style="font-family:var(--font-mono);font-size:2.4rem;font-weight:800;color:#fff;margin-bottom:8px;">
+                —
+              </div>
+              <div id="meas-last-sub" style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px;">
+                Ready for projective measurement.
+              </div>
+
+              <!-- Live Histogram -->
+              <div style="display:flex;gap:24px;justify-content:center;height:120px;align-items:flex-end;max-width:320px;margin:0 auto;">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <div id="hist-0" style="width:50px;background:var(--learn-cyan);border-radius:4px 4px 0 0;height:0%;transition:height 0.2s;"></div>
+                  <span id="label-m0" style="font-family:var(--font-mono);font-size:0.8rem;margin-top:6px;">|0⟩: 0</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <div id="hist-1" style="width:50px;background:#c084fc;border-radius:4px 4px 0 0;height:0%;transition:height 0.2s;"></div>
+                  <span id="label-m1" style="font-family:var(--font-mono);font-size:0.8rem;margin-top:6px;">|1⟩: 0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="la-edu-card">
+          <div class="la-edu-header"><span>💡</span> The Measurement Problem</div>
+          <div class="la-edu-body">
+            How continuous Schrödinger wave evolution transitions into a discrete macroscopic outcome is known as the Quantum Measurement Problem, giving rise to interpretations like Copenhagen, Many-Worlds, and Decoherence theory.
+          </div>
+          <div class="la-edu-highlight"><strong>Ensemble Statistics:</strong> With large shot counts, relative frequencies converge to the exact theoretical Born probabilities $|\alpha|^2$ and $|\beta|^2$.</div>
+        </div>
+      </aside>
+
+    </main>
+
+  </div>
+
+  <script>
+    let curState = 'plus';
+    let curBasis = 'Z';
+    let count0 = 0;
+    let count1 = 0;
+
+    function setMeasureState(st) {
+      curState = st;
+      ['plus', '0', '1', 'biased'].forEach(id => {
+        const btn = document.getElementById(`btn-st-${id}`);
+        if (btn) btn.classList.toggle('active', id === st);
+      });
+      resetCounts();
+    }
+
+    function setBasis(b) {
+      curBasis = b;
+      document.getElementById('btn-basis-z').classList.toggle('active', b === 'Z');
+      document.getElementById('btn-basis-x').classList.toggle('active', b === 'X');
+      document.getElementById('label-m0').textContent = (b === 'Z') ? '|0⟩: 0' : '|+⟩: 0';
+      document.getElementById('label-m1').textContent = (b === 'Z') ? '|1⟩: 0' : '|-⟩: 0';
+      resetCounts();
+    }
+
+    function resetCounts() {
+      count0 = 0;
+      count1 = 0;
+      updateHist();
+      document.getElementById('meas-last-outcome').textContent = '—';
+      document.getElementById('meas-last-sub').textContent = 'Ready for projective measurement.';
+    }
+
+    function getProb0() {
+      if (curBasis === 'Z') {
+        if (curState === '0') return 1.0;
+        if (curState === '1') return 0.0;
+        if (curState === 'plus') return 0.5;
+        if (curState === 'biased') return 0.85;
+      } else {
+        // X basis
+        if (curState === 'plus') return 1.0;
+        if (curState === '0' || curState === '1') return 0.5;
+        if (curState === 'biased') return 0.5;
+      }
+      return 0.5;
+    }
+
+    function fireSingleShot() {
+      const p0 = getProb0();
+      const outcome = (Math.random() < p0) ? 0 : 1;
+      if (outcome === 0) count0++; else count1++;
+
+      const sym = (curBasis === 'Z') ? (outcome === 0 ? '|0⟩' : '|1⟩') : (outcome === 0 ? '|+⟩' : '|-⟩');
+      document.getElementById('meas-last-outcome').textContent = sym;
+      document.getElementById('meas-last-sub').innerHTML = `<span style="color:var(--learn-cyan);">State collapsed to eigenstate ${sym}!</span>`;
+      document.getElementById('meas-detector-badge').textContent = 'COLLAPSE RECORDED';
+      updateHist();
+    }
+
+    function runMultiShots(shots) {
+      const p0 = getProb0();
+      for (let i = 0; i < shots; i++) {
+        if (Math.random() < p0) count0++; else count1++;
+      }
+      document.getElementById('meas-last-outcome').textContent = `${shots} Shots`;
+      document.getElementById('meas-last-sub').textContent = `Total ensemble: ${count0 + count1} shots collected.`;
+      document.getElementById('meas-detector-badge').textContent = 'HISTOGRAM UPDATED';
+      updateHist();
+    }
+
+    function updateHist() {
+      const total = count0 + count1;
+      const h0 = total > 0 ? (count0 / total) * 100 : 0;
+      const h1 = total > 0 ? (count1 / total) * 100 : 0;
+
+      document.getElementById('hist-0').style.height = `${h0}%`;
+      document.getElementById('hist-1').style.height = `${h1}%`;
+
+      const sym0 = (curBasis === 'Z') ? '|0⟩' : '|+⟩';
+      const sym1 = (curBasis === 'Z') ? '|1⟩' : '|-⟩';
+      document.getElementById('label-m0').textContent = `${sym0}: ${count0}`;
+      document.getElementById('label-m1').textContent = `${sym1}: ${count1}`;
+    }
+  </script>
+</body>
+</html>

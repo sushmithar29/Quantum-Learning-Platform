@@ -2856,6 +2856,42 @@ measure q[2] -> c[2];`
     );
   }
 
+  /* ─── PYTHON SYNTAX HIGHLIGHTER ─── */
+  function highlightPython(code) {
+    const esc = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    return esc.replace(
+      /(#[^\n]*)|("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')|(\b(?:from|import|def|class|return|if|else|elif|for|while|in|as|with|try|except|lambda|None|True|False)\b)|(\b(?:QuantumCircuit|AerSimulator|AerJob|AerResult|Aer)\b)|(\b(?:h|x|y|z|s|t|sdg|tdg|cx|cz|cy|ch|swap|ccx|rx|ry|rz|p|measure|measure_all|barrier|draw|run|result|get_counts|print)\b)|(\b\d+\.?\d*\b)|(=|\+|-|\*|\/|\[|\]|\(|\)|:|,)/g,
+      (match, comment, str, kw, cls, method, num, op) => {
+        if (comment) return `<span class="tok-comment">${comment}</span>`;
+        if (str) return `<span class="tok-str">${str}</span>`;
+        if (kw) return `<span class="tok-kw">${kw}</span>`;
+        if (cls) return `<span class="tok-cls">${cls}</span>`;
+        if (method) return `<span class="tok-gate">${method}</span>`;
+        if (num) return `<span class="tok-num">${num}</span>`;
+        if (op) return `<span class="tok-op">${op}</span>`;
+        return match;
+      }
+    );
+  }
+
+  function isPythonCode(code) {
+    if (window.currentEditorLang === 'python') return true;
+    const trimmed = (code || '').trim();
+    return (
+      trimmed.startsWith('#') ||
+      trimmed.includes('from qiskit') ||
+      trimmed.includes('import qiskit') ||
+      trimmed.includes('qiskit_aer') ||
+      trimmed.includes('QuantumCircuit(') ||
+      trimmed.includes('AerSimulator(') ||
+      (trimmed.includes('circuit.') && !trimmed.startsWith('OPENQASM'))
+    );
+  }
+
   /* ─── UPDATE LINE NUMBERS ─── */
   function updateLineNums(code, container) {
     if (!container) return;
@@ -3371,6 +3407,16 @@ measure q[2] -> c[2];`
   let debounceTimer;
   function scheduleUpdate(code) {
     clearTimeout(debounceTimer);
+    if (isPythonCode(code)) {
+      // Do not run QASM parser on Python code
+      const errBox = document.getElementById('code-error-box');
+      if (errBox) errBox.classList.remove('visible');
+      const statusDot = document.getElementById('code-status-dot');
+      const statusMsg = document.getElementById('code-status-msg');
+      if (statusDot) statusDot.className = 'code-status-dot';
+      if (statusMsg) statusMsg.textContent = 'Python mode — click Run or press Ctrl+Enter';
+      return;
+    }
     const statusDot = document.getElementById('code-status-dot');
     if (statusDot) statusDot.className = 'code-status-dot running';
     debounceTimer = setTimeout(() => {
@@ -3392,7 +3438,14 @@ measure q[2] -> c[2];`
   const lineNums = document.getElementById('code-line-nums');
 
   function syncEditor(code) {
-    if (highlightLayer) highlightLayer.innerHTML = highlightQASM(code);
+    const isPy = isPythonCode(code);
+    if (isPy && window.currentEditorLang !== 'python' && window.switchEditorLang) {
+      window.switchEditorLang('python', true);
+    }
+    if (highlightLayer) {
+      highlightLayer.style.display = '';
+      highlightLayer.innerHTML = (isPy ? highlightPython(code) : highlightQASM(code)) + '\n';
+    }
     updateLineNums(code, lineNums);
     // Sync scroll
     if (highlightLayer && textarea) {
@@ -3496,6 +3549,14 @@ measure q[2] -> c[2];`
       const parsed = parseQASM(code);
       renderVisuals(parsed, currentStep);
     }
+  };
+
+  window.CodeEditorAPI = {
+    setBlochTarget: function(x, y, z) { if (bloch3D) bloch3D.setTarget(x, y, z); },
+    updateHUD: updateBlochHUD,
+    updateQubitPills: updateQubitPills,
+    updateCards: updateMultiQubitCards,
+    getBloch3D: function() { return bloch3D; }
   };
 
 })();

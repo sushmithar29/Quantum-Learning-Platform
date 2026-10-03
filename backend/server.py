@@ -16,6 +16,56 @@ from flask import Flask, request, jsonify, make_response
 # Ensure current directory is in path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from quantum_engine import QuantumCircuitMock, trace_circuit, compute_bloch_vectors
+import types
+
+# Register lightweight mock qiskit hierarchy so user code importing qiskit runs seamlessly
+qiskit_mod = types.ModuleType("qiskit")
+qiskit_mod.QuantumCircuit = QuantumCircuitMock
+sys.modules["qiskit"] = qiskit_mod
+
+qiskit_circuit_mod = types.ModuleType("qiskit.circuit")
+qiskit_circuit_mod.QuantumCircuit = QuantumCircuitMock
+sys.modules["qiskit.circuit"] = qiskit_circuit_mod
+
+qiskit_viz_mod = types.ModuleType("qiskit.visualization")
+qiskit_viz_mod.plot_histogram = lambda *args, **kwargs: None
+qiskit_viz_mod.plot_bloch_multivector = lambda *args, **kwargs: None
+sys.modules["qiskit.visualization"] = qiskit_viz_mod
+
+# Qiskit Aer Simulator emulation
+class AerResultMock:
+    def __init__(self, circuit, shots=1024):
+        self.circuit = circuit
+        self.shots = shots
+        self._counts = None
+
+    def get_counts(self):
+        if self._counts is None:
+            res = trace_circuit(self.circuit, shots=self.shots)
+            self._counts = res["counts"]
+        return self._counts
+
+class AerJobMock:
+    def __init__(self, circuit, shots=1024):
+        self.circuit = circuit
+        self.shots = shots
+
+    def result(self):
+        return AerResultMock(self.circuit, self.shots)
+
+class AerSimulatorMock:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def run(self, circuit, shots=1024, **kwargs):
+        return AerJobMock(circuit, shots=shots)
+
+qiskit_aer_mod = types.ModuleType("qiskit_aer")
+qiskit_aer_mod.AerSimulator = AerSimulatorMock
+sys.modules["qiskit_aer"] = qiskit_aer_mod
+
+qiskit_mod.AerSimulator = AerSimulatorMock
+qiskit_mod.Aer = types.SimpleNamespace(get_backend=lambda *a, **kw: AerSimulatorMock())
 
 app = Flask(__name__)
 
@@ -144,6 +194,8 @@ def run_code():
     sandbox_globals = {
         "__builtins__": __builtins__,
         "QuantumCircuit": QuantumCircuitMock,
+        "AerSimulator": AerSimulatorMock,
+        "Aer": qiskit_mod.Aer,
         "np": __import__('numpy'),
         "math": __import__('math'),
         "pi": __import__('math').pi,

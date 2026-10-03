@@ -717,17 +717,22 @@
       </div>
     </section>
 
-    <!-- PANEL 7: QASM CODE EDITOR -->
+    <!-- PANEL 7: QASM / PYTHON CODE EDITOR -->
     <section class="viz-panel" id="panel-code" role="tabpanel">
       <div class="viz-panel__header">
         <div>
-          <h2 class="viz-panel__title"><span class="viz-panel__icon" style="background:rgba(34,211,238,0.1);border-color:rgba(34,211,238,0.25);color:#22d3ee">&lt;/&gt;</span>QASM Live Code Editor</h2>
-          <p class="viz-panel__desc">Write or edit OpenQASM 2.0 code and instantly see the circuit, Bloch spheres, and state vector update in real time. Every keystroke re-simulates.</p>
+          <h2 class="viz-panel__title"><span class="viz-panel__icon" style="background:rgba(34,211,238,0.1);border-color:rgba(34,211,238,0.25);color:#22d3ee">&lt;/&gt;</span>Quantum Code Editor</h2>
+          <p class="viz-panel__desc">Write OpenQASM 2.0 or Python&nbsp;(Qiskit-style) code — the real Python backend compiles and executes it, returning live Bloch spheres, state vectors, and measurement counts.</p>
         </div>
         <div class="viz-panel__badges">
           <span class="viz-badge viz-badge--cyan">OpenQASM 2.0</span>
+          <span class="viz-badge viz-badge--amber">Python Compiler</span>
           <span class="viz-badge viz-badge--emerald">Live Simulation</span>
-          <span class="viz-badge viz-badge--violet">Editable</span>
+          <!-- Backend connection status -->
+          <span class="viz-badge backend-status-badge" id="backend-status-badge" title="Python backend at http://127.0.0.1:5000">
+            <span class="backend-status-dot" id="backend-status-dot"></span>
+            <span id="backend-status-text">Checking…</span>
+          </span>
         </div>
       </div>
 
@@ -735,7 +740,16 @@
         <!-- LEFT: CODE EDITOR -->
         <div class="code-editor-pane">
           <div class="code-editor-header">
-            <span class="code-editor-title">quantum_circuit.qasm</span>
+            <!-- Language mode toggle -->
+            <div class="lang-toggle" id="lang-toggle" role="group" aria-label="Code language mode">
+              <button class="lang-toggle-btn active" id="lang-btn-qasm" data-lang="qasm">QASM</button>
+              <button class="lang-toggle-btn" id="lang-btn-python" data-lang="python">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12h8M12 8v8" stroke-width="2"/></svg>
+                Python
+              </button>
+            </div>
+            <span class="code-editor-title" id="code-editor-title">quantum_circuit.qasm</span>
+            <!-- QASM presets -->
             <div class="code-preset-btns" id="code-preset-btns">
               <button class="code-preset-btn active" data-preset="superpos" id="cp-superpos">SUPERPOS</button>
               <button class="code-preset-btn" data-preset="bell" id="cp-bell">BELL</button>
@@ -744,6 +758,15 @@
               <button class="code-preset-btn" data-preset="deutsch" id="cp-deutsch">DEUTSCH</button>
               <button class="code-preset-btn" data-preset="grover" id="cp-grover">GROVER</button>
               <button class="code-preset-btn" data-preset="teleport" id="cp-teleport">TELEPORT</button>
+            </div>
+            <!-- Python presets (hidden by default) -->
+            <div class="code-preset-btns" id="py-preset-btns" style="display:none">
+              <button class="code-preset-btn active" data-py-preset="superpos" id="pyp-superpos">SUPERPOS</button>
+              <button class="code-preset-btn" data-py-preset="bell" id="pyp-bell">BELL</button>
+              <button class="code-preset-btn" data-py-preset="ghz" id="pyp-ghz">GHZ</button>
+              <button class="code-preset-btn" data-py-preset="grover" id="pyp-grover">GROVER</button>
+              <button class="code-preset-btn" data-py-preset="teleport" id="pyp-teleport">TELEPORT</button>
+              <button class="code-preset-btn" data-py-preset="custom" id="pyp-custom">BLANK</button>
             </div>
           </div>
 
@@ -913,6 +936,19 @@
             <div class="svd-title">Execution Log</div>
             <div class="code-step-log" id="code-step-log"></div>
           </div>
+
+          <!-- Python stdout / stderr output (shown only in Python mode) -->
+          <div class="py-output-section" id="py-output-section" style="display:none">
+            <div class="py-output-header">
+              <div class="svd-title" style="margin:0">Python Output</div>
+              <div class="py-output-meta" id="py-output-meta"></div>
+            </div>
+            <pre class="py-stdout" id="py-stdout"></pre>
+            <div class="py-counts-section" id="py-counts-section" style="display:none">
+              <div class="svd-title" style="font-size:0.7rem;margin-bottom:0.4rem">Measurement Counts</div>
+              <div class="py-counts-grid" id="py-counts-grid"></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -940,5 +976,6 @@
   <script src="js/vendor/three.min.js"></script>
   <script src="js/vendor/OrbitControls.js"></script>
   <script src="js/visualizer.js"></script>
+  <script src="js/python-backend.js"></script>
 </body>
 </html>

@@ -18,20 +18,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from quantum_engine import QuantumCircuitMock, trace_circuit, compute_bloch_vectors
 import types
 
-# Register lightweight mock qiskit hierarchy so user code importing qiskit runs seamlessly
-qiskit_mod = types.ModuleType("qiskit")
-qiskit_mod.QuantumCircuit = QuantumCircuitMock
-sys.modules["qiskit"] = qiskit_mod
-
-qiskit_circuit_mod = types.ModuleType("qiskit.circuit")
-qiskit_circuit_mod.QuantumCircuit = QuantumCircuitMock
-sys.modules["qiskit.circuit"] = qiskit_circuit_mod
-
-qiskit_viz_mod = types.ModuleType("qiskit.visualization")
-qiskit_viz_mod.plot_histogram = lambda *args, **kwargs: None
-qiskit_viz_mod.plot_bloch_multivector = lambda *args, **kwargs: None
-sys.modules["qiskit.visualization"] = qiskit_viz_mod
-
 # Qiskit Aer Simulator emulation
 class AerResultMock:
     def __init__(self, circuit, shots=1024):
@@ -39,11 +25,15 @@ class AerResultMock:
         self.shots = shots
         self._counts = None
 
-    def get_counts(self):
+    def get_counts(self, *args, **kwargs):
         if self._counts is None:
             res = trace_circuit(self.circuit, shots=self.shots)
             self._counts = res["counts"]
         return self._counts
+
+    def get_statevector(self, *args, **kwargs):
+        res = trace_circuit(self.circuit, shots=self.shots)
+        return res.get("final_statevector", [])
 
 class AerJobMock:
     def __init__(self, circuit, shots=1024):
@@ -60,12 +50,55 @@ class AerSimulatorMock:
     def run(self, circuit, shots=1024, **kwargs):
         return AerJobMock(circuit, shots=shots)
 
+class AerMock:
+    @staticmethod
+    def get_backend(name='qasm_simulator', *args, **kwargs):
+        return AerSimulatorMock()
+
+def mock_execute(circuit, backend=None, shots=1024, **kwargs):
+    return AerJobMock(circuit, shots=shots)
+
+def mock_transpile(circuits, *args, **kwargs):
+    return circuits
+
+# Register lightweight mock qiskit hierarchy so user code importing qiskit runs seamlessly
+qiskit_mod = types.ModuleType("qiskit")
+qiskit_mod.QuantumCircuit = QuantumCircuitMock
+qiskit_mod.Aer = AerMock
+qiskit_mod.AerSimulator = AerSimulatorMock
+qiskit_mod.execute = mock_execute
+qiskit_mod.transpile = mock_transpile
+sys.modules["qiskit"] = qiskit_mod
+
+qiskit_circuit_mod = types.ModuleType("qiskit.circuit")
+qiskit_circuit_mod.QuantumCircuit = QuantumCircuitMock
+sys.modules["qiskit.circuit"] = qiskit_circuit_mod
+qiskit_mod.circuit = qiskit_circuit_mod
+
+qiskit_viz_mod = types.ModuleType("qiskit.visualization")
+qiskit_viz_mod.plot_histogram = lambda *args, **kwargs: None
+qiskit_viz_mod.plot_bloch_multivector = lambda *args, **kwargs: None
+qiskit_viz_mod.plot_state_city = lambda *args, **kwargs: None
+qiskit_viz_mod.circuit_drawer = lambda *args, **kwargs: None
+sys.modules["qiskit.visualization"] = qiskit_viz_mod
+qiskit_mod.visualization = qiskit_viz_mod
+
+qiskit_qi_mod = types.ModuleType("qiskit.quantum_info")
+qiskit_qi_mod.Statevector = lambda *args, **kwargs: None
+sys.modules["qiskit.quantum_info"] = qiskit_qi_mod
+qiskit_mod.quantum_info = qiskit_qi_mod
+
+# qiskit_aer mock
 qiskit_aer_mod = types.ModuleType("qiskit_aer")
+qiskit_aer_mod.Aer = AerMock
 qiskit_aer_mod.AerSimulator = AerSimulatorMock
 sys.modules["qiskit_aer"] = qiskit_aer_mod
 
-qiskit_mod.AerSimulator = AerSimulatorMock
-qiskit_mod.Aer = types.SimpleNamespace(get_backend=lambda *a, **kw: AerSimulatorMock())
+qiskit_aer_backends_mod = types.ModuleType("qiskit_aer.backends")
+qiskit_aer_backends_mod.Aer = AerMock
+qiskit_aer_backends_mod.AerSimulator = AerSimulatorMock
+sys.modules["qiskit_aer.backends"] = qiskit_aer_backends_mod
+qiskit_aer_mod.backends = qiskit_aer_backends_mod
 
 app = Flask(__name__)
 
@@ -195,7 +228,11 @@ def run_code():
         "__builtins__": __builtins__,
         "QuantumCircuit": QuantumCircuitMock,
         "AerSimulator": AerSimulatorMock,
-        "Aer": qiskit_mod.Aer,
+        "Aer": AerMock,
+        "execute": mock_execute,
+        "transpile": mock_transpile,
+        "plot_histogram": lambda *args, **kwargs: None,
+        "plot_bloch_multivector": lambda *args, **kwargs: None,
         "np": __import__('numpy'),
         "math": __import__('math'),
         "pi": __import__('math').pi,

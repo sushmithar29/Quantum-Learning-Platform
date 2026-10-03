@@ -468,12 +468,17 @@ def trace_circuit(circuit, shots=1024):
         })
 
     # Shot simulation from final statevector
-    probs = [abs(c)**2 for c in current_sv]
+    probs = np.array([abs(c)**2 for c in current_sv], dtype=float)
+    p_sum = np.sum(probs)
+    if p_sum > 0:
+        probs = probs / p_sum
+    else:
+        probs = np.ones(dim, dtype=float) / dim
     # Sample outcomes
     samples = np.random.choice(dim, size=shots, p=probs)
     counts = {}
     for outcome in samples:
-        bstr = format(outcome, f'0{num_qubits}b')
+        bstr = format(int(outcome), f'0{num_qubits}b')
         counts[bstr] = counts.get(bstr, 0) + 1
 
     return {

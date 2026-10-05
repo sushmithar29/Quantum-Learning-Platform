@@ -61,9 +61,25 @@ def mock_execute(circuit, backend=None, shots=1024, **kwargs):
 def mock_transpile(circuits, *args, **kwargs):
     return circuits
 
+class RegisterMock:
+    def __init__(self, size=1, name=None):
+        self.size = int(size)
+        self.name = name or "reg"
+    def __len__(self):
+        return self.size
+    def __iter__(self):
+        return iter(range(self.size))
+    def __getitem__(self, idx):
+        return idx
+
+class QuantumRegister(RegisterMock): pass
+class ClassicalRegister(RegisterMock): pass
+
 # Register lightweight mock qiskit hierarchy so user code importing qiskit runs seamlessly
 qiskit_mod = types.ModuleType("qiskit")
 qiskit_mod.QuantumCircuit = QuantumCircuitMock
+qiskit_mod.QuantumRegister = QuantumRegister
+qiskit_mod.ClassicalRegister = ClassicalRegister
 qiskit_mod.Aer = AerMock
 qiskit_mod.AerSimulator = AerSimulatorMock
 qiskit_mod.execute = mock_execute
@@ -72,6 +88,8 @@ sys.modules["qiskit"] = qiskit_mod
 
 qiskit_circuit_mod = types.ModuleType("qiskit.circuit")
 qiskit_circuit_mod.QuantumCircuit = QuantumCircuitMock
+qiskit_circuit_mod.QuantumRegister = QuantumRegister
+qiskit_circuit_mod.ClassicalRegister = ClassicalRegister
 sys.modules["qiskit.circuit"] = qiskit_circuit_mod
 qiskit_mod.circuit = qiskit_circuit_mod
 
@@ -227,6 +245,8 @@ def run_code():
     sandbox_globals = {
         "__builtins__": __builtins__,
         "QuantumCircuit": QuantumCircuitMock,
+        "QuantumRegister": QuantumRegister,
+        "ClassicalRegister": ClassicalRegister,
         "AerSimulator": AerSimulatorMock,
         "Aer": AerMock,
         "execute": mock_execute,

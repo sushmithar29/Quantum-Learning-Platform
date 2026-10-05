@@ -18,7 +18,11 @@ class QuantumCircuitMock:
     Lightweight Qiskit-compatible QuantumCircuit emulator.
     Records instructions, tracks line numbers, and executes statevector simulation.
     """
-    def __init__(self, num_qubits=2, num_clbits=2):
+    def __init__(self, num_qubits=2, num_clbits=None, *args, **kwargs):
+        if hasattr(num_qubits, 'size'):
+            num_qubits = num_qubits.size
+        if num_clbits is not None and hasattr(num_clbits, 'size'):
+            num_clbits = num_clbits.size
         self.num_qubits = int(num_qubits)
         self.num_clbits = int(num_clbits) if num_clbits is not None else int(num_qubits)
         self.instructions = []
@@ -87,23 +91,28 @@ class QuantumCircuitMock:
     def fredkin(self, control, t1, t2): return self.cswap(control, t1, t2)
 
     # Measurement and controls
-    def measure(self, q, c):
-        if isinstance(q, list):
-            for qi, ci in zip(q, c):
-                self._record("Measure", [qi], params={"clbit": int(ci)})
+    def measure(self, q, c=None, *args, **kwargs):
+        if hasattr(q, '__iter__') and not isinstance(q, (str, bytes)):
+            q_list = list(q)
+            c_list = list(c) if hasattr(c, '__iter__') and not isinstance(c, (str, bytes)) else list(range(len(q_list)))
+            for qi, ci in zip(q_list, c_list):
+                self._record("Measure", [int(qi)], params={"clbit": int(ci)})
             return self
-        return self._record("Measure", [q], params={"clbit": int(c)})
+        clbit = int(c) if c is not None else int(q)
+        return self._record("Measure", [int(q)], params={"clbit": clbit})
 
-    def measure_all(self):
+    def measure_all(self, inplace=True, add_bits=True, *args, **kwargs):
+        if add_bits and self.num_clbits < self.num_qubits:
+            self.num_clbits = self.num_qubits
         for i in range(self.num_qubits):
             self.measure(i, i)
         return self
 
-    def barrier(self, *qubits):
+    def barrier(self, *qubits, **kwargs):
         targets = list(qubits) if qubits else list(range(self.num_qubits))
         return self._record("Barrier", targets)
 
-    def draw(self, output='text'):
+    def draw(self, output='text', *args, **kwargs):
         # Return text representation
         lines = []
         for i in range(self.num_qubits):

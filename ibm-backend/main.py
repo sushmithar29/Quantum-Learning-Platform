@@ -31,10 +31,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 try:
     from pydantic import field_validator
-    _HAS_V2 = True
 except ImportError:
-    from pydantic import validator  # type: ignore
-    _HAS_V2 = False
+    from pydantic import validator as field_validator  # type: ignore
 
 # ── Logging with secret redaction ──────────────────────────────────────────
 _REDACT_PATTERN = re.compile(r'[A-Za-z0-9_\-]{40,}')
@@ -87,23 +85,14 @@ class RunRequest(BaseModel):
     shots: int = Field(ge=1, le=MAX_SHOTS, default=DEFAULT_SHOTS)
     backend: Optional[str] = None  # None = let IBM choose best
 
-    if _HAS_V2:
-        @field_validator('qasm')
-        @classmethod
-        def check_qasm(cls, v: str) -> str:
-            if not v or not v.strip():
-                raise ValueError('QASM must not be empty')
-            if len(v) > 50_000:
-                raise ValueError('QASM too large (max 50k chars)')
-            return v.strip()
-    else:
-        @validator('qasm')  # type: ignore
-        def check_qasm(cls, v):
-            if not v or not v.strip():
-                raise ValueError('QASM must not be empty')
-            if len(v) > 50_000:
-                raise ValueError('QASM too large (max 50k chars)')
-            return v.strip()
+    @field_validator('qasm')
+    @classmethod
+    def check_qasm(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError('QASM must not be empty')
+        if len(v) > 50_000:
+            raise ValueError('QASM too large (max 50k chars)')
+        return v.strip()
 
 class IdealRunRequest(BaseModel):
     qasm: str

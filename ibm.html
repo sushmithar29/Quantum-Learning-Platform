@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IBM Quantum Hub — Architecture, Qiskit & Physical Digital Twin | QuantumLab</title>
+  <meta name="description" content="Explore IBM Quantum superconducting QPUs, Heron heavy-hex architecture, Qiskit Runtime workflows, and the 3D Dilution Refrigerator digital twin." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/ibm-quantum.css" />
+  <style>
+    .ibm-hero {
+      position: relative;
+      padding: 120px 24px 60px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 20%, rgba(15, 98, 254, 0.15), transparent 70%),
+                  radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.12), transparent 60%),
+                  var(--bg-deep);
+    }
+    .ibm-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    .ibm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 98, 254, 0.15);
+      border: 1px solid rgba(15, 98, 254, 0.35);
+      color: #60a5fa;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .ibm-title {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+    .ibm-title span {
+      background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ibm-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      max-width: 780px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .ibm-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .ibm-btn-blue {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 12px 26px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(15, 98, 254, 0.35);
+      transition: var(--transition);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .ibm-btn-blue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(15, 98, 254, 0.5);
+    }
+    .ibm-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.04);
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: var(--transition);
+    }
+    .ibm-btn-outline:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: #38bdf8;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* GRID CARDS */
+    .ibm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .ibm-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-white);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .ibm-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(15, 98, 254, 0.15);
+    }
+    .ibm-card__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(15, 98, 254, 0.15);
+      border: 1px solid rgba(15, 98, 254, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+    .ibm-card__title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .ibm-card__desc {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .ibm-card__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .ibm-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+    }
+    .ibm-chip--blue {
+      background: rgba(15, 98, 254, 0.12);
+      border-color: rgba(15, 98, 254, 0.3);
+      color: #60a5fa;
+    }
+
+    /* QPU HARDWARE HIGHLIGHT */
+    .ibm-hardware-spotlight {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      background: linear-gradient(145deg, rgba(11, 18, 33, 0.95), rgba(7, 12, 22, 0.95));
+      border: 1px solid rgba(15, 98, 254, 0.25);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-bottom: 60px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .ibm-hardware-spotlight {
+        grid-template-columns: 1fr;
+      }
+    }
+    .ibm-hw-img-wrap {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.6);
+    }
+    .ibm-hw-img {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .ibm-hw-img-wrap:hover .ibm-hw-img {
+      transform: scale(1.04);
+    }
+    .ibm-hw-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    /* BENCHMARKS TABLE */
+    .ibm-table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border-white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 60px;
+      overflow-x: auto;
+    }
+    .ibm-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .ibm-table th {
+      padding: 14px 16px;
+      color: #94a3b8;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ibm-table td {
+      padding: 16px;
+      color: #e2e8f0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .ibm-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+    .ibm-table-highlight {
+      color: #38bdf8 !important;
+      font-weight: 700;
+    }
+
+    /* CODE SNIPPET BOX */
+    .ibm-code-box {
+      background: #060913;
+      border: 1px solid rgba(15, 98, 254, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 60px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+    }
+    .ibm-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="main-nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" id="logo-link">
+        <svg class="nav__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="6" stroke="url(#logo-grad)" stroke-width="1.5" />
+          <circle cx="16" cy="16" r="2" fill="url(#logo-grad)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#logo-grad)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)" />
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="nav__logo-text">QuantumLab</span>
+      </a>
+
+      <div class="nav__links">
+        <a href="basics.html" class="nav__link">Basics</a>
+        <a href="hardware.html" class="nav__link nav__link--highlight">&#x2697; Quantum Hardware</a>
+        <a href="learn.html" class="nav__link">Learn</a>
+        <a href="algorithms.html" class="nav__link">Algorithms</a>
+        <a href="virtual-labs.html" class="nav__link">Virtual Labs</a>
+        <a href="experiments.html" class="nav__link">Experiments</a>
+        <a href="visualizer.html" class="nav__link" style="display:inline-flex;align-items:center;gap:4px;color:#22d3ee;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          Visualizer
+        </a>
+        <a href="ibm.html" class="nav__link active" style="display:inline-flex;align-items:center;gap:5px;color:#38bdf8;font-weight:700;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="2" y="2" width="20" height="20" rx="4"/>
+            <path d="M7 8h2m-2 4h2m-2 4h2M12 8h5M12 12h5M12 16h5"/>
+          </svg>
+          IBM
+        </a>
+        <a href="progress.html" class="nav__link" id="nav-progress" style="display:inline-flex;align-items:center;gap:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Progress
+        </a>
+      </div>
+
+      <div class="nav__actions">
+        <button class="nav__ai-btn" id="ai-tutor-btn" onclick="window.location.href='index.html#ai-tutor'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          AI Tutor
+        </button>
+        <button class="nav__profile-btn" id="profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+      </div>
+
+      <button class="nav__menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="basics.html" class="nav__mobile-link">Basics</a>
+      <a href="hardware.html" class="nav__mobile-link">⚛ Quantum Hardware</a>
+      <a href="learn.html" class="nav__mobile-link">Learn</a>
+      <a href="algorithms.html" class="nav__mobile-link">Algorithms</a>
+      <a href="virtual-labs.html" class="nav__mobile-link">Virtual Labs</a>
+      <a href="experiments.html" class="nav__mobile-link">Experiments</a>
+      <a href="visualizer.html" class="nav__mobile-link" style="color:#22d3ee">👁 Visualizer</a>
+      <a href="ibm.html" class="nav__mobile-link active" style="color:#38bdf8">⚛ IBM</a>
+      <a href="progress.html" class="nav__mobile-link">Progress</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="ibm-hero">
+    <div class="ibm-container">
+      <div class="ibm-badge">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;"></span>
+        IBM Quantum Architecture &amp; Ecosystem
+      </div>
+      <h1 class="ibm-title">IBM Quantum <span>Hardware &amp; Qiskit</span> Hub</h1>
+      <p class="ibm-subtitle">
+        Explore IBM's cutting-edge superconducting quantum computing roadmap — from 133-qubit Heron processors and heavy-hex topology to Qiskit Runtime Primitives and a photorealistic 3D Dilution Refrigerator digital twin.
+      </p>
+
+      <div class="ibm-actions">
+        <a href="hardware.html" class="ibm-btn-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>
+          Launch 3D Dilution Refrigerator Digital Twin
+        </a>
+        <a href="visualizer.html" class="ibm-btn-outline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Open Qiskit Python IDE
+        </a>
+      </div>
+
+      <!-- HARDWARE SPOTLIGHT -->
+      <div class="ibm-hardware-spotlight">
+        <div>
+          <span style="color:#38bdf8;font-size:0.82rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Cryogenic Thermodynamic Engineering</span>
+          <h2 style="font-size:1.8rem;color:#fff;font-weight:800;margin:8px 0 16px;">The IBM Dilution Refrigerator</h2>
+          <p style="color:var(--text-secondary);font-size:0.95rem;line-height:1.65;margin-bottom:24px;">
+            Superconducting qubits must operate at <strong>15 millikelvin (-273.135°C)</strong> — colder than deep space — to prevent thermal photons from destroying quantum superposition. QuantumLab models all 6 distinct cooling stages with active thermodynamic sensors.
+          </p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <div class="ibm-chip ibm-chip--blue">Stage 1: 50K Flange</div>
+            <div class="ibm-chip ibm-chip--blue">Stage 2: 4K Plate</div>
+            <div class="ibm-chip ibm-chip--blue">Stage 3: Still Plate (0.8K)</div>
+            <div class="ibm-chip ibm-chip--blue">Stage 4: Cold Plate (100mK)</div>
+            <div class="ibm-chip ibm-chip--blue">Mixing Chamber (15mK)</div>
+          </div>
+        </div>
+        <div class="ibm-hw-img-wrap">
+          <span class="ibm-hw-tag">REAL HARDWARE BENCHMARK</span>
+          <img src="images/ibm_chandelier_real.jpg" alt="IBM Quantum Dilution Refrigerator Real Hardware" class="ibm-hw-img" />
+        </div>
+      </div>
+
+      <!-- FEATURES / TECH CARDS -->
+      <div class="ibm-grid">
+        <div class="ibm-card">
+          <div class="ibm-card__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3 class="ibm-card__title">Heron &amp; Eagle QPUs</h3>
+          <p class="ibm-card__desc">
+            Equipped with tunable couplers delivering up to a 5x error rate reduction over previous generation Eagle chips, enabling true quantum utility benchmarks.
+          </p>
+          <div class="ibm-card__meta">
+            <span class="ibm-chip">133 Qubits</span>
+            <span class="ibm-chip">Heavy-Hex Lattice</span>
+            <span class="ibm-chip">99.9% CX Fidelity</span>
+          </div>
+        </div>
+
+        <div class="ibm-card">
+          <div class="ibm-card__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3 class="ibm-card__title">Qiskit Runtime Primitives</h3>
+          <p class="ibm-card__desc">
+            Leverage <code>SamplerV2</code> and <code>EstimatorV2</code> execution primitives with built-in zero-noise extrapolation (ZNE) and readout error mitigation.
+          </p>
+          <div class="ibm-card__meta">
+            <span class="ibm-chip">Estimator V2</span>
+            <span class="ibm-chip">Sampler V2</span>
+            <span class="ibm-chip">TREX Mitigation</span>
+          </div>
+        </div>
+
+        <div class="ibm-card">
+          <div class="ibm-card__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+          </div>
+          <h3 class="ibm-card__title">OpenQASM 3.0 &amp; Transpiler</h3>
+          <p class="ibm-card__desc">
+            Full support for dynamic circuits, classical feed-forward mid-circuit measurements, and hardware-aware basis gate routing (RZ, SX, X, ECR).
+          </p>
+          <div class="ibm-card__meta">
+            <span class="ibm-chip">OpenQASM 3.0</span>
+            <span class="ibm-chip">Level 3 Transpile</span>
+            <span class="ibm-chip">Basis [rz,sx,x,cx]</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROCESSOR COMPARISON TABLE -->
+      <h2 style="font-size:1.6rem;color:#fff;font-weight:700;margin-bottom:16px;">IBM Quantum Processor Generations</h2>
+      <div class="ibm-table-wrap">
+        <table class="ibm-table">
+          <thead>
+            <tr>
+              <th>Processor</th>
+              <th>Qubit Count</th>
+              <th>Coupling Topology</th>
+              <th>Avg T1 / T2 Coherence</th>
+              <th>2Q Gate Error</th>
+              <th>Primary Architecture Feature</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ibm-table-highlight">Falcon (r5)</td>
+              <td>27</td>
+              <td>Heavy-Hex</td>
+              <td>~120 µs / ~110 µs</td>
+              <td>~7.5 × 10⁻³</td>
+              <td>Fixed-frequency Transmon qubits</td>
+            </tr>
+            <tr>
+              <td class="ibm-table-highlight">Eagle (r3)</td>
+              <td>127</td>
+              <td>Heavy-Hex</td>
+              <td>~150 µs / ~130 µs</td>
+              <td>~6.0 × 10⁻³</td>
+              <td>Multi-level wiring &amp; through-silicon vias</td>
+            </tr>
+            <tr style="background:rgba(15, 98, 254, 0.08);">
+              <td class="ibm-table-highlight" style="color:#60a5fa !important;">Heron (r1)</td>
+              <td>133</td>
+              <td>Heavy-Hex</td>
+              <td>~220 µs / ~200 µs</td>
+              <td>~1.2 × 10⁻³</td>
+              <td>Tunable couplers with 5x error suppression</td>
+            </tr>
+            <tr>
+              <td class="ibm-table-highlight">Condor</td>
+              <td>1,121</td>
+              <td>Heavy-Hex</td>
+              <td>~180 µs / ~150 µs</td>
+              <td>~4.0 × 10⁻³</td>
+              <td>High-density cryogenic flex cabling</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RUNTIME CODE DEMO BOX -->
+      <h2 style="font-size:1.6rem;color:#fff;font-weight:700;margin-bottom:16px;">Live IBM Qiskit Execution Snippet</h2>
+      <div class="ibm-code-box">
+        <div class="ibm-code-header">
+          <span>PYTHON / QISKIT AER RUNTIME EXECUTOR</span>
+          <span style="color:#38bdf8;">TESTED ON LOCAL PYTHON COMPILER</span>
+        </div>
+        <pre style="color:#e2e8f0;overflow-x:auto;line-height:1.6;"><code><span style="color:#818cf8;">from</span> qiskit <span style="color:#818cf8;">import</span> QuantumCircuit
+<span style="color:#818cf8;">from</span> qiskit_aer <span style="color:#818cf8;">import</span> AerSimulator
+
+<span style="color:#64748b;"># Construct 3-qubit IBM Bell/GHZ state</span>
+qc = QuantumCircuit(3, 3)
+qc.h(0)
+qc.cx(0, 1)
+qc.cx(1, 2)
+qc.measure_all(add_bits=<span style="color:#f43f5e;">False</span>)
+
+<span style="color:#64748b;"># Run on local AerSimulator</span>
+simulator = AerSimulator()
+result = simulator.run(qc, shots=1000).result()
+counts = result.get_counts(qc)
+
+<span style="color:#38bdf8;">print</span>(<span style="color:#34d399;">"IBM Hardware State Counts:"</span>, counts)
+<span style="color:#64748b;"># Output: {'000': ~500, '111': ~500}</span></code></pre>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       RUN ON IBM QUANTUM — NEW ISOLATED SECTION
+       All classes prefixed .qibm-  |  JS: window.QuantumLabIBM
+       This section is entirely new. Zero existing code was modified.
+  ════════════════════════════════════════════════════════════════════ -->
+  <section class="qibm-section" id="qibm-run" aria-label="Run on IBM Quantum">
+    <div class="qibm-container">
+
+      <!-- SECTION HEADER -->
+      <div class="qibm-section-head">
+        <div class="qibm-badge">
+          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3b82f6;"></span>
+          Real Hardware Experiment
+        </div>
+        <h2 class="qibm-section-title">Run on <span>IBM Quantum</span><br>Real vs Ideal Comparison</h2>
+        <p class="qibm-section-sub">
+          Pick a circuit, connect your free IBM Quantum account, run it on a real quantum computer,
+          and see your result next to a perfect simulation — with a plain-English explanation of why they differ.
+        </p>
+      </div>
+
+      <!-- STEP PROGRESS BAR -->
+      <nav class="qibm-progress" aria-label="Wizard steps">
+        <div class="qibm-step-item active" id="qibm-step-1-dot">
+          <div class="qibm-step-dot" aria-label="Step 1: Your circuit">1</div>
+          <span class="qibm-step-label">Your<br>circuit</span>
+        </div>
+        <div class="qibm-step-item" id="qibm-step-2-dot">
+          <div class="qibm-step-dot" aria-label="Step 2: Connect IBM">2</div>
+          <span class="qibm-step-label">Connect<br>IBM</span>
+        </div>
+        <div class="qibm-step-item" id="qibm-step-3-dot">
+          <div class="qibm-step-dot" aria-label="Step 3: Choose machine">3</div>
+          <span class="qibm-step-label">Machine</span>
+        </div>
+        <div class="qibm-step-item" id="qibm-step-4-dot">
+          <div class="qibm-step-dot" aria-label="Step 4: Review">4</div>
+          <span class="qibm-step-label">Review</span>
+        </div>
+        <div class="qibm-step-item" id="qibm-step-5-dot">
+          <div class="qibm-step-dot" aria-label="Step 5: Wait">5</div>
+          <span class="qibm-step-label">Wait</span>
+        </div>
+        <div class="qibm-step-item" id="qibm-step-6-dot">
+          <div class="qibm-step-dot" aria-label="Step 6: Compare">6</div>
+          <span class="qibm-step-label">Compare</span>
+        </div>
+      </nav>
+
+      <!-- ARIA live region for job status -->
+      <div id="qibm-live-region" class="qibm-live-region" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- WIZARD PANELS -->
+      <div class="qibm-panels">
+
+        <!-- ── STEP 1: CHOOSE CIRCUIT ────────────────────────────────── -->
+        <div class="qibm-panel active" id="qibm-panel-1" role="tabpanel" aria-label="Step 1: Choose your circuit">
+          <div class="qibm-card">
+            <h3 class="qibm-card-title">Choose your circuit</h3>
+            <p class="qibm-card-sub">Pick a preset to get started instantly, or paste your own OpenQASM 2.0 below. Bell state is the default.</p>
+
+            <div class="qibm-preset-grid">
+              <button class="qibm-preset-btn" data-qibm-preset="bell" aria-pressed="false">
+                <span class="qibm-preset-icon">🔔</span>
+                <div class="qibm-preset-name">Bell State</div>
+                <div class="qibm-preset-desc">2-qubit entangled state.<br>Ideal: 50% |00⟩, 50% |11⟩</div>
+              </button>
+              <button class="qibm-preset-btn" data-qibm-preset="ghz" aria-pressed="false">
+                <span class="qibm-preset-icon">🌀</span>
+                <div class="qibm-preset-name">3-Qubit GHZ</div>
+                <div class="qibm-preset-desc">3-qubit entanglement.<br>Ideal: 50% |000⟩, 50% |111⟩</div>
+              </button>
+              <button class="qibm-preset-btn" data-qibm-preset="superposition" aria-pressed="false">
+                <span class="qibm-preset-icon">⚛️</span>
+                <div class="qibm-preset-name">Superposition</div>
+                <div class="qibm-preset-desc">Single qubit in |+⟩.<br>Ideal: 50% |0⟩, 50% |1⟩</div>
+              </button>
+            </div>
+
+            <div class="qibm-qasm-label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              OpenQASM 2.0 (editable)
+            </div>
+            <textarea id="qibm-qasm-input" class="qibm-qasm-box"
+              aria-label="OpenQASM circuit input"
+              placeholder="OPENQASM 2.0;&#10;include &quot;qelib1.inc&quot;;&#10;qreg q[2];&#10;creg c[2];&#10;h q[0];&#10;cx q[0],q[1];&#10;measure q -> c;"></textarea>
+
+            <div id="qibm-status-1" class="qibm-alert qibm-alert--error" style="display:none;"></div>
+
+            <div class="qibm-btn-row">
+              <button id="qibm-next-1" class="qibm-btn qibm-btn--blue">
+                Next: Connect IBM
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+
+            <!-- Learn pills -->
+            <div class="qibm-learn-bar" role="group" aria-label="Learn more">
+              <span style="font-size:0.75rem;color:var(--text-muted);align-self:center;">Learn:</span>
+              <button class="qibm-learn-pill" data-qibm-learn="qubit-order">Qubit order</button>
+              <button class="qibm-learn-pill" data-qibm-learn="ideal-vs-real">Ideal vs Real</button>
+              <button class="qibm-learn-pill" data-qibm-learn="shot">What is a shot?</button>
+            </div>
+            <div id="qibm-learn-drawer" class="qibm-learn-drawer" role="note"></div>
+          </div>
+        </div>
+
+        <!-- ── STEP 2: CONNECT IBM ────────────────────────────────────── -->
+        <div class="qibm-panel" id="qibm-panel-2" role="tabpanel" aria-label="Step 2: Connect IBM Quantum">
+          <div class="qibm-card">
+            <h3 class="qibm-card-title">Connect your free IBM Quantum account</h3>
+            <p class="qibm-card-sub">Your key stays only in this browser tab — it is never saved, logged, or sent anywhere except IBM's servers.</p>
+
+            <div class="qibm-connect-steps">
+              <div class="qibm-connect-step">
+                <span class="qibm-connect-num">1</span>
+                <span class="qibm-connect-text">Create a free account at
+                  <a href="https://quantum.ibm.com" target="_blank" rel="noopener noreferrer">quantum.ibm.com</a>
+                </span>
+              </div>
+              <div class="qibm-connect-step">
+                <span class="qibm-connect-num">2</span>
+                <span class="qibm-connect-text">Go to your account → <strong>API token</strong> → Copy the token</span>
+              </div>
+              <div class="qibm-connect-step">
+                <span class="qibm-connect-num">3</span>
+                <span class="qibm-connect-text">Paste it below and click <strong>Connect</strong></span>
+              </div>
+            </div>
+
+            <div class="qibm-privacy-note" role="note">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span><strong>Privacy:</strong> Your key stays in this browser tab and is never saved to any server, database, or storage. It is held in memory only and cleared when you click Disconnect or close the tab.</span>
+            </div>
+
+            <div class="qibm-key-row">
+              <input type="password" id="qibm-key-input" class="qibm-key-input"
+                placeholder="Paste your IBM Quantum API key here"
+                aria-label="IBM Quantum API key" autocomplete="off"
+                spellcheck="false" autocorrect="off" />
+              <button id="qibm-connect-btn" class="qibm-btn qibm-btn--blue" aria-label="Connect to IBM Quantum">Connect</button>
+            </div>
+
+            <button id="qibm-disconnect-btn" class="qibm-btn qibm-btn--danger qibm-btn--sm" style="margin-bottom:4px;" aria-label="Disconnect and clear key">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
+              Disconnect
+            </button>
+
+            <div class="qibm-divider">or</div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button id="qibm-practice-btn" class="qibm-btn qibm-btn--outline">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                No account? Try Practice mode
+              </button>
+              <button id="qibm-replay-btn" class="qibm-btn qibm-btn--outline" style="display:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+                Replay a recorded real run
+              </button>
+            </div>
+
+            <div id="qibm-status-2" class="qibm-alert qibm-alert--info" style="display:none;"></div>
+
+            <div class="qibm-btn-row">
+              <button id="qibm-back-1" class="qibm-btn qibm-btn--outline">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                Back
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: CHOOSE MACHINE ─────────────────────────────────── -->
+        <div class="qibm-panel" id="qibm-panel-3" role="tabpanel" aria-label="Step 3: Choose a machine">
+          <div class="qibm-card">
+            <h3 class="qibm-card-title">Choose a quantum machine</h3>
+            <p class="qibm-card-sub">"Best available" lets IBM pick the least busy suitable machine automatically — recommended for beginners.</p>
+            <div id="qibm-machine-list" class="qibm-machine-list" role="radiogroup" aria-label="Available machines">
+              <div class="qibm-alert qibm-alert--info">Loading available machines…</div>
+            </div>
+            <div class="qibm-btn-row">
+              <button id="qibm-back-2" class="qibm-btn qibm-btn--outline">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                Back
+              </button>
+              <button id="qibm-next-3" class="qibm-btn qibm-btn--blue">
+                Next: Review
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STEP 4: REVIEW & RUN ───────────────────────────────────── -->
+        <div class="qibm-panel" id="qibm-panel-4" role="tabpanel" aria-label="Step 4: Review and run">
+          <div class="qibm-card">
+            <h3 class="qibm-card-title">Review your run</h3>
+            <p class="qibm-card-sub">Everything looks right? Confirm and send your circuit to the quantum computer.</p>
+
+            <div class="qibm-summary-grid">
+              <div class="qibm-summary-item">
+                <div class="qibm-summary-label">Circuit</div>
+                <div class="qibm-summary-value" id="qibm-sum-circuit">Bell State</div>
+              </div>
+              <div class="qibm-summary-item">
+                <div class="qibm-summary-label">Qubits</div>
+                <div class="qibm-summary-value" id="qibm-sum-qubits">2</div>
+              </div>
+              <div class="qibm-summary-item">
+                <div class="qibm-summary-label">
+                  <span class="qibm-tooltip-target" title="A shot is one full run of the circuit from start to finish. We repeat it many times to build up statistics.">Shots (?)</span>
+                </div>
+                <div class="qibm-summary-value" id="qibm-sum-shots">1024</div>
+              </div>
+              <div class="qibm-summary-item">
+                <div class="qibm-summary-label">Machine</div>
+                <div class="qibm-summary-value" id="qibm-sum-machine">Best available</div>
+              </div>
+            </div>
+
+            <div class="qibm-range-wrap">
+              <div class="qibm-range-label">
+                <span>Shots: <strong id="qibm-shots-val">1024</strong></span>
+                <span style="color:var(--text-muted);font-size:0.78rem;">max 4096</span>
+              </div>
+              <input type="range" id="qibm-shots-range" class="qibm-range" min="128" max="4096" step="128" value="1024"
+                aria-label="Number of shots" />
+            </div>
+
+            <div class="qibm-alert qibm-alert--info" style="margin-bottom:16px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span id="qibm-estimate-text">Calculating estimate…</span>
+            </div>
+
+            <div class="qibm-btn-row">
+              <button id="qibm-back-3" class="qibm-btn qibm-btn--outline">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                Back
+              </button>
+              <button id="qibm-run-btn" class="qibm-btn qibm-btn--blue" aria-label="Run circuit on quantum hardware">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Run on real hardware
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STEP 5: WAIT ───────────────────────────────────────────── -->
+        <div class="qibm-panel" id="qibm-panel-5" role="tabpanel" aria-label="Step 5: Waiting for results">
+          <div class="qibm-card">
+            <div class="qibm-tracker" aria-live="polite">
+              <div class="qibm-tracker-anim" role="status" aria-label="Loading"></div>
+              <div class="qibm-tracker-title">Your circuit is on its way</div>
+              <div id="qibm-tracker-msg" class="qibm-tracker-msg">Starting…</div>
+              <div id="qibm-tracker-meta" class="qibm-tracker-meta">
+                <span id="qibm-elapsed">Elapsed: 0s</span>
+                <span style="margin:0 8px;opacity:0.3;">·</span>
+                <span id="qibm-job-id-display" style="display:none;font-family:var(--font-mono);font-size:0.78rem;"></span>
+              </div>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:20px;">You can leave this tab and come back — your job will keep running on IBM's servers. Reconnect with the same key to resume checking.</p>
+              <button id="qibm-cancel-btn" class="qibm-btn qibm-btn--danger qibm-btn--sm" style="margin-bottom:16px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Cancel job
+              </button>
+              <button id="qibm-back-5" class="qibm-btn qibm-btn--outline qibm-btn--sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                Go back
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STEP 6: COMPARE ────────────────────────────────────────── -->
+        <div class="qibm-panel" id="qibm-panel-6" role="tabpanel" aria-label="Step 6: Compare results">
+
+          <!-- HISTOGRAMS -->
+          <div class="qibm-compare-grid">
+            <div class="qibm-hist-wrap">
+              <div class="qibm-hist-title">
+                Ideal (perfect simulation)
+                <span id="qibm-prov-ideal" class="qibm-provenance qibm-provenance--ideal">Ideal (simulated)</span>
+              </div>
+              <canvas id="qibm-hist-ideal" class="qibm-hist-canvas" role="img" aria-label="Ideal simulation histogram"></canvas>
+            </div>
+            <div class="qibm-hist-wrap">
+              <div class="qibm-hist-title">
+                Real IBM hardware
+                <span id="qibm-prov-real" class="qibm-provenance qibm-provenance--real">Real hardware</span>
+              </div>
+              <canvas id="qibm-hist-real" class="qibm-hist-canvas" role="img" aria-label="Real hardware results histogram"></canvas>
+            </div>
+          </div>
+
+          <!-- JOB METADATA -->
+          <div id="qibm-result-meta" class="qibm-job-meta"></div>
+
+          <!-- MATCH GAUGE -->
+          <div class="qibm-gauge-wrap" role="region" aria-label="Match score">
+            <div class="qibm-gauge-label">Match Score (Hellinger Fidelity)</div>
+            <div id="qibm-gauge-score" class="qibm-gauge-score qibm-gauge-score--good">–</div>
+            <div id="qibm-gauge-meaning" class="qibm-gauge-meaning">–</div>
+            <div id="qibm-gauge-guide" class="qibm-gauge-subtext"></div>
+          </div>
+
+          <!-- UNEXPECTED OUTCOMES -->
+          <div class="qibm-noise-panel">
+            <div class="qibm-noise-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Unexpected outcomes
+            </div>
+            <div id="qibm-unexpected-wrap"></div>
+          </div>
+
+          <!-- WHY ARE THEY DIFFERENT -->
+          <div class="qibm-noise-panel">
+            <div class="qibm-noise-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Why are they different?
+            </div>
+            <div id="qibm-noise-list" class="qibm-noise-list"></div>
+          </div>
+
+          <!-- WHAT TO TRY NEXT -->
+          <div class="qibm-try-panel">
+            <h4>What to try next</h4>
+            <ul id="qibm-try-list" class="qibm-try-list"></ul>
+          </div>
+
+          <!-- LEARN PILLS -->
+          <div class="qibm-learn-bar">
+            <span style="font-size:0.75rem;color:var(--text-muted);align-self:center;">Learn:</span>
+            <button class="qibm-learn-pill" data-qibm-learn="noise">What is noise?</button>
+            <button class="qibm-learn-pill" data-qibm-learn="queue">What is a queue?</button>
+            <button class="qibm-learn-pill" data-qibm-learn="qubit-order">Qubit order</button>
+            <button class="qibm-learn-pill" data-qibm-learn="shot">What is a shot?</button>
+          </div>
+
+          <!-- RESTART -->
+          <div class="qibm-btn-row" style="margin-top:32px;">
+            <button id="qibm-restart-btn" class="qibm-btn qibm-btn--outline">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+              Start over
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /qibm-panels -->
+
+      <!-- MY HARDWARE RUNS HISTORY -->
+      <div class="qibm-history">
+        <div class="qibm-history-title">
+          <span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+            My Hardware Runs
+          </span>
+          <span style="font-size:0.75rem;font-weight:400;color:var(--text-muted);">Saved locally · No keys stored</span>
+        </div>
+        <div id="qibm-history-list"></div>
+      </div>
+
+    </div><!-- /qibm-container -->
+  </section><!-- /qibm-run -->
+
+  <!-- IBM Quantum JS — loaded last so DOM is ready -->
+  <script>
+    // Set backend URL here. Change to your deployed backend URL in production.
+    // Example: window.QIBM_API_BASE = 'https://qibm-backend.onrender.com';
+    window.QIBM_API_BASE = 'http://127.0.0.1:8001';
+  </script>
+  <script src="js/ibm-quantum.js" defer></script>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <svg viewBox="0 0 32 32" fill="none" width="22" height="22">
+          <circle cx="16" cy="16" r="6" stroke="url(#fg)" stroke-width="1.5" />
+          <circle cx="16" cy="16" r="2" fill="url(#fg)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(-30 16 16)" />
+          <ellipse cx="16" cy="16" rx="14" ry="5" stroke="url(#fg)" stroke-width="1" opacity="0.6" transform="rotate(30 16 16)" />
+          <defs>
+            <linearGradient id="fg" x1="2" y1="2" x2="30" y2="30">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>QuantumLab</span>
+      </div>
+      <p class="footer__tagline">A virtual quantum learning laboratory.</p>
+      <p class="footer__copy">© 2026 QuantumLab. Built for explorers.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

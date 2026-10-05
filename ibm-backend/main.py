@@ -21,10 +21,8 @@ import os
 import re
 import math
 import time
-import json
 import logging
-import asyncio
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request, Header
@@ -153,11 +151,9 @@ def _get_token(x_ibm_token: Optional[str]) -> Optional[str]:
     return token if len(token) >= 10 else None
 
 # ── IBM SDK imports (with graceful degradation) ─────────────────────────────
-# ── IBM SDK imports (with graceful degradation) ─────────────────────────────
 try:
     from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2 as Sampler
-    from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
-    from qiskit import QuantumCircuit, transpile
+    from qiskit import transpile
     from qiskit.qasm2 import loads as qasm2_loads
     from qiskit.primitives import StatevectorSampler
     IBM_AVAILABLE = True
@@ -167,10 +163,9 @@ except ImportError as _e:
     logger.warning('qiskit-ibm-runtime import error: %s', _e)
 
 try:
-    from qiskit_aer import AerSimulator
-    from qiskit_aer.noise import NoiseModel, depolarizing_error
-    AER_AVAILABLE = True
-except ImportError:
+    import importlib.util as _importlib_util
+    AER_AVAILABLE = _importlib_util.find_spec('qiskit_aer') is not None
+except Exception:
     AER_AVAILABLE = False
 
 
@@ -555,7 +550,7 @@ import traceback
 import types
 
 try:
-    from quantum_engine import QuantumCircuitMock, trace_circuit, compute_bloch_vectors
+    from quantum_engine import QuantumCircuitMock, trace_circuit  # noqa: F401
     QUANTUM_ENGINE_AVAILABLE = True
 except Exception as _qe_err:
     QUANTUM_ENGINE_AVAILABLE = False

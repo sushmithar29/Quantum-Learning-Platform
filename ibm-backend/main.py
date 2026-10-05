@@ -321,7 +321,15 @@ def _get_service(token: str, instance: str = '') -> Any:
             raise HTTPException(401, detail='Invalid IBM Quantum API key. Check your key and try again.')
         raise HTTPException(502, detail='Could not connect to IBM Quantum: ' + msg[:200])
 
-# ── ENDPOINTS ───────────────────────────────────────────────────────────────
+@app.get('/')
+async def root():
+    """Root landing message."""
+    return {
+        'service': 'QuantumLab IBM Quantum Backend',
+        'status': 'online',
+        'health_check': '/health',
+        'version': '1.0.0'
+    }
 
 @app.get('/health')
 async def health():

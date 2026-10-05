@@ -28,8 +28,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
+try:
+    from pydantic import field_validator
+    _HAS_V2 = True
+except ImportError:
+    from pydantic import validator  # type: ignore
+    _HAS_V2 = False
 
 # ── Logging with secret redaction ──────────────────────────────────────────
 _REDACT_PATTERN = re.compile(r'[A-Za-z0-9_\-]{40,}')
@@ -82,13 +87,23 @@ class RunRequest(BaseModel):
     shots: int = Field(ge=1, le=MAX_SHOTS, default=DEFAULT_SHOTS)
     backend: Optional[str] = None  # None = let IBM choose best
 
-    @validator('qasm')
-    def check_qasm(cls, v):
-        if not v or not v.strip():
-            raise ValueError('QASM must not be empty')
-        if len(v) > 50_000:
-            raise ValueError('QASM too large (max 50k chars)')
-        return v.strip()
+    if _HAS_V2:
+        @field_validator('qasm')
+        @classmethod
+        def check_qasm(cls, v: str) -> str:
+            if not v or not v.strip():
+                raise ValueError('QASM must not be empty')
+            if len(v) > 50_000:
+                raise ValueError('QASM too large (max 50k chars)')
+            return v.strip()
+    else:
+        @validator('qasm')  # type: ignore
+        def check_qasm(cls, v):
+            if not v or not v.strip():
+                raise ValueError('QASM must not be empty')
+            if len(v) > 50_000:
+                raise ValueError('QASM too large (max 50k chars)')
+            return v.strip()
 
 class IdealRunRequest(BaseModel):
     qasm: str
@@ -98,12 +113,19 @@ class PracticeRunRequest(BaseModel):
     qasm: str
     shots: int = Field(ge=1, le=MAX_SHOTS, default=DEFAULT_SHOTS)
 
+# ── Lifespan handler ────────────────────────────────────────────────────────
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info('QuantumLab IBM backend started. IBM SDK: %s', IBM_AVAILABLE)
+    yield
+
 # ── App ─────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title='QuantumLab IBM Quantum Backend',
     version='1.0.0',
     docs_url=None,   # disable Swagger UI in production
     redoc_url=None,
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -527,10 +549,6 @@ async def practice_run(request: Request, body: PracticeRunRequest):
     result = _run_practice(body.qasm, min(body.shots, MAX_SHOTS))
     return result
 
-# ── Startup / wakeup ─────────────────────────────────────────────────────────
-@app.on_event('startup')
-async def startup_event():
-    logger.info('QuantumLab IBM backend started. IBM SDK: %s', IBM_AVAILABLE)
 
 # ── Run directly ─────────────────────────────────────────────────────────────
 if __name__ == '__main__':

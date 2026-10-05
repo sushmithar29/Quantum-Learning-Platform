@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import math
 
 try:
-    import pytest
+    import pytest  # type: ignore
 except ImportError:
     import contextlib
     class _PytestShim:

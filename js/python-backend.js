@@ -7,7 +7,7 @@
 (function PythonBackendIntegration() {
   "use strict";
 
-  var BACKEND_URL = "http://127.0.0.1:5000";
+  var BACKEND_URL = window.PYTHON_BACKEND_URL || "https://ibm-backend-9uslg4i5h-sushmithar29s-projects.vercel.app";
   var currentLang   = "qasm";
   var backendOnline = false;
   var pyLastResult  = null;

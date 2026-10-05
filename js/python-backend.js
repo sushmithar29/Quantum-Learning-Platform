@@ -7,7 +7,8 @@
 (function PythonBackendIntegration() {
   "use strict";
 
-  var BACKEND_URL = window.PYTHON_BACKEND_URL || "https://ibm-backend-9uslg4i5h-sushmithar29s-projects.vercel.app";
+  var BACKEND_URL = window.PYTHON_BACKEND_URL || "http://localhost:8001";
+  var BACKEND_URL_REMOTE = "https://ibm-backend-9uslg4i5h-sushmithar29s-projects.vercel.app";
   var currentLang   = "qasm";
   var backendOnline = false;
   var pyLastResult  = null;
@@ -62,15 +63,31 @@
 
   function pollBackend() {
     setBackendStatus("checking");
+    // Try localhost first (dev), then fall back to remote
     return fetch(BACKEND_URL + "/api/status", { method: "GET", signal: AbortSignal.timeout(3000) })
       .then(function(r) {
-        if (r.ok) {
-          setBackendStatus("online");
-        } else {
-          setBackendStatus("offline");
-        }
+        if (r.ok) return r.json().then(function(d) {
+          if (d && d.status === "online") {
+            setBackendStatus("online");
+          } else { throw new Error("not online"); }
+        });
+        throw new Error("bad status");
       })
       .catch(function() {
+        // localhost failed — try remote URL
+        if (BACKEND_URL !== BACKEND_URL_REMOTE) {
+          return fetch(BACKEND_URL_REMOTE + "/api/status", { method: "GET", signal: AbortSignal.timeout(8000) })
+            .then(function(r) {
+              if (r.ok) return r.json().then(function(d) {
+                if (d && d.status === "online") {
+                  BACKEND_URL = BACKEND_URL_REMOTE;  // switch to remote for all future requests
+                  setBackendStatus("online");
+                } else { setBackendStatus("offline"); }
+              });
+              setBackendStatus("offline");
+            })
+            .catch(function() { setBackendStatus("offline"); });
+        }
         setBackendStatus("offline");
       });
   }

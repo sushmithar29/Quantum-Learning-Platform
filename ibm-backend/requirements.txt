@@ -10,8 +10,6 @@ qiskit==1.1.1
 qiskit-aer==0.14.2
 qiskit-ibm-runtime==0.24.1
 
-# Optional: needed for noise model depolarizing_error
-qiskit-aer[gpu]  # remove [gpu] if no CUDA
 
 # Dev / test
 pytest==8.2.2

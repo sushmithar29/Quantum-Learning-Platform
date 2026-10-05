@@ -34,6 +34,22 @@ class QuantumCircuitMock:
         if params is None:
             params = {}
         
+        # Flatten and sanitize targets
+        flat_targets = []
+        for t in targets:
+            if hasattr(t, '__iter__') and not isinstance(t, (str, bytes)):
+                flat_targets.extend(int(ti) for ti in t)
+            else:
+                flat_targets.append(int(t))
+
+        # Flatten and sanitize controls
+        flat_controls = []
+        for c in controls:
+            if hasattr(c, '__iter__') and not isinstance(c, (str, bytes)):
+                flat_controls.extend(int(ci) for ci in c)
+            else:
+                flat_controls.append(int(c))
+
         # Get caller line number
         lineno = None
         try:
@@ -45,8 +61,8 @@ class QuantumCircuitMock:
         instr = {
             "id": len(self.instructions),
             "gate": gate_name,
-            "targets": [int(t) for t in targets],
-            "controls": [int(c) for c in controls],
+            "targets": flat_targets,
+            "controls": flat_controls,
             "params": params,
             "label": label or gate_name,
             "lineno": lineno
@@ -54,40 +70,69 @@ class QuantumCircuitMock:
         self.instructions.append(instr)
         return self
 
-    # Single-qubit gates
-    def h(self, q): return self._record("H", [q])
-    def x(self, q): return self._record("X", [q])
-    def y(self, q): return self._record("Y", [q])
-    def z(self, q): return self._record("Z", [q])
-    def s(self, q): return self._record("S", [q])
-    def sdg(self, q): return self._record("Sdg", [q])
-    def t(self, q): return self._record("T", [q])
-    def tdg(self, q): return self._record("Tdg", [q])
-    def sx(self, q): return self._record("SX", [q])
-    def id(self, q): return self._record("I", [q])
+    def _apply_single(self, gate_name, q, params=None):
+        """Applies single-qubit gate, broadcasting across a list or iterable if provided."""
+        if hasattr(q, '__iter__') and not isinstance(q, (str, bytes)):
+            for qi in q:
+                self._record(gate_name, [int(qi)], params=params)
+            return self
+        return self._record(gate_name, [int(q)], params=params)
+
+    def _apply_two(self, gate_name, control, target, params=None):
+        """Applies two-qubit gate with support for lists/iterables."""
+        if hasattr(control, '__iter__') and hasattr(target, '__iter__'):
+            c_list = list(control)
+            t_list = list(target)
+            if len(c_list) == len(t_list):
+                for ci, ti in zip(c_list, t_list):
+                    self._record(gate_name, [int(ti)], controls=[int(ci)], params=params)
+                return self
+        c_val = int(control[0]) if hasattr(control, '__iter__') and not isinstance(control, (str, bytes)) else int(control)
+        t_val = int(target[0]) if hasattr(target, '__iter__') and not isinstance(target, (str, bytes)) else int(target)
+        return self._record(gate_name, [t_val], controls=[c_val], params=params)
+
+    # Single-qubit gates (with list/iterable broadcasting support)
+    def h(self, q): return self._apply_single("H", q)
+    def x(self, q): return self._apply_single("X", q)
+    def y(self, q): return self._apply_single("Y", q)
+    def z(self, q): return self._apply_single("Z", q)
+    def s(self, q): return self._apply_single("S", q)
+    def sdg(self, q): return self._apply_single("Sdg", q)
+    def t(self, q): return self._apply_single("T", q)
+    def tdg(self, q): return self._apply_single("Tdg", q)
+    def sx(self, q): return self._apply_single("SX", q)
+    def id(self, q): return self._apply_single("I", q)
 
     # Parametric rotations
-    def rx(self, theta, q): return self._record("Rx", [q], params={"theta": str(theta)})
-    def ry(self, theta, q): return self._record("Ry", [q], params={"theta": str(theta)})
-    def rz(self, theta, q): return self._record("Rz", [q], params={"theta": str(theta)})
-    def p(self, lam, q): return self._record("P", [q], params={"lambda": str(lam)})
-    def u(self, theta, phi, lam, q): return self._record("U3", [q], params={"theta": str(theta), "phi": str(phi), "lambda": str(lam)})
+    def rx(self, theta, q): return self._apply_single("Rx", q, params={"theta": str(theta)})
+    def ry(self, theta, q): return self._apply_single("Ry", q, params={"theta": str(theta)})
+    def rz(self, theta, q): return self._apply_single("Rz", q, params={"theta": str(theta)})
+    def p(self, lam, q): return self._apply_single("P", q, params={"lambda": str(lam)})
+    def u(self, theta, phi, lam, q): return self._apply_single("U3", q, params={"theta": str(theta), "phi": str(phi), "lambda": str(lam)})
     def u3(self, theta, phi, lam, q): return self.u(theta, phi, lam, q)
 
     # Two-qubit gates
-    def cx(self, control, target): return self._record("CNOT", [target], controls=[control])
+    def cx(self, control, target): return self._apply_two("CNOT", control, target)
     def cnot(self, control, target): return self.cx(control, target)
-    def cz(self, control, target): return self._record("CZ", [target], controls=[control])
-    def cy(self, control, target): return self._record("CY", [target], controls=[control])
-    def ch(self, control, target): return self._record("CH", [target], controls=[control])
-    def swap(self, q1, q2): return self._record("SWAP", [q2], controls=[q1])
-    def cp(self, theta, control, target): return self._record("CPhase", [target], controls=[control], params={"lambda": str(theta)})
-    def crz(self, theta, control, target): return self._record("CRz", [target], controls=[control], params={"theta": str(theta)})
+    def cz(self, control, target): return self._apply_two("CZ", control, target)
+    def cy(self, control, target): return self._apply_two("CY", control, target)
+    def ch(self, control, target): return self._apply_two("CH", control, target)
+    def swap(self, q1, q2): return self._apply_two("SWAP", q1, q2)
+    def cp(self, theta, control, target): return self._apply_two("CPhase", control, target, params={"lambda": str(theta)})
+    def crz(self, theta, control, target): return self._apply_two("CRz", control, target, params={"theta": str(theta)})
 
     # Multi-qubit gates
-    def ccx(self, c1, c2, target): return self._record("CCX", [target], controls=[c1, c2])
+    def ccx(self, c1, c2, target):
+        c1_val = int(c1[0]) if hasattr(c1, '__iter__') and not isinstance(c1, (str, bytes)) else int(c1)
+        c2_val = int(c2[0]) if hasattr(c2, '__iter__') and not isinstance(c2, (str, bytes)) else int(c2)
+        t_val = int(target[0]) if hasattr(target, '__iter__') and not isinstance(target, (str, bytes)) else int(target)
+        return self._record("CCX", [t_val], controls=[c1_val, c2_val])
     def toffoli(self, c1, c2, target): return self.ccx(c1, c2, target)
-    def cswap(self, control, t1, t2): return self._record("CSWAP", [t1, t2], controls=[control])
+    def cswap(self, control, t1, t2):
+        c_val = int(control[0]) if hasattr(control, '__iter__') and not isinstance(control, (str, bytes)) else int(control)
+        t1_val = int(t1[0]) if hasattr(t1, '__iter__') and not isinstance(t1, (str, bytes)) else int(t1)
+        t2_val = int(t2[0]) if hasattr(t2, '__iter__') and not isinstance(t2, (str, bytes)) else int(t2)
+        return self._record("CSWAP", [t1_val, t2_val], controls=[c_val])
     def fredkin(self, control, t1, t2): return self.cswap(control, t1, t2)
 
     # Measurement and controls
